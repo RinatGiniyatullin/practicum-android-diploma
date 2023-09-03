@@ -23,15 +23,22 @@ import ru.practicum.android.diploma.util.BindingFragment
 
 class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
 
+
+
     private val viewModel by viewModel<FiltersViewModel>()
     private var adapter:FiltersAdapter? = null
     private var screen:Int? =null
+    val PermKrai = Country(id = "1", name = "Россия", parent_id = "2")
+    val Samara = Country(id = "1", name = "Украина", parent_id = "3")
+    val industriesList:MutableList<Country> = mutableListOf(PermKrai, Samara
+    )
 
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
     ): FragmentFilterSelectionBinding {
         return FragmentFilterSelectionBinding.inflate(inflater, container, false)
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,6 +49,9 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         initAdapter()
         binding.recyclerViewFilters.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFilters.adapter = adapter
+        binding.chooseCountryBottom.setOnClickListener {
+            viewModel.setScreen(3)
+        }
 
 
     }
@@ -64,6 +74,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         when(state){
             ScreenState.showPlaceOfWorkScreen -> showPlaceOfWorkScreen()
             ScreenState.showIndustriesScreen -> showIndustriesScreen()
+            ScreenState.showChooseCountryScreen -> showCountryScreen()
 
         }
     }
@@ -74,10 +85,22 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.regionButton.visibility = View.VISIBLE
         binding.region.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_place_of_work)
-
     }
     private fun showIndustriesScreen(){
 
+    }
+    private fun showCountryScreen(){
+        adapter?.setCountry(industriesList)
+        binding.recyclerViewFilters.visibility = View.VISIBLE
+        binding.chooseCountryBottom.visibility = View.GONE
+        binding.textViewChoose.visibility = View.GONE
+        binding.regionButton.visibility = View.GONE
+        binding.region.visibility = View.GONE
+        binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_country)
+
+    }
+    companion object{
+         val COUNTRIES = listOf<Country>()
     }
 
 }

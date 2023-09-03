@@ -16,6 +16,8 @@ class FiltersViewModel():ViewModel() {
         when (numberOfScreen){
             1 -> screenStateLiveData.postValue(ScreenState.showPlaceOfWorkScreen)
             2 -> screenStateLiveData.postValue(ScreenState.showIndustriesScreen)
+            3 -> screenStateLiveData.postValue(ScreenState.showChooseCountryScreen)
+
         }
     }
 
