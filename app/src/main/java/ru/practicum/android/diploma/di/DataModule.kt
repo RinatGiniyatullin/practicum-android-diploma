@@ -24,6 +24,7 @@ val dataModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(Api::class.java)
+
     }
 
     singleOf(::RetrofitNetworkClient).bind<NetworkClient>()

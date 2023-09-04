@@ -32,9 +32,7 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
     }
     fun switchToPlaceOfWorkScreen(){
         binding.placeOfWorkButton.setOnClickListener{
-            Log.d("myLog", "Click")
-            bundle = bundleOf(SCREEN to PLACE_OF_WORK)
-            findNavController().navigate(R.id.action_settingFilters_to_fragmentChooseFilter, bundle)
+            findNavController().navigate(R.id.action_settingFilters_to_fragmentPlaceOfWork)
         }
     }
     fun switchToIndustriesScreen(){
@@ -48,7 +46,8 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
     }
     companion object{
         const val SCREEN = "screen"
-        const val PLACE_OF_WORK = 1
-        const val INDUSTRIES = 2
+        const val COUNTRIES = "COUNTRIES"
+        const val REGION = "REGION"
+        const val INDUSTRIES = "INDUSTRIES"
     }
 }

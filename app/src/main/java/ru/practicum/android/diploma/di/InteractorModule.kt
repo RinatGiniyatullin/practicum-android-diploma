@@ -7,6 +7,8 @@ import ru.practicum.android.diploma.search.domain.SearchInteractor
 import ru.practicum.android.diploma.search.domain.SearchInteractorImpl
 import ru.practicum.android.diploma.db.domain.api.VacancyDbInteractor
 import ru.practicum.android.diploma.db.domain.impl.VacancyDbInteractorImpl
+import ru.practicum.android.diploma.filters.domain.FiltersInteractor
+import ru.practicum.android.diploma.filters.domain.FiltersInteractorImpl
 
 val interactorModule = module {
     singleOf(::SearchInteractorImpl).bind<SearchInteractor>()
@@ -15,5 +17,8 @@ val interactorModule = module {
             vacancyDbConverter = get(),
             vacancyDbRepository = get()
         )
+    }
+    single<FiltersInteractor>{
+        FiltersInteractorImpl(get())
     }
 }

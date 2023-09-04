@@ -12,7 +12,7 @@ val viewModelModule = module {
 
     viewModelOf(::SearchViewModel)
     viewModel {
-        FiltersViewModel()
+        FiltersViewModel(get())
     }
     viewModel{
         FavouriteViewModel(favouriteVacancyDbInteractor = get())
@@ -21,4 +21,6 @@ val viewModelModule = module {
     viewModel{
         VacancyViewModel()
     }
+
+
 }

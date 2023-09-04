@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.filters.domain.models.Country
 import ru.practicum.android.diploma.filters.domain.models.Industries
-import ru.practicum.android.diploma.filters.domain.models.Region
+import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.ui.adapter.FilterSelectionClickListener
 
 class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
@@ -19,7 +19,7 @@ class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
 
 
 
-    fun bindRegion(model: Region?, onClickListener: FilterSelectionClickListener?) {
+    fun bindRegion(model: Areas?, onClickListener: FilterSelectionClickListener?) {
         textView.text = model?.name
         rightArrow?.visibility = View.GONE
         checkBox?.visibility = View.VISIBLE

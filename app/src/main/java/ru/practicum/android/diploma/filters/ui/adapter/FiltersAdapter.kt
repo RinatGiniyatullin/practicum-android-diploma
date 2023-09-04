@@ -6,12 +6,12 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.filters.domain.models.Country
 import ru.practicum.android.diploma.filters.domain.models.Industries
-import ru.practicum.android.diploma.filters.domain.models.Region
+import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.ui.viewholder.ViewHolder
 
 class FiltersAdapter(val onClickListener:FilterSelectionClickListener):RecyclerView.Adapter<ViewHolder>() {
 
-    var regionList = mutableListOf<Region>()
+    var areasList = mutableListOf<Areas>()
     var industriesList = mutableListOf<Industries>()
     var countryList = mutableListOf<Country>()
 
@@ -24,11 +24,11 @@ class FiltersAdapter(val onClickListener:FilterSelectionClickListener):RecyclerV
             )
     }
     override fun getItemCount(): Int {
-        return regionList.size+industriesList.size+countryList.size
+        return areasList.size+industriesList.size+countryList.size
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        regionList.takeIf { it.isNotEmpty()}?.let {
-            holder.bindRegion(regionList.get(position), onClickListener)
+        areasList.takeIf { it.isNotEmpty()}?.let {
+            holder.bindRegion(areasList.get(position), onClickListener)
         }
         industriesList.takeIf { it.isNotEmpty()}?.let {
             holder.bindIndustries(industriesList.get(position), onClickListener)
@@ -37,27 +37,27 @@ class FiltersAdapter(val onClickListener:FilterSelectionClickListener):RecyclerV
             holder.bindCountry(countryList.get(position), onClickListener)
         }
     }
-    fun setRegion(newRegionList:List<Region>){
+    fun setRegion(newAreasList:List<Areas>){
         industriesList.clear()
         countryList.clear()
-        regionList.addAll(newRegionList)
+        areasList.addAll(newAreasList)
         notifyDataSetChanged()
     }
     fun setIndustrie(newIndustriesList:List<Industries>){
-        regionList.clear()
+        areasList.clear()
         countryList.clear()
         industriesList.addAll(newIndustriesList)
         notifyDataSetChanged()
     }
     fun setCountry(newCountryList:List<Country>){
-        regionList.clear()
+        areasList.clear()
         industriesList.clear()
         countryList.addAll(newCountryList)
         notifyDataSetChanged()
     }
 }
  interface FilterSelectionClickListener {
-    fun onClickRegion(model:Region?)
+    fun onClickRegion(model:Areas?)
     fun onClickIndustries(model:Industries?)
     fun onClickCountry(model:Country?)
 }

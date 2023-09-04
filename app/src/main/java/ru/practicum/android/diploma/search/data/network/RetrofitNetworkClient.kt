@@ -7,7 +7,10 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import ru.practicum.android.diploma.filters.data.dto.models.AreasDto
 import ru.practicum.android.diploma.search.data.NetworkClient
+import ru.practicum.android.diploma.search.data.dto.AreaSearchRequest
+import ru.practicum.android.diploma.search.data.dto.CountriesSearchRequest
 import ru.practicum.android.diploma.search.data.dto.Response
 import ru.practicum.android.diploma.search.data.dto.SearchRequest
 import ru.practicum.android.diploma.search.data.dto.SearchRequestOptions
@@ -32,25 +35,59 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
             }
         }
     }
-
-   /* @RequiresApi(Build.VERSION_CODES.M)
-    override suspend fun doRequest(dto: Any): Response {
+    @RequiresApi(Build.VERSION_CODES.M)
+    override suspend fun getCountries(dto: Any): Response {
         if (isConnected() == false) {
             return Response().apply { resultCode = -1 }
         }
-        if (dto !is SearchRequestOptions) {
+        if(dto !is CountriesSearchRequest ){
             return Response().apply { resultCode = 400 }
         }
-        return withContext(Dispatchers.IO) {
+        return withContext(Dispatchers.IO){
             try {
-                val response = api.getVacancies(dto.options)
+                val response = api.getCountries()
                 response.apply { resultCode = 200 }
-            } catch (e: Throwable) {
+            } catch (e:Throwable){
                 Response().apply { resultCode = 500 }
-
             }
         }
-    }*/
+    }
+    @RequiresApi(Build.VERSION_CODES.M)
+    override suspend fun getAres(dto: Any): List<AreasDto> {
+        if(isConnected() == false){
+            return Response().apply { resultCode = -1 }
+        }
+        if(dto !is AreaSearchRequest){
+            return Response().apply { resultCode = 400 }
+        }
+        return withContext(Dispatchers.IO){
+            try {
+                val response = api.getAreas()
+                response.apply { resultCode = 200 }
+            } catch (e:Throwable){
+                Response().apply { resultCode = 500 }
+            }
+        }
+    }
+
+    /* @RequiresApi(Build.VERSION_CODES.M)
+     override suspend fun doRequest(dto: Any): Response {
+         if (isConnected() == false) {
+             return Response().apply { resultCode = -1 }
+         }
+         if (dto !is SearchRequestOptions) {
+             return Response().apply { resultCode = 400 }
+         }
+         return withContext(Dispatchers.IO) {
+             try {
+                 val response = api.getVacancies(dto.options)
+                 response.apply { resultCode = 200 }
+             } catch (e: Throwable) {
+                 Response().apply { resultCode = 500 }
+
+             }
+         }
+     }*/
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun isConnected(): Boolean {
