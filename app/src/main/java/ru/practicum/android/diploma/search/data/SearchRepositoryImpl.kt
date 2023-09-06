@@ -70,7 +70,7 @@ class SearchRepositoryImpl(
         val response = networkClient.getVacancyById(SearchRequestDetails(vacancyId))
         when (response.resultCode) {
             ERROR -> {
-                return(Resource.Error(resourceProvider.getString(R.string.check_connection)))
+                return (Resource.Error(resourceProvider.getString(R.string.check_connection)))
             }
 
             SUCCESS -> {
@@ -82,13 +82,14 @@ class SearchRepositoryImpl(
             }
 
             else -> {
-                return(Resource.Error(resourceProvider.getString(R.string.server_error)))
+                return (Resource.Error(resourceProvider.getString(R.string.server_error)))
             }
         }
     }
 
     override fun getSimilarVacanciesById(vacancyId: String): Flow<Resource<List<Vacancy>>> = flow {
-        val response = networkClient.getSimilarVacanciesById(SearchRequestSimilarVacancies(vacancyId))
+        val response =
+            networkClient.getSimilarVacanciesById(SearchRequestSimilarVacancies(vacancyId))
         when (response.resultCode) {
             ERROR -> {
                 emit(Resource.Error(resourceProvider.getString(R.string.check_connection)))
@@ -96,7 +97,7 @@ class SearchRepositoryImpl(
 
             SUCCESS -> {
                 with(response as SearchResponse) {
-                    val vacanciesList = items.map { mapVacancyFromDto(it, found) }
+                    val vacanciesList = items.map { mapVacancyFromDto(it, found, pages) }
                     emit(Resource.Success(vacanciesList))
                 }
 
@@ -108,13 +109,13 @@ class SearchRepositoryImpl(
         }
     }
 
-    private fun mapVacancyFromDto(vacancyDto: VacancyDto, foundValue: Int): Vacancy {
     override fun loadVacanciesBig(
         searchText: String,
         currentPage: Int,
         perPage: Int,
     ): Flow<Resource<List<Vacancy>>> = flow {
-        val response = networkClient.doRequest(SearchRequestBig(searchText, currentPage, perPage))
+        val response =
+            networkClient.doRequest(SearchRequestBig(searchText, currentPage, perPage))
         when (response.resultCode) {
             ERROR -> {
                 emit(Resource.Error(resourceProvider.getString(R.string.check_connection)))
@@ -160,7 +161,6 @@ class SearchRepositoryImpl(
         )
     }
 
-
     private fun getSymbol(currency: String?): String? {
 
         return when (currency) {
@@ -182,5 +182,4 @@ class SearchRepositoryImpl(
         const val ERROR = -1
         const val SUCCESS = 200
     }
-
 }

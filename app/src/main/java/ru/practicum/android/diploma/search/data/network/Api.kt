@@ -38,8 +38,6 @@ interface Api {
         @Path("vacancy_id") id: String,
     ): SearchResponse
 
-    /*  Форма запроса для фильтров
-
 /*
 Форма запроса для фильтров через QueryMap
 
@@ -64,8 +62,8 @@ interface Api {
        /*  @Query("area") area: String,
          @Query("industry") industry: String,
          @Query("salary") salary: Int,
-         @Query("only_with_salary") onlyWithSalary: Boolean,
-     ): SearchResponse*/
+         @Query("only_with_salary") onlyWithSalary: Boolean,*/
+     ): SearchResponse
 
     @Headers(
         "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",

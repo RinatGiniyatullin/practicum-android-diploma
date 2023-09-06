@@ -18,48 +18,50 @@ import ru.practicum.android.diploma.search.data.dto.SearchRequestSimilarVacancie
 
 class RetrofitNetworkClient(private val api: Api, private val context: Context) : NetworkClient {
 
-     /*  Форма для запроса с QueryMap
+    /*  Форма для запроса с QueryMap
 
-     @RequiresApi(Build.VERSION_CODES.M)
-      override suspend fun doRequest(dto: Any): Response {
-          if (isConnected() == false) {
-              return Response().apply { resultCode = -1 }
-          }
-          if (dto !is SearchRequestOptions) {
-              return Response().apply { resultCode = 400 }
-          }
-          return withContext(Dispatchers.IO) {
-              try {
-                  val response = api.searchQueryMap(dto.options)
-                  response.apply { resultCode = 200 }
-              } catch (e: Throwable) {
-                  Response().apply { resultCode = 500 }
+    @RequiresApi(Build.VERSION_CODES.M)
+     override suspend fun doRequest(dto: Any): Response {
+         if (isConnected() == false) {
+             return Response().apply { resultCode = -1 }
+         }
+         if (dto !is SearchRequestOptions) {
+             return Response().apply { resultCode = 400 }
+         }
+         return withContext(Dispatchers.IO) {
+             try {
+                 val response = api.searchQueryMap(dto.options)
+                 response.apply { resultCode = 200 }
+             } catch (e: Throwable) {
+                 Response().apply { resultCode = 500 }
 
-            }
-        }
-    }
+           }
+       }
+   }*/
 
     @RequiresApi(Build.VERSION_CODES.M)
     override suspend fun getAres(dto: Any): Response {
-        if(isConnected() == false){
+        if (isConnected() == false) {
             return Response().apply { resultCode = -1 }
         }
-        if(dto !is AreaSearchRequest){
+        if (dto !is AreaSearchRequest) {
             return Response().apply { resultCode = 400 }
         }
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             try {
                 val response = Response()
                 val results = api.getAreas()
-                response.apply { resultCode = 200
-                    resultAreas= results  }
-            } catch (e:Throwable){
+                response.apply {
+                    resultCode = 200
+                    resultAreas = results
+                }
+            } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }
             }
         }
     }
 
-   @RequiresApi(Build.VERSION_CODES.M)
+    @RequiresApi(Build.VERSION_CODES.M)
     override suspend fun getVacancyById(dto: Any): Response {
         if (isConnected() == false) {
             return Response().apply { resultCode = -1 }
@@ -67,7 +69,7 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
         if (dto !is SearchRequestDetails) {
             return Response().apply { resultCode = 400 }
         }
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             try {
                 val response = api.getVacancyById(dto.vacancyId)
                 response.apply { resultCode = 200 }
@@ -85,7 +87,7 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
         if (dto !is SearchRequestSimilarVacancies) {
             return Response().apply { resultCode = 400 }
         }
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             try {
                 val response = api.getSimilarVacanciesById(dto.vacancyId)
                 response.apply { resultCode = 200 }
@@ -95,11 +97,8 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
         }
     }
 
-              }
-          }
-      }*/
-
-    /* @RequiresApi(Build.VERSION_CODES.M)
+    /* Запрос для фильтров
+    @RequiresApi(Build.VERSION_CODES.M)
      override suspend fun doRequest(dto: Any): Response {
          if (isConnected() == false) {
              return Response().apply { resultCode = -1 }
@@ -112,7 +111,9 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
                  val response = api.getVacancies(dto.options)
                  response.apply { resultCode = 200 }
              } catch (e: Throwable) {
-                 Response().apply { resultCode = 500 }
+                 Response().apply { resultCode = 500 }*/
+
+
     @RequiresApi(Build.VERSION_CODES.M)
     override suspend fun doRequest(dto: Any): Response {
         if (isConnected() == false) {
@@ -128,12 +129,10 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
             } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }
 
-             }
-         }
-     }*/
             }
         }
     }
+
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun isConnected(): Boolean {
