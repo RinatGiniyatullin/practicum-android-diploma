@@ -15,10 +15,10 @@ import ru.practicum.android.diploma.details.domain.ExternalNavigator
 import ru.practicum.android.diploma.filters.data.FiltersStorage
 import ru.practicum.android.diploma.filters.data.localwork.SharedPrefStorage
 import ru.practicum.android.diploma.search.data.NetworkClient
-import ru.practicum.android.diploma.search.data.network.Api
-import ru.practicum.android.diploma.search.data.network.RetrofitNetworkClient
 import ru.practicum.android.diploma.search.data.ResourceProvider
 import ru.practicum.android.diploma.search.data.ResourceProviderImpl
+import ru.practicum.android.diploma.search.data.network.Api
+import ru.practicum.android.diploma.search.data.network.RetrofitNetworkClient
 
 val dataModule = module {
     factory { Gson() }

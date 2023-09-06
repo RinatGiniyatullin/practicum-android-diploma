@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.db.data.converter.VacancyDbConverter
 import ru.practicum.android.diploma.db.domain.api.VacancyDbInteractor
 import ru.practicum.android.diploma.details.domain.VacancyInteractor
 import ru.practicum.android.diploma.details.domain.models.VacancyDetails
@@ -17,7 +18,8 @@ import ru.practicum.android.diploma.search.domain.models.Vacancy
 class VacancyViewModel(
     private val vacancyInteractor: VacancyInteractor,
     private val resourceProvider: ResourceProvider,
-    private val vacancyDbInteractor: VacancyDbInteractor
+    private val vacancyDbInteractor: VacancyDbInteractor,
+    private val converter: VacancyDbConverter
 ): ViewModel() {
 
     private val _state = MutableLiveData<VacancyState>()
@@ -64,9 +66,19 @@ class VacancyViewModel(
     }
 
     fun checkFavourite(vacancy: Vacancy) {
-        viewModelScope.launch {
-            val vacancies = vacancyDbInteractor.getFavouriteVacancy()
-            stateFavouriteIconLiveData.postValue(vacancy in vacancies)
+        viewModelScope.launch {vacancyDbInteractor
+            var favouriteVacancies = listOf<Vacancy>()
+            vacancyDbInteractor.getFavouriteVacancy().collect(){
+                    vacanciesEntity -> favouriteVacancies =
+                vacanciesEntity.map { vacancyEntity -> converter.map(vacancyEntity) }
+                var isFavourite: Boolean = false
+
+                favouriteVacancies.forEach{
+                    favouriteVacancy ->  if (vacancy.id == favouriteVacancy.id) isFavourite = true
+                }
+
+                stateFavouriteIconLiveData.postValue(isFavourite)
+            }
         }
     }
 

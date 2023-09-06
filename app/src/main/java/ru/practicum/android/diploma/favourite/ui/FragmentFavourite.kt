@@ -23,10 +23,9 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
 
     private lateinit var vacancyAdapter: VacancyAdapter
     private lateinit var confirmDialogDeleteFavouriteVacancy: MaterialAlertDialogBuilder
+    private lateinit var onFavouriteVacancyClickDebounce: (Vacancy) -> Unit
 
     private val favouriteViewModel: FavouriteViewModel by viewModel()
-    //private val vacancyId: Int? = null
-
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -55,10 +54,14 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
     }
 
     private fun setListeners() {
-        vacancyAdapter.itemClickListener = { position, vacancy ->
-            debounce<Vacancy>(CLICK_DEBOUNCE_DELAY_MILLIS, lifecycleScope, false) {
+
+        onFavouriteVacancyClickDebounce =
+            debounce<Vacancy>(CLICK_DEBOUNCE_DELAY_MILLIS, lifecycleScope, false) { vacancy ->
                 sendToDetail(vacancy)
             }
+
+        vacancyAdapter.itemClickListener = { position, vacancy ->
+            onFavouriteVacancyClickDebounce(vacancy)
         }
 
         vacancyAdapter.itemLongClickListener = { position, vacancy ->
@@ -69,7 +72,8 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
     private fun renderStateFavouriteVacancies(favoriteStateInterface: FavoriteStateInterface) {
         when(favoriteStateInterface){
             is FavoriteStateInterface.FavoriteVacanciesIsEmpty -> showPlaceHolder()
-            is FavoriteStateInterface.FavoriteVacancies -> showFavoriteVacancies(favoriteStateInterface.favoriteVacancies)
+            is FavoriteStateInterface.FavoriteVacancies ->
+                showFavoriteVacancies(favoriteStateInterface.favoriteVacancies)
         }
     }
 
