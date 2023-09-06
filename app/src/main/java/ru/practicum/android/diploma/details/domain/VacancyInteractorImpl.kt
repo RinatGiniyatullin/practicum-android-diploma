@@ -8,7 +8,8 @@ import ru.practicum.android.diploma.search.domain.models.Vacancy
 import ru.practicum.android.diploma.util.Resource
 
 class VacancyInteractorImpl(
-    private val repository: SearchRepository
+    private val repository: SearchRepository,
+    private val navigator: ExternalNavigator
 ): VacancyInteractor {
 
     override suspend fun loadVacancyDetails(vacancyId: String): Pair<VacancyDetails?, String?> {
@@ -35,5 +36,17 @@ class VacancyInteractorImpl(
                 }
             }
         }
+    }
+
+    override fun shareVacancyUrl(vacancyUrl: String){
+        navigator.shareVacancyUrl(vacancyUrl)
+    }
+
+    override fun sharePhone(phone: String){
+        navigator.sharePhone(phone)
+    }
+
+    override fun shareEmail(email: String) {
+        navigator.shareEmail(email)
     }
 }

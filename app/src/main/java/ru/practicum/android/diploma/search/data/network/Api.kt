@@ -39,31 +39,33 @@ interface Api {
         @Path("vacancy_id") id: String,
     ): SearchResponse
 
-    /*  Форма запроса для фильтров
+/*
+Форма запроса для фильтров через QueryMap
 
     @Headers(
-          "Authorization: Bearer YOUR_TOKEN",
-          "HH-User-Agent: Application Name (name@example.com)"
+        "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",
+        "HH-User-Agent: EmployMe (gerzag96@gmail.com)"
+    )
+    @GET("/vacancies")
+    suspend fun searchQueryMap(@QueryMap options: Map<String, Any>): SearchResponse*/
 
-          @GET("/vacancies")
-     suspend fun getVacancies(@QueryMap options: Map<String, String>): SearchResponse*/
-
-    /* Форма запроса для фильтров для понимания
+   //  Форма запроса для фильтров подробная
 
     @Headers(
-         "Authorization: Bearer YOUR_TOKEN",
-         "HH-User-Agent: Application Name (name@example.com)"
-     )
+        "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",
+        "HH-User-Agent: EmployMe (gerzag96@gmail.com)"
+    )
      @GET("/vacancies")
-     suspend fun getVacancies(
-         @Query("searchRequest") searchRequest: String,
+     suspend fun searchBig(
+         @Query("text") searchRequest: String,
          @Query("page") page: Int,
-         @Query("per_page") perPage: Int,//20
-         @Query("area") area: String,
+         @Query("per_page") perPage: Int,
+       /*  @Query("area") area: String,
          @Query("industry") industry: String,
          @Query("salary") salary: Int,
-         @Query("only_with_salary") onlyWithSalary: Boolean,
-     ): SearchResponse*/
+         @Query("only_with_salary") onlyWithSalary: Boolean,*/
+     ): SearchResponse
+
     @Headers(
         "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",
         "HH-User-Agent: EmployMe (gerzag96@gmail.com)"

@@ -42,32 +42,15 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
 
         viewModel.state.observe(viewLifecycleOwner){state ->
             when (state) {
-                is SearchState.Loading -> {}
+                is SearchState.FirstLoading -> {}
+                is SearchState.AddLoading -> {}
                 is SearchState.VacancyContent -> showVacanciesList(state.vacancies)
                 is SearchState.Error -> showError(state.errorMessage)
                 is SearchState.Empty -> showEmpty(state.message)
             }
         }
 
-        binding.refreshButton.setOnClickListener {
-            viewModel.getSimilarVacanciesById(requireArguments().getString(VACANCY_ID)!!)
-        }
-
-        binding.backIcon.setOnClickListener{
-            findNavController().navigateUp()
-        }
-
-        adapter.itemClickListener = { position, vacancy ->
-            onVacancyClickDebounce(vacancy)
-        }
-
-        onVacancyClickDebounce = debounce<Vacancy>(
-            CLICK_DEBOUNCE_DELAY,
-            viewLifecycleOwner.lifecycleScope,
-            false
-        ) { vacancy ->
-            openVacancy(vacancy)
-        }
+        initClickListeners()
     }
 
     private fun initAdapters(){
@@ -101,6 +84,28 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
         binding.searchResult.text = emptyMessage
         binding.searchResult.visibility = View.VISIBLE
         binding.recyclerView.visibility = View.GONE
+    }
+
+    private fun initClickListeners(){
+        binding.refreshButton.setOnClickListener {
+            viewModel.getSimilarVacanciesById(requireArguments().getString(VACANCY_ID)!!)
+        }
+
+        binding.backIcon.setOnClickListener{
+            findNavController().navigateUp()
+        }
+
+        adapter.itemClickListener = { position, vacancy ->
+            onVacancyClickDebounce(vacancy)
+        }
+
+        onVacancyClickDebounce = debounce<Vacancy>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { vacancy ->
+            openVacancy(vacancy)
+        }
     }
 
     private fun openVacancy(vacancy: Vacancy) {

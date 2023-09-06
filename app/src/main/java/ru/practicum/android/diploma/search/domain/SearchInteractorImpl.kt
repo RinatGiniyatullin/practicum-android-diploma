@@ -20,8 +20,26 @@ class SearchInteractorImpl(private val repository: SearchRepository) : SearchInt
         }
     }
 
-    override fun getVacancies(options: HashMap<String, String>): Flow<Pair<List<Vacancy>?, String?>> {
-        return repository.getVacancies(options).map { result ->
+    override fun loadVacanciesQueryMap(options: HashMap<String, Any>): Flow<Pair<List<Vacancy>?, String?>> {
+        return repository.loadVacanciesQueryMap(options).map { result ->
+            when (result) {
+                is Resource.Success -> {
+                    Pair(result.data, null)
+                }
+
+                is Resource.Error -> {
+                    Pair(null, result.message)
+                }
+            }
+        }
+    }
+
+    override fun loadVacanciesBig(
+        searchText: String,
+        currentPage: Int,
+        per_page: Int,
+    ): Flow<Pair<List<Vacancy>?, String?>> {
+        return repository.loadVacanciesBig(searchText, currentPage, per_page).map { result ->
             when (result) {
                 is Resource.Success -> {
                     Pair(result.data, null)
