@@ -1,18 +1,12 @@
 package ru.practicum.android.diploma.search.data.network
 
-import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.practicum.android.diploma.BuildConfig
-
-import ru.practicum.android.diploma.filters.data.dto.models.AreasDto
-import ru.practicum.android.diploma.filters.data.dto.models.CountryDto
-import ru.practicum.android.diploma.filters.data.dto.responcse.AreasResponse
-import ru.practicum.android.diploma.filters.data.dto.responcse.CountriesResponse
-import ru.practicum.android.diploma.search.data.dto.Response
 import ru.practicum.android.diploma.details.data.VacancyDetailsResponse
+import ru.practicum.android.diploma.filters.data.dto.models.AreasDto
 import ru.practicum.android.diploma.search.data.dto.SearchResponse
 
 interface Api {

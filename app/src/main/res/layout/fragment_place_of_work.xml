@@ -9,13 +9,13 @@
         android:id="@+id/leftBorder"
         style="@style/guideline"
         android:orientation="vertical"
-        app:layout_constraintGuide_begin="16dp" />
+        app:layout_constraintGuide_begin="@dimen/margin_16" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/rightBorder"
         style="@style/guideline"
         android:orientation="vertical"
-        app:layout_constraintGuide_end="16dp" />
+        app:layout_constraintGuide_end="@dimen/margin_16" />
 
     <ImageView
         android:id="@+id/arrowback"

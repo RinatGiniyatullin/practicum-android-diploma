@@ -22,11 +22,14 @@ val interactorModule = module {
         )
     }
 
-    single<FiltersInteractor>{
+    single<FiltersInteractor> {
         FiltersInteractorImpl(get())
+    }
+
 
     factory<VacancyInteractor>{
         VacancyInteractorImpl(get())
 
     }
+
 }
