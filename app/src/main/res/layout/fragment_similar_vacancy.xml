@@ -35,6 +35,36 @@
             android:textColor="?attr/black_to_white_color" />
     </androidx.appcompat.widget.Toolbar>
 
+    <TextView
+        android:id="@+id/search_result"
+        style="@style/Text_Regular_16_400"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_12"
+        android:background="@drawable/field_for_result_text"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/margin_12"
+        android:paddingVertical="@dimen/margin_4"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        tools:text="@string/no_vacancies" />
+
+    <TextView
+        android:id="@+id/refresh_button"
+        style="@style/Text_Medium_16_500"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/margin_59"
+        android:background="@drawable/field_for_result_text"
+        android:text="@string/repeat_loading"
+        android:textColor="@color/white"
+        android:gravity="center"
+        app:layout_constraintTop_toBottomOf="@id/search_result"
+        android:layout_marginTop="@dimen/margin_48"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"

@@ -9,4 +9,5 @@ interface SearchRepository {
     fun searchVacancies(query: String): Flow<Resource<List<Vacancy>>>
     fun getVacancies(options: HashMap<String,String>): Flow<Resource<List<Vacancy>>>
     suspend fun loadVacancyDetails(vacancyId: String): Resource<VacancyDetails>
+    fun getSimilarVacanciesById(vacancyId: String): Flow<Resource<List<Vacancy>>>
 }
