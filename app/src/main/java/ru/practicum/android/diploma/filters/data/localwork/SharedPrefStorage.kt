@@ -8,7 +8,7 @@ import ru.practicum.android.diploma.filters.data.dto.models.FiltersDto
 class SharedPrefStorage(val sharedPrefrs:SharedPreferences):FiltersStorage {
 
     private var filters: FiltersDto =
-        FiltersDto(countryName = null, countryId = null, areasNames = null, areasId = null, industry = null, salary = 0, onlyWithSalary = false)
+        FiltersDto(countryName = null, countryId = null, areasNames = null, areasId = null, industriesName = null, industriesId = null,  salary = 0, onlyWithSalary = false)
 
     companion object{
         const val FILTER_KEY = "FILTER_KEY"

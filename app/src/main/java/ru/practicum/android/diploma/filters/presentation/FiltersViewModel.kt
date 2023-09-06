@@ -10,6 +10,8 @@ import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.filters.domain.FiltersInteractor
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Filters
+import ru.practicum.android.diploma.filters.domain.models.Industries
+import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
@@ -23,13 +25,16 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     private val filtersDataStateLiveData = MutableLiveData<FiltersDataState>()
     private var getAreasJob: Job? = null
     private var getFiltersJob: Job? = null
+    private var getIndustriesJob:Job? = null
     private var showFiltersData:Job? = null
     private var writeFiltersJob:Job? = null
     private var countries = mutableListOf<Areas>()
+    private var newIndustryList = mutableListOf<Industry>()
+    private var newIndustries = mutableListOf<Industries>()
     private var region = mutableListOf<Region>()
     private var parentId: String? = null
     private var filtersNew: Filters =
-        Filters(countryName = null, countryId = null, areasNames = null, areasId = null, industry = null, salary = 0, onlyWithSalary = false)
+        Filters(countryName = null, countryId = null, areasNames = null, areasId = null, industriesName = null, industriesId = null, salary = 0, onlyWithSalary = false)
 
     fun getScreenStateLiveData(): LiveData<ScreenState> = screenStateLiveData
     fun getFiltersStateLiveData():LiveData<FiltersDataState> = filtersDataStateLiveData
@@ -43,7 +48,7 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         when (nameOfScreen) {
             COUNTRIES -> setScreenCountries()
             REGION -> setScreenRegion()
-            INDUSTRIES -> screenStateLiveData.postValue(ScreenState.showIndustriesScreen)
+            INDUSTRIES -> setScreenIndustries()
         }
     }
 
@@ -52,7 +57,12 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
             getAreas()
             screenStateLiveData.postValue(ScreenState.showCountriesScreen(countries))
         }
-
+    }
+    private fun setScreenIndustries(){
+        getIndustriesJob = viewModelScope.launch {
+            getIndustries()
+            screenStateLiveData.postValue(ScreenState.showIndustriesScreen(newIndustries))
+        }
     }
 
     private fun setScreenRegion() {
@@ -95,6 +105,29 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
                 }
             }
     }
+    suspend fun getIndustries(){
+        filtersInteractor.getIndustries()
+            .collect{pair ->
+                val industryList = mutableListOf<Industry>()
+                val industries = mutableListOf<Industries>()
+                if(pair.first!=null){
+                    industryList.addAll(pair.first!!)
+                    industryList.map { it.industries.map { industries.add(it) } }
+                }
+                when{
+                    pair.second !=null ->{
+
+                    }
+                    industryList.isEmpty() -> {
+
+                    }
+                    else ->{
+                        newIndustryList.addAll(industryList)
+                        newIndustries.addAll(industries)
+                    }
+                }
+            }
+    }
 
     fun addCountry(country: Areas) {
         filtersNew.countryName = country.name
@@ -117,6 +150,15 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         Log.d("Region", "${filtersNew.areasId}")
 
     }
+    fun addIndustries(industries: List<Industries>){
+        filtersNew.industriesName  = ""
+        filtersNew.industriesId = ""
+        industries.map {
+            filtersNew.industriesId+= "${it.id} "
+            filtersNew.industriesName+="${it.name} "
+        }
+        writeFilters()
+    }
 
     private fun getFilters() {
         getFiltersJob = viewModelScope.launch {
@@ -126,7 +168,7 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
                     filtersNew.areasId = filters.areasId
                     filtersNew.areasNames = filters.areasNames
                     filtersNew.countryId = filters.countryId
-                    filtersNew.industry = filters.industry
+                    filtersNew.industriesName = filters.industriesName
                     filtersNew.salary = filters.salary
                     filtersNew.onlyWithSalary = filters.onlyWithSalary
                 }
@@ -146,12 +188,17 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     fun clearCountry(){
         filtersNew.countryName = null
         filtersNew.countryId = null
-
+        writeFilters()
     }
     fun clearRegion(){
         filtersNew.areasNames = null
         filtersNew.areasId = null
-
+        writeFilters()
+    }
+    fun clearIndustries(){
+        filtersNew.industriesName = null
+        filtersNew.industriesId = null
+        writeFilters()
     }
 
 }

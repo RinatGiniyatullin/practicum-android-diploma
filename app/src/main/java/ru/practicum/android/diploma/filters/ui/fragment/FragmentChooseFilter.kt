@@ -11,6 +11,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFilterSelectionBinding
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Industries
+import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
@@ -24,7 +25,9 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     private val viewModel by viewModel<FiltersViewModel>()
     private var adapter:FiltersAdapter? = null
     private var screen:String? =null
-    val areaList = mutableListOf<Region>()
+    private val areaList = mutableListOf<Region>()
+    private val industryList = mutableListOf<Industries>()
+
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -42,7 +45,8 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         back()
         binding.recyclerViewFilters.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFilters.adapter = adapter
-        addRegion()
+        applyButtom()
+
     }
 
     private fun initAdapter(){
@@ -56,7 +60,14 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
                 areaList.takeIf { it.isNotEmpty()}?.let{ binding.buttonApply.visibility = View.VISIBLE}
                 Log.d("Area", "$areaList")
             }
-            override fun onClickIndustries(model: Industries?) {
+            override fun onClickIndustries(model: Industries?, isChecked:Boolean) {
+                when(isChecked){
+                    true -> industryList.add(model!!)
+                    false -> industryList.remove(model)
+                }
+                binding.buttonApply.visibility = View.GONE
+                industryList.takeIf { it.isNotEmpty()}?.let{ binding.buttonApply.visibility = View.VISIBLE}
+
             }
             override fun onClickCountry(model: Areas?) {
                 viewModel.addCountry(model!!)
@@ -65,9 +76,14 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
             }
         })
     }
-    private fun addRegion(){
+    private fun applyButtom(){
         binding.buttonApply.setOnClickListener {
-            viewModel.addArea(areaList)
+            areaList.takeIf { it.isNotEmpty() }?.let {
+                viewModel.addArea(it)
+            }
+            industryList.takeIf { it.isNotEmpty() }?.let {
+                viewModel.addIndustries(it)
+            }
             findNavController().navigateUp()
         }
     }
@@ -76,10 +92,9 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
             findNavController().navigateUp()
         }
     }
-
     private fun chooseScreen(state:ScreenState){
         when(state){
-            is ScreenState.showIndustriesScreen -> showIndustriesScreen()
+            is ScreenState.showIndustriesScreen -> showIndustriesScreen(state.industryList)
             is ScreenState.showAreasScreen -> showAreasScreen(state.areasList)
             is ScreenState.showCountriesScreen -> {
                 showCountriesScreen(state.countriesList)
@@ -92,10 +107,12 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.searchEditText.visibility = View.GONE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_country)
     }
-    private fun showIndustriesScreen(){
+    private fun showIndustriesScreen(industryList:List<Industries>){
+        adapter?.setIndustrie(industryList)
+        binding.recyclerViewFilters.visibility = View.VISIBLE
+        binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_industry)
     }
     private fun showAreasScreen(areas:List<Region>){
-
         adapter?.setRegion(areas)
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_region)

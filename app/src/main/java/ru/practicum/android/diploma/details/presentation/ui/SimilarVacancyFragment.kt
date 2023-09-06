@@ -42,7 +42,8 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
 
         viewModel.state.observe(viewLifecycleOwner){state ->
             when (state) {
-                is SearchState.Loading -> {}
+                is SearchState.FirstLoading -> {}
+                is SearchState.AddLoading -> {}
                 is SearchState.VacancyContent -> showVacanciesList(state.vacancies)
                 is SearchState.Error -> showError(state.errorMessage)
                 is SearchState.Empty -> showEmpty(state.message)
