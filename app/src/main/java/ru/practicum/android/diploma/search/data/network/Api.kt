@@ -6,6 +6,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.details.data.VacancyDetailsResponse
+import ru.practicum.android.diploma.filters.data.dto.models.AreasDto
 import ru.practicum.android.diploma.search.data.dto.SearchResponse
 
 interface Api {
@@ -53,5 +54,11 @@ interface Api {
          @Query("salary") salary: Int,
          @Query("only_with_salary") onlyWithSalary: Boolean,
      ): SearchResponse*/
-
+    @Headers(
+        "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",
+        "HH-User-Agent: EmployMe (gerzag96@gmail.com)"
+    )
+    @GET("/areas")
+    suspend fun getAreas(
+    ): List<AreasDto>
 }
