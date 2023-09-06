@@ -15,10 +15,10 @@ val viewModelModule = module {
         FiltersViewModel()
     }
     viewModel{
-        FavouriteViewModel(favouriteVacancyDbInteractor = get())
+        FavouriteViewModel(get(),get())
     }
 
     viewModel{
-        VacancyViewModel(get(), get(), get())
+        VacancyViewModel(get(), get(), get(), get())
     }
 }

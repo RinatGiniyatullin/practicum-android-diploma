@@ -5,11 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.db.data.converter.VacancyDbConverter
 import ru.practicum.android.diploma.db.domain.api.VacancyDbInteractor
 import ru.practicum.android.diploma.favourite.presentation.models.FavoriteStateInterface
 import ru.practicum.android.diploma.search.domain.models.Vacancy
 
-class FavouriteViewModel(private val favouriteVacancyDbInteractor: VacancyDbInteractor) :
+class FavouriteViewModel(private val favouriteVacancyDbInteractor: VacancyDbInteractor, private val converter: VacancyDbConverter) :
     ViewModel() {
 
     init {
@@ -26,10 +27,16 @@ class FavouriteViewModel(private val favouriteVacancyDbInteractor: VacancyDbInte
 
     private fun showFavouriteVacancies() {
         viewModelScope.launch {
-            val favouriteVacancies = favouriteVacancyDbInteractor.getFavouriteVacancy()
+            var favouriteVacancies = listOf<Vacancy>()
+                favouriteVacancyDbInteractor.getFavouriteVacancy().collect(){
+                        vacanciesEntity -> favouriteVacancies =
+               vacanciesEntity.map { vacancyEntity -> converter.map(vacancyEntity) }
 
-            if (favouriteVacancies.isEmpty()) renderStateFavourite(FavoriteStateInterface.FavoriteVacanciesIsEmpty)
-            else renderStateFavourite(FavoriteStateInterface.FavoriteVacancies(favouriteVacancies))
+                    if (favouriteVacancies.isEmpty()) renderStateFavourite(FavoriteStateInterface.FavoriteVacanciesIsEmpty)
+                    else renderStateFavourite(FavoriteStateInterface.FavoriteVacancies(favouriteVacancies))
+                }
+
+
         }
     }
 
