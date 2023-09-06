@@ -16,6 +16,10 @@ object AreaSearchRequest:Parcelable
 data class SearchRequestDetails(val vacancyId: String) : Parcelable
 
 @Parcelize
+object IndustriesSearchRequest:Parcelable
+
+@Parcelize
 data class SearchRequestSimilarVacancies(val vacancyId: String) : Parcelable
+
 
 
