@@ -44,8 +44,8 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         back()
         binding.recyclerViewFilters.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFilters.adapter = adapter
-        addRegion()
-        addIndustries()
+        applyButtom()
+
     }
 
     private fun initAdapter(){
@@ -75,15 +75,14 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
             }
         })
     }
-    private fun addRegion(){
+    private fun applyButtom(){
         binding.buttonApply.setOnClickListener {
-            viewModel.addArea(areaList)
-            findNavController().navigateUp()
-        }
-    }
-    private fun addIndustries(){
-        binding.buttonApply.setOnClickListener {
-            viewModel.addIndustries(industriesList)
+            areaList.takeIf { it.isNotEmpty() }?.let {
+                viewModel.addArea(it)
+            }
+            industriesList.takeIf { it.isNotEmpty() }?.let {
+                viewModel.addIndustries(it)
+            }
             findNavController().navigateUp()
         }
     }
@@ -92,7 +91,6 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
             findNavController().navigateUp()
         }
     }
-
     private fun chooseScreen(state:ScreenState){
         when(state){
             is ScreenState.showIndustriesScreen -> showIndustriesScreen(state.industriesList)
@@ -114,7 +112,6 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.chooseTextview.text = "Выбор отрасли"
     }
     private fun showAreasScreen(areas:List<Region>){
-
         adapter?.setRegion(areas)
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_region)

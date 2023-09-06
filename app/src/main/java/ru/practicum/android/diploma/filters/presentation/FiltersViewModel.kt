@@ -183,12 +183,17 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     fun clearCountry(){
         filtersNew.countryName = null
         filtersNew.countryId = null
-
+        writeFilters()
     }
     fun clearRegion(){
         filtersNew.areasNames = null
         filtersNew.areasId = null
-
+        writeFilters()
+    }
+    fun clearIndustries(){
+        filtersNew.industriesName = null
+        filtersNew.industriesId = null
+        writeFilters()
     }
 
 }

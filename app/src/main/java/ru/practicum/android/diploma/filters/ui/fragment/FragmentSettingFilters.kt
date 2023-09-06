@@ -31,6 +31,7 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         super.onViewCreated(view, savedInstanceState)
         switchToPlaceOfWorkScreen()
         switchToIndustriesScreen()
+        back()
 
         viewModel.getFiltersStateLiveData().observe(requireActivity()){
             render(it)
@@ -39,8 +40,13 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         binding.placeOfWorkClear.setOnClickListener {
             clearPlaceWork()
         }
+        binding.industryClear.setOnClickListener {
+            clearIndustries()
+        }
         binding.clearAll.setOnClickListener {
             clearPlaceWork()
+            clearIndustries()
+            viewModel.writeFilters()
         }
         binding.buttonApply.setOnClickListener {
             viewModel.writeFilters()
@@ -59,7 +65,9 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         }
     }
     fun back(){
-        binding.arrowback
+        binding.arrowback.setOnClickListener {
+            findNavController().navigateUp()
+        }
     }
     private fun render(state: FiltersDataState) {
         when (state) {
@@ -82,6 +90,8 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         filters.industriesName?.let {
             industries+="$it "
             binding.industryEditText.setText(industries)
+            binding.industryButton.visibility = View.INVISIBLE
+            binding.industryClear.visibility = View.VISIBLE
         }
 
     }
@@ -91,6 +101,12 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         binding.placeOfWorkButton.visibility = View.VISIBLE
         viewModel.clearCountry()
         viewModel.clearRegion()
+    }
+    private fun clearIndustries(){
+        binding.industryEditText.text?.clear()
+        binding.industryClear.visibility = View.GONE
+        binding.industryButton.visibility = View.VISIBLE
+        viewModel.clearIndustries()
     }
     companion object{
         const val SCREEN = "screen"
