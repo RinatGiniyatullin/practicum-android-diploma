@@ -55,7 +55,5 @@ val dataModule = module {
             "false", Context.MODE_PRIVATE
         )
     }
-    single<FiltersStorage> {
-        SharedPrefStorage(get())
-    }
+    singleOf(::SharedPrefStorage).bind<FiltersStorage>()
 }

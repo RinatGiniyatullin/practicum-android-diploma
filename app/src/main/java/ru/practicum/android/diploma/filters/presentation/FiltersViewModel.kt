@@ -44,7 +44,7 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     fun setScreen(nameOfScreen: String) {
         when (nameOfScreen) {
             COUNTRIES -> setScreenCountries()
-            REGION -> setScerenRegion()
+            REGION -> setScreenRegion()
             INDUSTRIES -> screenStateLiveData.postValue(ScreenState.showIndustriesScreen)
         }
     }
@@ -57,7 +57,7 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
 
     }
 
-    private fun setScerenRegion() {
+    private fun setScreenRegion() {
         if (filtersNew.countryId.isNullOrEmpty()) {
             getAreasJob = viewModelScope.launch {
                 getAreas()
