@@ -10,8 +10,12 @@
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
         <action
+            android:id="@+id/action_searchFragment_to_settingFilters"
+            app:destination="@id/settingFilters" />
+        <action
             android:id="@+id/action_searchFragment_to_vacancyFragment"
             app:destination="@id/vacancyFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/settingFilters"
@@ -21,6 +25,9 @@
         <action
             android:id="@+id/action_settingFilters_to_fragmentChooseFilter"
             app:destination="@id/fragmentChooseFilter" />
+        <action
+            android:id="@+id/action_settingFilters_to_fragmentPlaceOfWork"
+            app:destination="@id/fragmentPlaceOfWork" />
     </fragment>
     <fragment
         android:id="@+id/fragmentChooseFilter"
@@ -31,7 +38,11 @@
         android:id="@+id/fragmentFavourite"
         android:name="ru.practicum.android.diploma.favourite.ui.FragmentFavourite"
         android:label="fragment_favourite"
-        tools:layout="@layout/fragment_favourite" />
+        tools:layout="@layout/fragment_favourite" >
+        <action
+            android:id="@+id/action_fragmentFavourite_to_vacancyFragment"
+            app:destination="@id/vacancyFragment" />
+    </fragment>
     <fragment
         android:id="@+id/vacancyFragment"
         android:name="ru.practicum.android.diploma.details.presentation.ui.VacancyFragment"
@@ -45,7 +56,20 @@
         android:id="@+id/similarVacancyFragment"
         android:name="ru.practicum.android.diploma.details.presentation.ui.SimilarVacancyFragment"
         android:label="fragment_similar_vacancy"
-        tools:layout="@layout/fragment_similar_vacancy" />
+        tools:layout="@layout/fragment_similar_vacancy" >
+        <action
+            android:id="@+id/action_similarVacancyFragment_to_vacancyFragment"
+            app:destination="@id/vacancyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/fragmentPlaceOfWork"
+        android:name="ru.practicum.android.diploma.filters.ui.fragment.FragmentPlaceOfWork"
+        android:label="fragment_place_of_work"
+        tools:layout="@layout/fragment_place_of_work" >
+        <action
+            android:id="@+id/action_fragmentPlaceOfWork_to_fragmentChooseFilter"
+            app:destination="@id/fragmentChooseFilter" />
+    </fragment>
     <fragment
         android:id="@+id/teamFragment"
         android:name="ru.practicum.android.diploma.team.ui.TeamFragment"

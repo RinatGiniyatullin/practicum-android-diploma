@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.di
 
+import android.content.Context
 import androidx.room.Room
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
@@ -9,6 +10,8 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.db.AppDataBase
+import ru.practicum.android.diploma.filters.data.FiltersStorage
+import ru.practicum.android.diploma.filters.data.localwork.SharedPrefStorage
 import ru.practicum.android.diploma.search.data.NetworkClient
 import ru.practicum.android.diploma.search.data.network.Api
 import ru.practicum.android.diploma.search.data.network.RetrofitNetworkClient
@@ -24,6 +27,7 @@ val dataModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(Api::class.java)
+
     }
 
     singleOf(::RetrofitNetworkClient).bind<NetworkClient>()
@@ -46,4 +50,10 @@ val dataModule = module {
     single {
         Room.databaseBuilder(androidContext(), AppDataBase::class.java, "database.db").build()
     }
+    single {
+        androidContext().getSharedPreferences(
+            "false", Context.MODE_PRIVATE
+        )
+    }
+    singleOf(::SharedPrefStorage).bind<FiltersStorage>()
 }

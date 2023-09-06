@@ -24,6 +24,7 @@ class VacancyDbConverter {
     }
 
     fun map(vacancy: Vacancy): VacancyEntity{
+
         return VacancyEntity(
             id = vacancy.id,
             name = vacancy.name,
@@ -31,8 +32,8 @@ class VacancyDbConverter {
             employerName = vacancy.employerName,
             employerLogoUrl = null,
             salaryCurrency = vacancy.salaryCurrency,
-            salaryFrom = vacancy.salaryFrom?.toInt(),
-            salaryTo = vacancy.salaryTo?.toInt(),
+            salaryFrom = vacancy.salaryFrom?.filterNot{it.isWhitespace()}?.toInt(),
+            salaryTo = vacancy.salaryTo?.filterNot{it.isWhitespace()}?.toInt(),
             getCurrentDate()
         )
     }

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.filters.domain.models.Country
 import ru.practicum.android.diploma.filters.domain.models.Industries
+import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.ui.adapter.FilterSelectionClickListener
 
@@ -25,9 +26,9 @@ class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         checkBox?.visibility = View.VISIBLE
         checkBox?.setOnClickListener {
             if (checkBox!!.isChecked) {
-                onClickListener?.onClickRegion(model!!)
+                onClickListener?.onClickRegion(model!!, true)
             }else{
-                onClickListener?.onClickRegion(null)
+                onClickListener?.onClickRegion(model, false)
             }
         }
     }
@@ -43,7 +44,7 @@ class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
             }
         }
     }
-    fun bindCountry(model: Country?, onClickListener: FilterSelectionClickListener?){
+    fun bindCountry(model: Areas?, onClickListener: FilterSelectionClickListener?){
         textView.text = model?.name
         checkBox?.visibility = View.GONE
         rightArrow?.setOnClickListener {
