@@ -56,6 +56,12 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
             }
         }
 
+        viewModel.observeStateFavouriteIcon().observe(viewLifecycleOwner){
+            renderStateFavouriteIcon(it)
+        }
+
+        viewModel.checkFavourite(vacancy)
+
         binding.refreshButton.setOnClickListener{
             viewModel.loadVacancyDetails(vacancy.id)
         }
@@ -69,6 +75,10 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
         binding.backIcon.setOnClickListener{
             findNavController().navigateUp()
+        }
+
+        binding.favouritesIcon.setOnClickListener{
+            viewModel.clickOnFavoriteIcon(vacancy)
         }
     }
 
@@ -123,6 +133,13 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
     private fun showToast(message: String){
         Toast.makeText(requireActivity().applicationContext, message, Toast.LENGTH_LONG)
             .show()
+    }
+
+    private fun renderStateFavouriteIcon(isFavourite: Boolean?){
+        when(isFavourite){
+            true -> binding.favouritesIcon.setImageResource(R.drawable.favorites_on)
+            else -> binding.favouritesIcon.setImageResource(R.drawable.favorites_off)
+        }
     }
 
     companion object {
