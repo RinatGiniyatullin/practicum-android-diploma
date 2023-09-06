@@ -8,16 +8,19 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.filters.data.dto.models.AreasDto
 import ru.practicum.android.diploma.filters.data.dto.models.CountryDto
 import ru.practicum.android.diploma.filters.data.dto.models.FiltersDto
+import ru.practicum.android.diploma.filters.data.dto.models.IndustriesDto
 import ru.practicum.android.diploma.filters.domain.FiltersRepository
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Country
 import ru.practicum.android.diploma.filters.domain.models.Filters
+import ru.practicum.android.diploma.filters.domain.models.Industries
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.search.data.NetworkClient
 import ru.practicum.android.diploma.search.data.ResourceProvider
 import ru.practicum.android.diploma.search.data.SearchRepositoryImpl.Companion.ERROR
 import ru.practicum.android.diploma.search.data.SearchRepositoryImpl.Companion.SUCCESS
 import ru.practicum.android.diploma.search.data.dto.AreaSearchRequest
+import ru.practicum.android.diploma.search.data.dto.IndustriesSearchRequest
 import ru.practicum.android.diploma.util.Resource
 
 class FiltersRepositoryImpl(
@@ -55,6 +58,27 @@ class FiltersRepositoryImpl(
         filtersStorage.doWrite(mapFiltersDtoFromFilters(filters))
     }
 
+    override suspend fun getIndustries(): Flow<Resource<List<Industries>>> = flow {
+        val response = networkClient.getIndustries(IndustriesSearchRequest)
+        when (response.resultCode) {
+            ERROR -> {
+                emit(Resource.Error(resourceProvider.getString(R.string.check_connection)))
+            }
+
+            SUCCESS -> {
+                with(response) {
+                    val industriesList = response.resultIndustries.map { mapIndustriesFromDto(it) }
+                    emit(ru.practicum.android.diploma.util.Resource.Success(industriesList))
+                }
+            }
+            else -> {
+
+                emit(ru.practicum.android.diploma.util.Resource.Error(resourceProvider.getString(R.string.server_error)))
+            }
+        }
+    }
+
+
     private fun mapVacancyFromDto(countryDto: CountryDto): Country {
         return Country(
             countryDto.url,
@@ -69,7 +93,7 @@ class FiltersRepositoryImpl(
             areasDto.id,
             areasDto.name,
             areasDto.areas.map {
-                 Region(
+                Region(
                     it.id,
                     it.parent_id,
                     it.name
@@ -77,7 +101,8 @@ class FiltersRepositoryImpl(
             }
         )
     }
-    private fun mapFiltersFromDto(filtersDto: FiltersDto):Filters{
+
+    private fun mapFiltersFromDto(filtersDto: FiltersDto): Filters {
         return Filters(
             filtersDto.countryName,
             filtersDto.countryId,
@@ -88,7 +113,8 @@ class FiltersRepositoryImpl(
             filtersDto.onlyWithSalary
         )
     }
-    private fun mapFiltersDtoFromFilters(filters: Filters):FiltersDto{
+
+    private fun mapFiltersDtoFromFilters(filters: Filters): FiltersDto {
         return FiltersDto(
             filters.countryName,
             filters.countryId,
@@ -97,6 +123,13 @@ class FiltersRepositoryImpl(
             filters.industry,
             filters.salary,
             filters.onlyWithSalary
+        )
+    }
+
+    private fun mapIndustriesFromDto(industries: IndustriesDto): Industries {
+        return Industries(
+            industries.id,
+            industries.name
         )
     }
 
