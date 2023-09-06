@@ -112,7 +112,9 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         RegionList.map {
             filtersNew.areasId += "${it.id} "
             filtersNew.areasNames += "${it.name} "
+            filtersNew.countryId = it.parent_id
         }
+        countries.map { if(it.id.equals(filtersNew.countryId)) addCountry(it)  }
         writeFilters()
         Log.d("Region", "${filtersNew.areasId}")
 
