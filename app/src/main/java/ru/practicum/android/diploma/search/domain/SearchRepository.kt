@@ -6,6 +6,10 @@ import ru.practicum.android.diploma.util.Resource
 
 interface SearchRepository {
     fun searchVacancies(query: String): Flow<Resource<List<Vacancy>>>
-    fun getVacancies(options: HashMap<String,String>): Flow<Resource<List<Vacancy>>>
-
+    fun loadVacanciesQueryMap(options: HashMap<String, Any>): Flow<Resource<List<Vacancy>>>
+    fun loadVacanciesBig(
+        searchText: String,
+        currentPage: Int,
+        perPage: Int,
+    ): Flow<Resource<List<Vacancy>>>
 }

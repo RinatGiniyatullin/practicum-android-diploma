@@ -2,8 +2,8 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("ru.practicum.android.diploma.plugins.developproperties")
-    id ("kotlin-parcelize")
-    id ("kotlin-kapt")
+    id("kotlin-parcelize")
+    id("kotlin-kapt")
     id("com.google.devtools.ksp")
 }
 
@@ -25,13 +25,20 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        buildConfigField(type = "String", name = "HH_ACCESS_TOKEN", value = "\"${developProperties.hhAccessToken}\"")
+        buildConfigField(
+            type = "String",
+            name = "HH_ACCESS_TOKEN",
+            value = "\"${developProperties.hhAccessToken}\""
+        )
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
     compileOptions {
@@ -69,7 +76,7 @@ dependencies {
     implementation("androidx.navigation:navigation-ui-ktx:2.6.0")
 
     //Fragment
-    implementation ("androidx.fragment:fragment-ktx:1.6.1")
+    implementation("androidx.fragment:fragment-ktx:1.6.1")
 
     //Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
@@ -79,7 +86,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.15.1")
 
     //ViewModel
-    implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1")
 
     //Room
     val room_version = "2.5.2"

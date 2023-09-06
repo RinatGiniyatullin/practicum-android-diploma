@@ -18,7 +18,8 @@ class VacancyDbConverter {
             salaryCurrency = vacancyEntity.salaryCurrency,
             salaryFrom = createValue(vacancyEntity.salaryFrom),
             salaryTo = createValue(vacancyEntity.salaryTo),
-            found = 0
+            found = 0,
+            pages = 0
         )
     }
 
