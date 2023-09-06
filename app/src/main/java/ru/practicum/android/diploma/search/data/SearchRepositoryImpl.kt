@@ -8,6 +8,7 @@ import ru.practicum.android.diploma.details.domain.models.VacancyDetails
 import ru.practicum.android.diploma.search.data.dto.SearchRequest
 import ru.practicum.android.diploma.search.data.dto.SearchRequestDetails
 import ru.practicum.android.diploma.search.data.dto.SearchRequestOptions
+import ru.practicum.android.diploma.search.data.dto.SearchRequestSimilarVacancies
 import ru.practicum.android.diploma.search.data.dto.SearchResponse
 import ru.practicum.android.diploma.search.data.dto.models.VacancyDto
 import ru.practicum.android.diploma.search.domain.SearchRepository
@@ -82,6 +83,27 @@ class SearchRepositoryImpl(
 
             else -> {
                 return(Resource.Error(resourceProvider.getString(R.string.server_error)))
+            }
+        }
+    }
+
+    override fun getSimilarVacanciesById(vacancyId: String): Flow<Resource<List<Vacancy>>> = flow {
+        val response = networkClient.getSimilarVacanciesById(SearchRequestSimilarVacancies(vacancyId))
+        when (response.resultCode) {
+            ERROR -> {
+                emit(Resource.Error(resourceProvider.getString(R.string.check_connection)))
+            }
+
+            SUCCESS -> {
+                with(response as SearchResponse) {
+                    val vacanciesList = items.map { mapVacancyFromDto(it, found) }
+                    emit(Resource.Success(vacanciesList))
+                }
+
+            }
+
+            else -> {
+                emit(Resource.Error(resourceProvider.getString(R.string.server_error)))
             }
         }
     }
