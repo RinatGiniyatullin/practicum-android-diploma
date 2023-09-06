@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.search.data.NetworkClient
 import ru.practicum.android.diploma.search.data.dto.AreaSearchRequest
+import ru.practicum.android.diploma.search.data.dto.IndustriesSearchRequest
 import ru.practicum.android.diploma.search.data.dto.Response
 import ru.practicum.android.diploma.search.data.dto.SearchRequest
 import ru.practicum.android.diploma.search.data.dto.SearchRequestDetails
@@ -68,6 +69,28 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
                 val response = api.getVacancyById(dto.vacancyId)
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
+                Response().apply { resultCode = 500 }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    override suspend fun getIndustries(dto: Any): Response {
+        if (isConnected() == false) {
+            return Response().apply { resultCode = -1 }
+        }
+        if(dto!is IndustriesSearchRequest){
+            return Response().apply { resultCode = 400 }
+        }
+        return withContext(Dispatchers.IO){
+            try {
+                val response = Response()
+                val result = api.getIndustries()
+                response.apply {
+                    resultCode = 200
+                    resultIndustries = result
+                }
+            }catch(e:Throwable){
                 Response().apply { resultCode = 500 }
             }
         }

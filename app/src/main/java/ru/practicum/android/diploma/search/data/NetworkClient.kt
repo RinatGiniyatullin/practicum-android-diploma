@@ -7,4 +7,5 @@ NetworkClient {
     suspend fun doRequest(dto: Any): Response
     suspend fun getAres(dto:Any):Response
     suspend fun getVacancyById(dto: Any): Response
+    suspend fun getIndustries(dto: Any):Response
 }
