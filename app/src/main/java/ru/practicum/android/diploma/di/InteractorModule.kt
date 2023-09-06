@@ -26,9 +26,5 @@ val interactorModule = module {
         FiltersInteractorImpl(get())
     }
 
-    factory<VacancyInteractor>{
-        VacancyInteractorImpl(get())
-
-    }
-
+    singleOf(::VacancyInteractorImpl).bind<VacancyInteractor>()
 }

@@ -29,6 +29,15 @@ interface Api {
     @GET("/vacancies/{vacancy_id}")
     suspend fun getVacancyById(@Path("vacancy_id") id: String): VacancyDetailsResponse
 
+    @Headers(
+        "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",
+        "HH-User-Agent: EmployMe (gerzag96@gmail.com)"
+    )
+    @GET("/vacancies/{vacancy_id}/similar_vacancies")
+    suspend fun getSimilarVacanciesById(
+        @Path("vacancy_id") id: String,
+    ): SearchResponse
+
     /*  Форма запроса для фильтров
 
     @Headers(
