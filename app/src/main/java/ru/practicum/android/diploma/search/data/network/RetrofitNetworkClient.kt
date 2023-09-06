@@ -33,25 +33,7 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
             }
         }
     }
-    @RequiresApi(Build.VERSION_CODES.M)
-    override suspend fun getCountries(dto: Any): Response {
-        if (isConnected() == false) {
-            return Response().apply { resultCode = -1 }
-        }
-        if(dto !is CountriesSearchRequest ){
-            return Response().apply { resultCode = 400 }
-        }
-        return withContext(Dispatchers.IO){
-            try {
-                val response = Response()
-                val result = api.getCountries()
-                response.apply { resultCode = 200
-                resultCountries = result}
-            } catch (e:Throwable){
-                Response().apply { resultCode = 500 }
-            }
-        }
-    }
+
     @RequiresApi(Build.VERSION_CODES.M)
     override suspend fun getAres(dto: Any): Response {
         if(isConnected() == false){

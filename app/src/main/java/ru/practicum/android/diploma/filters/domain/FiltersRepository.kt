@@ -9,7 +9,7 @@ import ru.practicum.android.diploma.util.Resource
 
 interface FiltersRepository {
 
-    suspend fun getCountries(): Flow<Resource<List<Country>>>
+
     suspend fun getAres(): Flow<Resource<List<Areas>>>
 
     suspend fun getFilters():Flow<Filters>
