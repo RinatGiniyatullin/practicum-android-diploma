@@ -84,6 +84,7 @@
         app:boxStrokeWidthFocused="0dp"
         >
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/industryEditText"
             style="@style/Text_Regular_16_400"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,6 +117,7 @@
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintTop_toTopOf="@+id/place_of_work"
         android:visibility="gone"/>
+
     <ImageView
         android:id="@+id/industry_button"
         android:layout_width="wrap_content"
@@ -124,7 +126,20 @@
         android:src="@drawable/arrow_forward"
         app:layout_constraintBottom_toBottomOf="@+id/industry"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
-        app:layout_constraintTop_toTopOf="@+id/industry" />
+        app:layout_constraintTop_toTopOf="@+id/industry"
+        app:layout_constraintVertical_bias="1.0" />
+    <ImageView
+        android:id="@+id/industry_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/weight_height_60"
+        android:paddingStart="@dimen/logo_padding_20"
+        android:src="@drawable/close"
+        app:layout_constraintBottom_toBottomOf="@+id/industry"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
+        app:layout_constraintTop_toTopOf="@+id/industry"
+        app:layout_constraintVertical_bias="1.0"
+        android:visibility="gone"/>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/salary_edit_text"
         android:layout_width="0dp"

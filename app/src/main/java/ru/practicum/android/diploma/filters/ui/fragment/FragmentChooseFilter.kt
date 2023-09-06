@@ -24,7 +24,9 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     private val viewModel by viewModel<FiltersViewModel>()
     private var adapter:FiltersAdapter? = null
     private var screen:String? =null
-    val areaList = mutableListOf<Region>()
+    private val areaList = mutableListOf<Region>()
+    private val industriesList = mutableListOf<Industries>()
+
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -43,6 +45,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.recyclerViewFilters.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFilters.adapter = adapter
         addRegion()
+        addIndustries()
     }
 
     private fun initAdapter(){
@@ -56,7 +59,14 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
                 areaList.takeIf { it.isNotEmpty()}?.let{ binding.buttonApply.visibility = View.VISIBLE}
                 Log.d("Area", "$areaList")
             }
-            override fun onClickIndustries(model: Industries?) {
+            override fun onClickIndustries(model: Industries?, isChecked:Boolean) {
+                when(isChecked){
+                    true -> industriesList.add(model!!)
+                    false -> industriesList.remove(model)
+                }
+                binding.buttonApply.visibility = View.GONE
+                industriesList.takeIf { it.isNotEmpty()}?.let{ binding.buttonApply.visibility = View.VISIBLE}
+
             }
             override fun onClickCountry(model: Areas?) {
                 viewModel.addCountry(model!!)
@@ -68,6 +78,12 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     private fun addRegion(){
         binding.buttonApply.setOnClickListener {
             viewModel.addArea(areaList)
+            findNavController().navigateUp()
+        }
+    }
+    private fun addIndustries(){
+        binding.buttonApply.setOnClickListener {
+            viewModel.addIndustries(industriesList)
             findNavController().navigateUp()
         }
     }

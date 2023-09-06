@@ -59,6 +59,6 @@ class FiltersAdapter(val onClickListener:FilterSelectionClickListener):RecyclerV
 }
  interface FilterSelectionClickListener {
     fun onClickRegion(model:Region?, isChecked:Boolean)
-    fun onClickIndustries(model:Industries?)
+    fun onClickIndustries(model:Industries?, isChecked:Boolean)
     fun onClickCountry(model:Areas?)
 }

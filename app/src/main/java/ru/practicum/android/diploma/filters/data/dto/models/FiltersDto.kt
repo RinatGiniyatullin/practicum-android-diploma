@@ -5,7 +5,8 @@ data class FiltersDto(
     var countryId:String?,
     var areasNames:String?,
     var areasId:String?,
-    var industry:String?,
+    var industriesName:String?,
+    var industriesId:String?,
     var salary:Int,
     var onlyWithSalary: Boolean
 )

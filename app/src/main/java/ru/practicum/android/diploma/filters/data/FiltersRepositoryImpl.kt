@@ -108,7 +108,8 @@ class FiltersRepositoryImpl(
             filtersDto.countryId,
             filtersDto.areasNames,
             filtersDto.areasId,
-            filtersDto.industry,
+            filtersDto.industriesName,
+            filtersDto.industriesId,
             filtersDto.salary,
             filtersDto.onlyWithSalary
         )
@@ -120,7 +121,8 @@ class FiltersRepositoryImpl(
             filters.countryId,
             filters.areasNames,
             filters.areasId,
-            filters.industry,
+            filters.industriesName,
+            filters.industriesId,
             filters.salary,
             filters.onlyWithSalary
         )

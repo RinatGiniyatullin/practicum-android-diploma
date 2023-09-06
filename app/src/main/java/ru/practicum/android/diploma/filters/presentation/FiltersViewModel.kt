@@ -32,7 +32,7 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     private var region = mutableListOf<Region>()
     private var parentId: String? = null
     private var filtersNew: Filters =
-        Filters(countryName = null, countryId = null, areasNames = null, areasId = null, industry = null, salary = 0, onlyWithSalary = false)
+        Filters(countryName = null, countryId = null, areasNames = null, areasId = null, industriesName = null, industriesId = null, salary = 0, onlyWithSalary = false)
 
     fun getScreenStateLiveData(): LiveData<ScreenState> = screenStateLiveData
     fun getFiltersStateLiveData():LiveData<FiltersDataState> = filtersDataStateLiveData
@@ -145,6 +145,15 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         Log.d("Region", "${filtersNew.areasId}")
 
     }
+    fun addIndustries(industries: List<Industries>){
+        filtersNew.industriesName  = ""
+        filtersNew.industriesId = ""
+        industries.map {
+            filtersNew.industriesId+= "${it.id} "
+            filtersNew.industriesName+="${it.name} "
+        }
+        writeFilters()
+    }
 
     private fun getFilters() {
         getFiltersJob = viewModelScope.launch {
@@ -154,7 +163,7 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
                     filtersNew.areasId = filters.areasId
                     filtersNew.areasNames = filters.areasNames
                     filtersNew.countryId = filters.countryId
-                    filtersNew.industry = filters.industry
+                    filtersNew.industriesName = filters.industriesName
                     filtersNew.salary = filters.salary
                     filtersNew.onlyWithSalary = filters.onlyWithSalary
                 }

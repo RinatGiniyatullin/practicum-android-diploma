@@ -38,9 +38,9 @@ class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         checkBox?.visibility = View.VISIBLE
         checkBox?.setOnClickListener {
             if (checkBox!!.isChecked) {
-                onClickListener?.onClickIndustries(model!!)
+                onClickListener?.onClickIndustries(model!!, true)
             }else{
-                onClickListener?.onClickIndustries(null)
+                onClickListener?.onClickIndustries(null, false)
             }
         }
     }

@@ -68,6 +68,7 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
     }
     private fun showFiltersData(filters: Filters) {
         var placeOfWork = ""
+        var industries = ""
         filters.countryName?.let {
             placeOfWork = it
             binding.placeOfWorkEditText.setText(placeOfWork)
@@ -77,6 +78,10 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         filters.areasNames?.let {
             placeOfWork+=", $it"
             binding.placeOfWorkEditText.setText(placeOfWork)
+        }
+        filters.industriesName?.let {
+            industries+="$it "
+            binding.industryEditText.setText(industries)
         }
 
     }
