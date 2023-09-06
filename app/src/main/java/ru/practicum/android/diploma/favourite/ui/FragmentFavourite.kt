@@ -72,7 +72,8 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
     private fun renderStateFavouriteVacancies(favoriteStateInterface: FavoriteStateInterface) {
         when(favoriteStateInterface){
             is FavoriteStateInterface.FavoriteVacanciesIsEmpty -> showPlaceHolder()
-            is FavoriteStateInterface.FavoriteVacancies -> showFavoriteVacancies(favoriteStateInterface.favoriteVacancies)
+            is FavoriteStateInterface.FavoriteVacancies ->
+                showFavoriteVacancies(favoriteStateInterface.favoriteVacancies)
         }
     }
 

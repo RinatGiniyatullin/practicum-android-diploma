@@ -22,14 +22,5 @@ class VacancyDbInteractorImpl(
 
     override suspend fun getFavouriteVacancy(): Flow<List<VacancyEntity>> {
         return vacancyDbRepository.getFavouriteVacancy()
-//            .map { vacancyEntity -> vacancyDbConverter.map(vacancyEntity) }
-
-
-//        var vacancies = listOf<Vacancy>()
-//        vacancyDbRepository.getFavouriteVacancy().collect() { vacanciesEntity ->
-//            vacancies =
-//                vacanciesEntity.map { vacancyEntity -> vacancyDbConverter.map(vacancyEntity) }
-//        }
-//        return vacancies
     }
 }
