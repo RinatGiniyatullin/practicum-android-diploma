@@ -12,6 +12,9 @@
         <action
             android:id="@+id/action_searchFragment_to_settingFilters"
             app:destination="@id/settingFilters" />
+            android:id="@+id/action_searchFragment_to_vacancyFragment"
+            app:destination="@id/vacancyFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/settingFilters"
@@ -58,4 +61,8 @@
             android:id="@+id/action_fragmentPlaceOfWork_to_fragmentChooseFilter"
             app:destination="@id/fragmentChooseFilter" />
     </fragment>
+        android:id="@+id/teamFragment"
+        android:name="ru.practicum.android.diploma.team.ui.TeamFragment"
+        android:label="fragment_team"
+        tools:layout="@layout/fragment_team" />
 </navigation>
