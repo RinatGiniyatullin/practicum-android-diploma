@@ -25,7 +25,7 @@ class FiltersInteractorImpl(val filtersRepository: FiltersRepository):FiltersInt
         return filtersRepository.getFilters()
     }
 
-    override suspend fun writeFilters(filters: Filters?) {
+    override suspend fun writeFilters(filters: Filters) {
         filtersRepository.writeFilters(filters)
     }
 }

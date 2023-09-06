@@ -13,5 +13,5 @@ interface FiltersRepository {
     suspend fun getAres(): Flow<Resource<List<Areas>>>
 
     suspend fun getFilters():Flow<Filters>
-    suspend fun writeFilters(filters: Filters?)
+    suspend fun writeFilters(filters: Filters)
 }

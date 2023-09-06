@@ -51,7 +51,7 @@ class FiltersRepositoryImpl(
         emit(mapFiltersFromDto(filtersStorage.doRequest()))
     }
 
-    override suspend fun writeFilters(filters: Filters?) {
+    override suspend fun writeFilters(filters: Filters) {
         filtersStorage.doWrite(mapFiltersDtoFromFilters(filters))
     }
 
@@ -88,14 +88,14 @@ class FiltersRepositoryImpl(
             filtersDto.onlyWithSalary
         )
     }
-    private fun mapFiltersDtoFromFilters(filters: Filters?):FiltersDto{
+    private fun mapFiltersDtoFromFilters(filters: Filters):FiltersDto{
         return FiltersDto(
-            filters?.countryName,
-            filters?.countryId,
-            filters?.areasNames,
-            filters?.areasId,
-            filters?.industry,
-            filters!!.salary,
+            filters.countryName,
+            filters.countryId,
+            filters.areasNames,
+            filters.areasId,
+            filters.industry,
+            filters.salary,
             filters.onlyWithSalary
         )
     }

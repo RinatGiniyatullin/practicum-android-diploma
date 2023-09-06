@@ -10,5 +10,5 @@ interface FiltersInteractor {
 
     suspend fun getFilters():Flow<Filters>?
 
-    suspend fun writeFilters(filters: Filters?)
+    suspend fun writeFilters(filters: Filters)
 }
