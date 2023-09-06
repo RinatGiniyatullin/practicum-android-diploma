@@ -62,24 +62,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
         viewModel.checkFavourite(vacancy)
 
-        binding.refreshButton.setOnClickListener{
-            viewModel.loadVacancyDetails(vacancy.id)
-        }
-
-        binding.similarVacanciesButton.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_vacancyFragment_to_similarVacancyFragment,
-                SimilarVacancyFragment.createArgs(vacancy.id)
-            )
-        }
-
-        binding.backIcon.setOnClickListener{
-            findNavController().navigateUp()
-        }
-
-        binding.favouritesIcon.setOnClickListener{
-            viewModel.clickOnFavoriteIcon(vacancy)
-        }
+        initClickListeners()
     }
 
     private fun initBasicVacancyInfo(){
@@ -139,6 +122,41 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         when(isFavourite){
             true -> binding.favouritesIcon.setImageResource(R.drawable.favorites_on)
             else -> binding.favouritesIcon.setImageResource(R.drawable.favorites_off)
+        }
+    }
+
+    private fun initClickListeners(){
+        binding.refreshButton.setOnClickListener{
+            viewModel.loadVacancyDetails(vacancy.id)
+        }
+
+        binding.similarVacanciesButton.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_vacancyFragment_to_similarVacancyFragment,
+                SimilarVacancyFragment.createArgs(vacancy.id)
+            )
+        }
+
+        binding.backIcon.setOnClickListener{
+            findNavController().navigateUp()
+        }
+
+        binding.favouritesIcon.setOnClickListener{
+            viewModel.clickOnFavoriteIcon(vacancy)
+        }
+
+        binding.sharingIcon.setOnClickListener {
+            viewModel.shareVacancyUrl(vacancyDetails.alternate_url)
+        }
+
+        binding.vacancyContactPhoneValue.setOnClickListener {
+            if(vacancyDetails.contacts?.phones != null)
+                viewModel.sharePhone(binding.vacancyContactPhoneValue.text.toString())
+        }
+
+        binding.vacancyContactEmailValue.setOnClickListener {
+            if(vacancyDetails.contacts?.email != null)
+                viewModel.shareEmail(vacancyDetails.contacts?.email!!)
         }
     }
 
