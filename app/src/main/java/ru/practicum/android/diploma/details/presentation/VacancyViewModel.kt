@@ -69,4 +69,16 @@ class VacancyViewModel(
             stateFavouriteIconLiveData.postValue(vacancy in vacancies)
         }
     }
+
+    fun shareVacancyUrl(vacancyUrl: String){
+        vacancyInteractor.shareVacancyUrl(vacancyUrl)
+    }
+
+    fun sharePhone(phone: String){
+        vacancyInteractor.sharePhone(phone)
+    }
+
+    fun shareEmail(email: String){
+        vacancyInteractor.shareEmail(email)
+    }
 }

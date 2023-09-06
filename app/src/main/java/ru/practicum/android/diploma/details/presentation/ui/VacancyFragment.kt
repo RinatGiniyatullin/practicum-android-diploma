@@ -9,6 +9,7 @@ import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
@@ -25,6 +26,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
     private lateinit var vacancy: Vacancy
     private lateinit var vacancyDetails: VacancyDetails
+    private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -37,6 +39,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         initBasicVacancyInfo()
+        setConfirmDialog()
 
         viewModel.loadVacancyDetails(vacancy.id)
 
@@ -62,24 +65,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
         viewModel.checkFavourite(vacancy)
 
-        binding.refreshButton.setOnClickListener{
-            viewModel.loadVacancyDetails(vacancy.id)
-        }
-
-        binding.similarVacanciesButton.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_vacancyFragment_to_similarVacancyFragment,
-                SimilarVacancyFragment.createArgs(vacancy.id)
-            )
-        }
-
-        binding.backIcon.setOnClickListener{
-            findNavController().navigateUp()
-        }
-
-        binding.favouritesIcon.setOnClickListener{
-            viewModel.clickOnFavoriteIcon(vacancy)
-        }
+        initClickListeners()
     }
 
     private fun initBasicVacancyInfo(){
@@ -91,6 +77,16 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         binding.city.width = (resources.displayMetrics.widthPixels*0.7).toInt()
         binding.employerName.text = vacancy.employerName
         binding.city.text = vacancy.city
+    }
+
+    private fun setConfirmDialog(){
+        confirmDialog = MaterialAlertDialogBuilder(requireContext())
+            .setTitle(requireActivity().getString(R.string.write_to_email))
+            .setNegativeButton(requireActivity().getString(R.string.no)) { _, _ ->
+
+            }.setPositiveButton(requireActivity().getString(R.string.yes)) { _, _ ->
+                viewModel.shareEmail(vacancyDetails.contacts?.email!!)
+            }
     }
 
     private fun initSalary(){
@@ -139,6 +135,41 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         when(isFavourite){
             true -> binding.favouritesIcon.setImageResource(R.drawable.favorites_on)
             else -> binding.favouritesIcon.setImageResource(R.drawable.favorites_off)
+        }
+    }
+
+    private fun initClickListeners(){
+        binding.refreshButton.setOnClickListener{
+            viewModel.loadVacancyDetails(vacancy.id)
+        }
+
+        binding.similarVacanciesButton.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_vacancyFragment_to_similarVacancyFragment,
+                SimilarVacancyFragment.createArgs(vacancy.id)
+            )
+        }
+
+        binding.backIcon.setOnClickListener{
+            findNavController().navigateUp()
+        }
+
+        binding.favouritesIcon.setOnClickListener{
+            viewModel.clickOnFavoriteIcon(vacancy)
+        }
+
+        binding.sharingIcon.setOnClickListener {
+            viewModel.shareVacancyUrl(vacancyDetails.alternate_url)
+        }
+
+        binding.vacancyContactPhoneValue.setOnClickListener {
+            if(vacancyDetails.contacts?.phones != null)
+                viewModel.sharePhone(binding.vacancyContactPhoneValue.text.toString())
+        }
+
+        binding.vacancyContactEmailValue.setOnClickListener {
+            if(vacancyDetails.contacts?.email != null)
+                confirmDialog.show()
         }
     }
 
