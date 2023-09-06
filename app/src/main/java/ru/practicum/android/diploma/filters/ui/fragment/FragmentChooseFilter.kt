@@ -110,7 +110,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     private fun showIndustriesScreen(industryList:List<Industries>){
         adapter?.setIndustrie(industryList)
         binding.recyclerViewFilters.visibility = View.VISIBLE
-        binding.chooseTextview.text = "Выбор отрасли"
+        binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_industry)
     }
     private fun showAreasScreen(areas:List<Region>){
         adapter?.setRegion(areas)
