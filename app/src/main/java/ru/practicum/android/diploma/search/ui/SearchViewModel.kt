@@ -21,7 +21,6 @@ class SearchViewModel(
     private var maxPages: Int = 1
     private var isNextPageLoading = true
     private val vacanciesList = mutableListOf<Vacancy>()
-    //val options: HashMap<String, Any> = HashMap()
 
     private var _viewStateLiveData = MutableLiveData<SearchState>()
     val viewStateLiveData: LiveData<SearchState> = _viewStateLiveData
@@ -61,7 +60,7 @@ class SearchViewModel(
         }
 
         viewModelScope.launch {
-            interactor.loadVacanciesBig(searchText, currentPage, 20)
+            interactor.loadVacanciesBig(searchText, currentPage, NUMBER_LOAD_VACANCIES)
                 .collect { pair ->
                     processResult(pair.first, pair.second)
                 }
@@ -109,10 +108,15 @@ class SearchViewModel(
             getVacancies(lastSearchText ?: "")
         }
     }
+
+    companion object {
+        private const val NUMBER_LOAD_VACANCIES = 20
+    }
 }
 /* Форма для фильтрации
+        val options: HashMap<String, Any> = HashMap()
 
-       options["text"] = searchText
+        options["text"] = searchText
         options["page"] = currentPage
         options["per_page"] = 20
         if (area.isNotEmpty()) options["area"] = area
