@@ -11,6 +11,7 @@ import ru.practicum.android.diploma.filters.domain.FiltersInteractor
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.filters.domain.models.Industries
+import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
@@ -28,7 +29,8 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     private var showFiltersData:Job? = null
     private var writeFiltersJob:Job? = null
     private var countries = mutableListOf<Areas>()
-    private var newIndustriesList = mutableListOf<Industries>()
+    private var newIndustryList = mutableListOf<Industry>()
+    private var newIndustries = mutableListOf<Industries>()
     private var region = mutableListOf<Region>()
     private var parentId: String? = null
     private var filtersNew: Filters =
@@ -59,7 +61,7 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     private fun setScreenIndustries(){
         getIndustriesJob = viewModelScope.launch {
             getIndustries()
-            screenStateLiveData.postValue(ScreenState.showIndustriesScreen(newIndustriesList))
+            screenStateLiveData.postValue(ScreenState.showIndustriesScreen(newIndustries))
         }
     }
 
@@ -106,19 +108,22 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     suspend fun getIndustries(){
         filtersInteractor.getIndustries()
             .collect{pair ->
-                val industriesList = mutableListOf<Industries>()
+                val industryList = mutableListOf<Industry>()
+                val industries = mutableListOf<Industries>()
                 if(pair.first!=null){
-                    industriesList.addAll(pair.first!!)
+                    industryList.addAll(pair.first!!)
+                    industryList.map { it.industries.map { industries.add(it) } }
                 }
                 when{
                     pair.second !=null ->{
 
                     }
-                    industriesList.isEmpty() -> {
+                    industryList.isEmpty() -> {
 
                     }
                     else ->{
-                        newIndustriesList.addAll(industriesList)
+                        newIndustryList.addAll(industryList)
+                        newIndustries.addAll(industries)
                     }
                 }
             }

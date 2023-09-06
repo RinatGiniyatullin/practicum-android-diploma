@@ -8,12 +8,13 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.filters.data.dto.models.AreasDto
 import ru.practicum.android.diploma.filters.data.dto.models.CountryDto
 import ru.practicum.android.diploma.filters.data.dto.models.FiltersDto
-import ru.practicum.android.diploma.filters.data.dto.models.IndustriesDto
+import ru.practicum.android.diploma.filters.data.dto.models.IndustryDto
 import ru.practicum.android.diploma.filters.domain.FiltersRepository
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Country
 import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.filters.domain.models.Industries
+import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.search.data.NetworkClient
 import ru.practicum.android.diploma.search.data.ResourceProvider
@@ -58,7 +59,7 @@ class FiltersRepositoryImpl(
         filtersStorage.doWrite(mapFiltersDtoFromFilters(filters))
     }
 
-    override suspend fun getIndustries(): Flow<Resource<List<Industries>>> = flow {
+    override suspend fun getIndustries(): Flow<Resource<List<Industry>>> = flow {
         val response = networkClient.getIndustries(IndustriesSearchRequest)
         when (response.resultCode) {
             ERROR -> {
@@ -128,10 +129,17 @@ class FiltersRepositoryImpl(
         )
     }
 
-    private fun mapIndustriesFromDto(industries: IndustriesDto): Industries {
-        return Industries(
+    private fun mapIndustriesFromDto(industries: IndustryDto): Industry {
+        return Industry(
             industries.id,
+            industries.industries.map {
+                Industries(
+                    it.id,
+                    it.name
+                )
+            },
             industries.name
+
         )
     }
 

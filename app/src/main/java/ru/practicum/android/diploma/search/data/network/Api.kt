@@ -7,7 +7,7 @@ import retrofit2.http.Query
 import ru.practicum.android.diploma.BuildConfig
 import ru.practicum.android.diploma.details.data.VacancyDetailsResponse
 import ru.practicum.android.diploma.filters.data.dto.models.AreasDto
-import ru.practicum.android.diploma.filters.data.dto.models.IndustriesDto
+import ru.practicum.android.diploma.filters.data.dto.models.IndustryDto
 import ru.practicum.android.diploma.search.data.dto.SearchResponse
 
 interface Api {
@@ -68,6 +68,6 @@ interface Api {
         "HH-User-Agent: EmployMe (gerzag96@gmail.com)"
     )
     @GET("/industries")
-    suspend fun getIndustries():List<IndustriesDto>
+    suspend fun getIndustries():List<IndustryDto>
 
 }

@@ -11,6 +11,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFilterSelectionBinding
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Industries
+import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
@@ -25,7 +26,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     private var adapter:FiltersAdapter? = null
     private var screen:String? =null
     private val areaList = mutableListOf<Region>()
-    private val industriesList = mutableListOf<Industries>()
+    private val industryList = mutableListOf<Industries>()
 
 
     override fun createBinding(
@@ -61,11 +62,11 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
             }
             override fun onClickIndustries(model: Industries?, isChecked:Boolean) {
                 when(isChecked){
-                    true -> industriesList.add(model!!)
-                    false -> industriesList.remove(model)
+                    true -> industryList.add(model!!)
+                    false -> industryList.remove(model)
                 }
                 binding.buttonApply.visibility = View.GONE
-                industriesList.takeIf { it.isNotEmpty()}?.let{ binding.buttonApply.visibility = View.VISIBLE}
+                industryList.takeIf { it.isNotEmpty()}?.let{ binding.buttonApply.visibility = View.VISIBLE}
 
             }
             override fun onClickCountry(model: Areas?) {
@@ -80,7 +81,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
             areaList.takeIf { it.isNotEmpty() }?.let {
                 viewModel.addArea(it)
             }
-            industriesList.takeIf { it.isNotEmpty() }?.let {
+            industryList.takeIf { it.isNotEmpty() }?.let {
                 viewModel.addIndustries(it)
             }
             findNavController().navigateUp()
@@ -93,7 +94,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     }
     private fun chooseScreen(state:ScreenState){
         when(state){
-            is ScreenState.showIndustriesScreen -> showIndustriesScreen(state.industriesList)
+            is ScreenState.showIndustriesScreen -> showIndustriesScreen(state.industryList)
             is ScreenState.showAreasScreen -> showAreasScreen(state.areasList)
             is ScreenState.showCountriesScreen -> {
                 showCountriesScreen(state.countriesList)
@@ -106,8 +107,8 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.searchEditText.visibility = View.GONE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_country)
     }
-    private fun showIndustriesScreen(industriesList:List<Industries>){
-        adapter?.setIndustrie(industriesList)
+    private fun showIndustriesScreen(industryList:List<Industries>){
+        adapter?.setIndustrie(industryList)
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = "Выбор отрасли"
     }

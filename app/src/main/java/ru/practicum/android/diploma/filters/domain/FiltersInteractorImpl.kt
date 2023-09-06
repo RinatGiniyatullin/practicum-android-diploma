@@ -4,7 +4,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Filters
-import ru.practicum.android.diploma.filters.domain.models.Industries
+import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.util.Resource
 
 class FiltersInteractorImpl(val filtersRepository: FiltersRepository):FiltersInteractor {
@@ -29,7 +29,7 @@ class FiltersInteractorImpl(val filtersRepository: FiltersRepository):FiltersInt
         filtersRepository.writeFilters(filters)
     }
 
-    override suspend fun getIndustries(): Flow<Pair<List<Industries>?, String?>> {
+    override suspend fun getIndustries(): Flow<Pair<List<Industry>?, String?>> {
         return filtersRepository.getIndustries().map { result ->
             when(result){
                 is Resource.Success -> {

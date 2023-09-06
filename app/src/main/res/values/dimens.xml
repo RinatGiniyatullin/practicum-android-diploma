@@ -23,4 +23,5 @@
     <dimen name="weight_height_60">60dp</dimen>
     <dimen name="weight_height_25">25dp</dimen>
     <dimen name="logo_padding_20">20dp</dimen>
+    <dimen name="margin_5">5dp</dimen>
 </resources>
