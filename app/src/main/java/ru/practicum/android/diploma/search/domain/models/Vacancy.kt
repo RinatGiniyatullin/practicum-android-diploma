@@ -10,4 +10,5 @@ data class Vacancy(
     val salaryCurrency: String?,
     val salaryFrom: String?,
     val salaryTo: String?,
+    val pages:Int
 )
