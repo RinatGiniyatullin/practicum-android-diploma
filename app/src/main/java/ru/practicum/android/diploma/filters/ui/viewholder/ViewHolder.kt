@@ -6,7 +6,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ru.practicum.android.diploma.R
-import ru.practicum.android.diploma.filters.domain.models.Country
+import ru.practicum.android.diploma.filters.domain.models.Industry
+import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Industries
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.ui.adapter.FilterSelectionClickListener
@@ -17,17 +18,15 @@ class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
     private var checkBox: CheckBox? = itemView.findViewById(R.id.filter_checkbox)
     private var rightArrow:ImageView? = itemView.findViewById(R.id.choose_country_bottom)
 
-
-
     fun bindRegion(model: Region?, onClickListener: FilterSelectionClickListener?) {
         textView.text = model?.name
         rightArrow?.visibility = View.GONE
         checkBox?.visibility = View.VISIBLE
         checkBox?.setOnClickListener {
             if (checkBox!!.isChecked) {
-                onClickListener?.onClickRegion(model!!)
+                onClickListener?.onClickRegion(model!!, true)
             }else{
-                onClickListener?.onClickRegion(null)
+                onClickListener?.onClickRegion(model, false)
             }
         }
     }
@@ -37,13 +36,13 @@ class ViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
         checkBox?.visibility = View.VISIBLE
         checkBox?.setOnClickListener {
             if (checkBox!!.isChecked) {
-                onClickListener?.onClickIndustries(model!!)
+                onClickListener?.onClickIndustries(model!!, true)
             }else{
-                onClickListener?.onClickIndustries(null)
+                onClickListener?.onClickIndustries(null, false)
             }
         }
     }
-    fun bindCountry(model: Country?, onClickListener: FilterSelectionClickListener?){
+    fun bindCountry(model: Areas?, onClickListener: FilterSelectionClickListener?){
         textView.text = model?.name
         checkBox?.visibility = View.GONE
         rightArrow?.setOnClickListener {

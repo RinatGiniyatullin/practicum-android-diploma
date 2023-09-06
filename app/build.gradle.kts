@@ -6,7 +6,6 @@ plugins {
     id ("kotlin-kapt")
     id("com.google.devtools.ksp")
 }
-
 android {
     namespace = "ru.practicum.android.diploma"
     compileSdk = 33
@@ -14,8 +13,6 @@ android {
     buildFeatures {
         viewBinding = true
     }
-
-
     defaultConfig {
         applicationId = "ru.practicum.android.diploma"
         minSdk = 26
@@ -46,9 +43,7 @@ android {
         buildConfig = true
     }
 }
-
 dependencies {
-
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.9.0")

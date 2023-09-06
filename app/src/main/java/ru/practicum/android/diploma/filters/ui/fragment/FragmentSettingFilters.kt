@@ -10,7 +10,9 @@ import androidx.navigation.fragment.findNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSettingFiltersBinding
+import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
+import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.util.BindingFragment
 
 class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
@@ -29,12 +31,31 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         super.onViewCreated(view, savedInstanceState)
         switchToPlaceOfWorkScreen()
         switchToIndustriesScreen()
+        back()
+
+        viewModel.getFiltersStateLiveData().observe(requireActivity()){
+            render(it)
+        }
+        viewModel.showFiltersData()
+        binding.placeOfWorkClear.setOnClickListener {
+            clearPlaceWork()
+        }
+        binding.industryClear.setOnClickListener {
+            clearIndustries()
+        }
+        binding.clearAll.setOnClickListener {
+            clearPlaceWork()
+            clearIndustries()
+            viewModel.writeFilters()
+        }
+        binding.buttonApply.setOnClickListener {
+            viewModel.writeFilters()
+            findNavController().navigateUp() }
+
     }
     fun switchToPlaceOfWorkScreen(){
         binding.placeOfWorkButton.setOnClickListener{
-            Log.d("myLog", "Click")
-            bundle = bundleOf(SCREEN to PLACE_OF_WORK)
-            findNavController().navigate(R.id.action_settingFilters_to_fragmentChooseFilter, bundle)
+            findNavController().navigate(R.id.action_settingFilters_to_fragmentPlaceOfWork)
         }
     }
     fun switchToIndustriesScreen(){
@@ -44,11 +65,53 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         }
     }
     fun back(){
-        binding.arrowback
+        binding.arrowback.setOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+    private fun render(state: FiltersDataState) {
+        when (state) {
+            is FiltersDataState.filtersData -> showFiltersData(state.filters)
+        }
+    }
+    private fun showFiltersData(filters: Filters) {
+        var placeOfWork = ""
+        var industries = ""
+        filters.countryName?.let {
+            placeOfWork = it
+            binding.placeOfWorkEditText.setText(placeOfWork)
+            binding.placeOfWorkButton.visibility = View.INVISIBLE
+            binding.placeOfWorkClear.visibility = View.VISIBLE
+        }
+        filters.areasNames?.let {
+            placeOfWork+=", $it"
+            binding.placeOfWorkEditText.setText(placeOfWork)
+        }
+        filters.industriesName?.let {
+            industries+="$it "
+            binding.industryEditText.setText(industries)
+            binding.industryButton.visibility = View.INVISIBLE
+            binding.industryClear.visibility = View.VISIBLE
+        }
+
+    }
+    private fun clearPlaceWork(){
+        binding.placeOfWorkEditText.text?.clear()
+        binding.placeOfWorkClear.visibility = View.GONE
+        binding.placeOfWorkButton.visibility = View.VISIBLE
+        viewModel.clearCountry()
+        viewModel.clearRegion()
+    }
+    private fun clearIndustries(){
+        binding.industryEditText.text?.clear()
+        binding.industryClear.visibility = View.GONE
+        binding.industryButton.visibility = View.VISIBLE
+        viewModel.clearIndustries()
     }
     companion object{
         const val SCREEN = "screen"
-        const val PLACE_OF_WORK = 1
-        const val INDUSTRIES = 2
+        const val COUNTRIES = "COUNTRIES"
+        const val REGION = "REGION"
+        const val INDUSTRIES = "INDUSTRIES"
     }
 }

@@ -1,7 +1,10 @@
 package ru.practicum.android.diploma.details.domain
 
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import ru.practicum.android.diploma.details.domain.models.VacancyDetails
 import ru.practicum.android.diploma.search.domain.SearchRepository
+import ru.practicum.android.diploma.search.domain.models.Vacancy
 import ru.practicum.android.diploma.util.Resource
 
 class VacancyInteractorImpl(
@@ -16,6 +19,20 @@ class VacancyInteractorImpl(
 
             is Resource.Error -> {
                 Pair(null, result.message)
+            }
+        }
+    }
+
+    override fun getSimilarVacanciesById(vacancyId: String): Flow<Pair<List<Vacancy>?, String?>> {
+        return repository.getSimilarVacanciesById(vacancyId).map { result ->
+            when (result) {
+                is Resource.Success -> {
+                    Pair(result.data, null)
+                }
+
+                is Resource.Error -> {
+                    Pair(null, result.message)
+                }
             }
         }
     }
