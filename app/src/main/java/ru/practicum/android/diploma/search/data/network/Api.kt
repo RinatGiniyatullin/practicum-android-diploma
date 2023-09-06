@@ -63,18 +63,7 @@ interface Api {
         "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",
         "HH-User-Agent: EmployMe (gerzag96@gmail.com)"
     )
-    @GET("/areas/countries")
-    suspend fun getCountries():List<CountryDto>
-
-
-    @Headers(
-        "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",
-        "HH-User-Agent: EmployMe (gerzag96@gmail.com)"
-    )
     @GET("/areas")
     suspend fun getAreas(
     ): List<AreasDto>
-
-
-
 }
