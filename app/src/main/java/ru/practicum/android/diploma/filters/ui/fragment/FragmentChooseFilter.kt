@@ -79,7 +79,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
 
     private fun chooseScreen(state:ScreenState){
         when(state){
-            is ScreenState.showIndustriesScreen -> showIndustriesScreen()
+            is ScreenState.showIndustriesScreen -> showIndustriesScreen(state.industriesList)
             is ScreenState.showAreasScreen -> showAreasScreen(state.areasList)
             is ScreenState.showCountriesScreen -> {
                 showCountriesScreen(state.countriesList)
@@ -92,7 +92,10 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.searchEditText.visibility = View.GONE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_country)
     }
-    private fun showIndustriesScreen(){
+    private fun showIndustriesScreen(industriesList:List<Industries>){
+        adapter?.setIndustrie(industriesList)
+        binding.recyclerViewFilters.visibility = View.VISIBLE
+        binding.chooseTextview.text = "Выбор отрасли"
     }
     private fun showAreasScreen(areas:List<Region>){
 

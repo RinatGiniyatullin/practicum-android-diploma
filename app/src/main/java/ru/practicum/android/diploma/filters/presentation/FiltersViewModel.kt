@@ -10,6 +10,7 @@ import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.filters.domain.FiltersInteractor
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Filters
+import ru.practicum.android.diploma.filters.domain.models.Industries
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
@@ -23,9 +24,11 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     private val filtersDataStateLiveData = MutableLiveData<FiltersDataState>()
     private var getAreasJob: Job? = null
     private var getFiltersJob: Job? = null
+    private var getIndustriesJob:Job? = null
     private var showFiltersData:Job? = null
     private var writeFiltersJob:Job? = null
     private var countries = mutableListOf<Areas>()
+    private var newIndustriesList = mutableListOf<Industries>()
     private var region = mutableListOf<Region>()
     private var parentId: String? = null
     private var filtersNew: Filters =
@@ -43,7 +46,7 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         when (nameOfScreen) {
             COUNTRIES -> setScreenCountries()
             REGION -> setScreenRegion()
-            INDUSTRIES -> screenStateLiveData.postValue(ScreenState.showIndustriesScreen)
+            INDUSTRIES -> setScreenIndustries()
         }
     }
 
@@ -52,7 +55,12 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
             getAreas()
             screenStateLiveData.postValue(ScreenState.showCountriesScreen(countries))
         }
-
+    }
+    private fun setScreenIndustries(){
+        getIndustriesJob = viewModelScope.launch {
+            getIndustries()
+            screenStateLiveData.postValue(ScreenState.showIndustriesScreen(newIndustriesList))
+        }
     }
 
     private fun setScreenRegion() {
@@ -91,6 +99,26 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
                     else -> {
                         countries.addAll(areasList)
                         region.addAll(regionList)
+                    }
+                }
+            }
+    }
+    suspend fun getIndustries(){
+        filtersInteractor.getIndustries()
+            .collect{pair ->
+                val industriesList = mutableListOf<Industries>()
+                if(pair.first!=null){
+                    industriesList.addAll(pair.first!!)
+                }
+                when{
+                    pair.second !=null ->{
+
+                    }
+                    industriesList.isEmpty() -> {
+
+                    }
+                    else ->{
+                        newIndustriesList.addAll(industriesList)
                     }
                 }
             }
