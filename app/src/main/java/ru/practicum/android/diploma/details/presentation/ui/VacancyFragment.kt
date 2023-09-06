@@ -69,7 +69,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         binding.similarVacanciesButton.setOnClickListener {
             findNavController().navigate(
                 R.id.action_vacancyFragment_to_similarVacancyFragment,
-                bundleOf(SimilarVacancyFragment.VACANCY_ID to vacancy.id)
+                SimilarVacancyFragment.createArgs(vacancy.id)
             )
         }
 
