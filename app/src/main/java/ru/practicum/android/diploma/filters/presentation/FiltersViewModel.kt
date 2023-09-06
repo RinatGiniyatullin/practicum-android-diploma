@@ -19,7 +19,6 @@ import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.C
 
 class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
 
-
     private val screenStateLiveData = MutableLiveData<ScreenState>()
     private val filtersDataStateLiveData = MutableLiveData<FiltersDataState>()
     private var getAreasJob: Job? = null
@@ -39,7 +38,6 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         getFilters()
         Log.d("Filters","$filtersNew" )
     }
-
 
     fun setScreen(nameOfScreen: String) {
         when (nameOfScreen) {
@@ -155,7 +153,5 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         filtersNew.areasId = null
 
     }
-
-
 
 }

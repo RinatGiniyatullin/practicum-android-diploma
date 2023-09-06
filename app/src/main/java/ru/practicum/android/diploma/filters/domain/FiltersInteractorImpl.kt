@@ -7,7 +7,6 @@ import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.util.Resource
 
 class FiltersInteractorImpl(val filtersRepository: FiltersRepository):FiltersInteractor {
-
     override suspend fun getAreas(): Flow<Pair<List<Areas>?, String?>> {
         return filtersRepository.getAres().map{result ->
             when(result){

@@ -1,5 +1,4 @@
 package ru.practicum.android.diploma.filters.ui.fragment
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +18,6 @@ import ru.practicum.android.diploma.util.BindingFragment
 class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
 
     private val viewModel by viewModel<FiltersViewModel>()
-
     private var bundle: Bundle? = null
     override fun createBinding(
         inflater: LayoutInflater,
@@ -33,18 +31,15 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
         viewModel.getFiltersStateLiveData().observe(requireActivity()) { render(it) }
         viewModel.showFiltersData()
 
-
-
         binding.clearCountryName.setOnClickListener {
             clearCountry()
             clearRegion()
 
         }
+
         binding.clearRegion.setOnClickListener {
             clearRegion()
         }
-
-
 
         binding.buttonApply.setOnClickListener {
             viewModel.writeFilters()
@@ -89,6 +84,7 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
     }
 
     private fun showFiltersData(filters: Filters) {
+
         filters.countryName?.let {
             binding.countryEditText.setText(it)
             binding.buttonApply.visibility = View.VISIBLE

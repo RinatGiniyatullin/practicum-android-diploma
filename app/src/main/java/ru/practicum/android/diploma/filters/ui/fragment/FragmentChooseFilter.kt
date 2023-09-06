@@ -1,5 +1,4 @@
 package ru.practicum.android.diploma.filters.ui.fragment
-
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -22,8 +21,6 @@ import ru.practicum.android.diploma.util.BindingFragment
 
 class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
 
-
-
     private val viewModel by viewModel<FiltersViewModel>()
     private var adapter:FiltersAdapter? = null
     private var screen:String? =null
@@ -34,7 +31,6 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         container: ViewGroup?
     ): FragmentFilterSelectionBinding {
         return FragmentFilterSelectionBinding.inflate(inflater, container, false)
-
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,9 +43,8 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.recyclerViewFilters.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFilters.adapter = adapter
         addRegion()
-
-
     }
+
     private fun initAdapter(){
         adapter = FiltersAdapter(object: FilterSelectionClickListener {
             override fun onClickRegion(model: Region?, isChecked: Boolean) {
@@ -105,6 +100,4 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_region)
     }
-
-
 }
