@@ -6,20 +6,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSimilarVacancyBinding
 import ru.practicum.android.diploma.details.presentation.SimilarVacancyViewModel
 import ru.practicum.android.diploma.search.domain.SearchState
 import ru.practicum.android.diploma.search.domain.models.Vacancy
 import ru.practicum.android.diploma.util.BindingFragment
 import ru.practicum.android.diploma.util.adapter.VacancyAdapter
+import ru.practicum.android.diploma.util.debounce
 
 class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
 
     private val viewModel by viewModel<SimilarVacancyViewModel>()
     private lateinit var adapter: VacancyAdapter
+    private lateinit var onVacancyClickDebounce: (Vacancy) -> Unit
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -50,6 +55,18 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
 
         binding.backIcon.setOnClickListener{
             findNavController().navigateUp()
+        }
+
+        adapter.itemClickListener = { position, vacancy ->
+            onVacancyClickDebounce(vacancy)
+        }
+
+        onVacancyClickDebounce = debounce<Vacancy>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { vacancy ->
+            openVacancy(vacancy)
         }
     }
 
@@ -86,8 +103,16 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
         binding.recyclerView.visibility = View.GONE
     }
 
+    private fun openVacancy(vacancy: Vacancy) {
+        findNavController().navigate(
+            R.id.action_similarVacancyFragment_to_vacancyFragment,
+            VacancyFragment.createArgs(Gson().toJson(vacancy))
+        )
+    }
+
     companion object {
         const val VACANCY_ID = "vacancy_id"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
 
         fun createArgs(vacancyId: String): Bundle = bundleOf(VACANCY_ID to vacancyId)
     }
