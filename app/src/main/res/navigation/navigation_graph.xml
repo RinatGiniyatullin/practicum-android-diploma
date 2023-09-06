@@ -3,12 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation_graph"
-    app:startDestination="@id/settingFilters">
+    app:startDestination="@id/searchFragment">
     <fragment
         android:id="@+id/searchFragment"
         android:name="ru.practicum.android.diploma.search.ui.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_searchFragment_to_settingFilters"
+            app:destination="@id/settingFilters" />
+    </fragment>
     <fragment
         android:id="@+id/settingFilters"
         android:name="ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters"
@@ -17,6 +21,9 @@
         <action
             android:id="@+id/action_settingFilters_to_fragmentChooseFilter"
             app:destination="@id/fragmentChooseFilter" />
+        <action
+            android:id="@+id/action_settingFilters_to_fragmentPlaceOfWork"
+            app:destination="@id/fragmentPlaceOfWork" />
     </fragment>
     <fragment
         android:id="@+id/fragmentChooseFilter"
@@ -42,4 +49,13 @@
         android:name="ru.practicum.android.diploma.details.presentation.ui.SimilarVacancyFragment"
         android:label="fragment_similar_vacancy"
         tools:layout="@layout/fragment_similar_vacancy" />
+    <fragment
+        android:id="@+id/fragmentPlaceOfWork"
+        android:name="ru.practicum.android.diploma.filters.ui.fragment.FragmentPlaceOfWork"
+        android:label="fragment_place_of_work"
+        tools:layout="@layout/fragment_place_of_work" >
+        <action
+            android:id="@+id/action_fragmentPlaceOfWork_to_fragmentChooseFilter"
+            app:destination="@id/fragmentChooseFilter" />
+    </fragment>
 </navigation>

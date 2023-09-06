@@ -49,7 +49,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/place_of_work"
         android:layout_width="0dp"
-        android:layout_height="@dimen/weight_height_60"
+        android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/place_of_work_button"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/arrowback"
@@ -60,6 +60,7 @@
         android:textColorHint="@color/gray"
         >
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/place_of_work_editText"
             style="@style/Text_Regular_16_400"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -105,6 +106,16 @@
         app:layout_constraintBottom_toBottomOf="@+id/place_of_work"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintTop_toTopOf="@+id/place_of_work" />
+    <ImageView
+        android:id="@+id/place_of_work_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/weight_height_60"
+        android:paddingStart="@dimen/logo_padding_20"
+        android:src="@drawable/close"
+        app:layout_constraintBottom_toBottomOf="@+id/place_of_work"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
+        app:layout_constraintTop_toTopOf="@+id/place_of_work"
+        android:visibility="gone"/>
     <ImageView
         android:id="@+id/industry_button"
         android:layout_width="wrap_content"
@@ -169,13 +180,13 @@
         android:text="@string/apply"
         style="@style/Text_Medium_16_500"
         android:textColor="@color/white_2"
-        app:layout_constraintBottom_toTopOf="@+id/textView"
+        app:layout_constraintBottom_toTopOf="@+id/clearAll"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintStart_toStartOf="@+id/leftBorder"
         android:background="@drawable/field_for_result_text"/>
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/clearAll"
         style="@style/Text_Medium_16_500"
         android:layout_width="0dp"
         android:layout_height="@dimen/weight_height_60"

@@ -1,9 +1,15 @@
 package ru.practicum.android.diploma.search.data.network
 
+import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
 import ru.practicum.android.diploma.BuildConfig
+import ru.practicum.android.diploma.filters.data.dto.models.AreasDto
+import ru.practicum.android.diploma.filters.data.dto.models.CountryDto
+import ru.practicum.android.diploma.filters.data.dto.responcse.AreasResponse
+import ru.practicum.android.diploma.filters.data.dto.responcse.CountriesResponse
+import ru.practicum.android.diploma.search.data.dto.Response
 import ru.practicum.android.diploma.search.data.dto.SearchResponse
 
 interface Api {
@@ -53,5 +59,22 @@ interface Api {
          @Query("salary") salary: Int,
          @Query("only_with_salary") onlyWithSalary: Boolean,
      ): SearchResponse*/
+    @Headers(
+        "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",
+        "HH-User-Agent: EmployMe (gerzag96@gmail.com)"
+    )
+    @GET("/areas/countries")
+    suspend fun getCountries():List<CountryDto>
+
+
+    @Headers(
+        "Authorization: Bearer ${BuildConfig.HH_ACCESS_TOKEN}",
+        "HH-User-Agent: EmployMe (gerzag96@gmail.com)"
+    )
+    @GET("/areas")
+    suspend fun getAreas(
+    ): List<AreasDto>
+
+
 
 }
