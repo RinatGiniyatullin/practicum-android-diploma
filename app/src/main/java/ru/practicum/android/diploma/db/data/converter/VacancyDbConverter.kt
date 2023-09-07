@@ -30,7 +30,7 @@ class VacancyDbConverter {
             name = vacancy.name,
             city = vacancy.city,
             employerName = vacancy.employerName,
-            employerLogoUrl = null,
+            employerLogoUrl = vacancy.employerLogoUrl,
             salaryCurrency = vacancy.salaryCurrency,
             salaryFrom = vacancy.salaryFrom?.filterNot{it.isWhitespace()}?.toInt(),
             salaryTo = vacancy.salaryTo?.filterNot{it.isWhitespace()}?.toInt(),
