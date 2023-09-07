@@ -54,6 +54,6 @@
     <string name="dmitriy">Дмитрий Сергеевич Харакшинов</string>
     <string name="german">Герман Романович Заговенко</string>
     <string name="aleksey">Алексей Михайлович Путилов</string>
-
+    <string name="write_to_email">Хотите написать на этот email?</string>
 
 </resources>

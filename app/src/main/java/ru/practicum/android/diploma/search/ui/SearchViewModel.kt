@@ -19,20 +19,18 @@ class SearchViewModel(
     private var lastSearchText: String? = null
     private var currentPage: Int = 0
     private var maxPages: Int = 1
+    private var isNextPageLoading = true
     private val vacanciesList = mutableListOf<Vacancy>()
 
-    private val stateLiveData = MutableLiveData<SearchState>()
+    private var _viewStateLiveData = MutableLiveData<SearchState>()
+    val viewStateLiveData: LiveData<SearchState> = _viewStateLiveData
 
     private var _iconStateLiveData = MutableLiveData<IconState>()
     val iconStateLiveData: LiveData<IconState> = _iconStateLiveData
 
-    fun observeState(): LiveData<SearchState> = stateLiveData
-    private fun renderState(state: SearchState) {
-        stateLiveData.postValue(state)
-    }
-
     fun clearInputEditText() {
         lastSearchText = null
+        vacanciesList.clear()
     }
 
     fun setOnFocus(editText: String?, hasFocus: Boolean) {
@@ -42,50 +40,33 @@ class SearchViewModel(
         if (!hasFocus && editText.isNullOrEmpty()) _iconStateLiveData.postValue(IconState.SearchIcon)
     }
 
-    fun searchVacancy(searchText: String) {
+    fun search(searchText: String) {
         if (lastSearchText == searchText) {
             return
         } else {
-            lastSearchText = searchText
-            if (searchText.isNotEmpty()) {
-                renderState(SearchState.Loading)
-
-                if (currentPage < maxPages) {
-                    viewModelScope.launch {
-                        interactor.loadVacancies(searchText)
-                            .collect { pair ->
-                                processResult(pair.first, pair.second)
-                            }
-                    }
-                }
-            }
+            vacanciesList.clear()
+            getVacancies(searchText)
         }
     }
 
-    /*  Заготовка для фильтров
+    fun getVacancies(searchText: String) {
 
-    fun getVacancies(newSearchText: String) {
-          if (newSearchText.isNotEmpty()) {
-              renderState(SearchState.Loading)
-              viewModelScope.launch {
+        if (searchText.isEmpty()) return
+        if (searchText.isNotEmpty() && vacanciesList.isEmpty()) {
+            _viewStateLiveData.postValue(SearchState.FirstLoading)
+        }
+        if (searchText.isNotEmpty() && vacanciesList.isNotEmpty()) {
+            _viewStateLiveData.postValue(SearchState.AddLoading)
+        }
 
-                  val options: HashMap<String, String> = HashMap()
-                  options["searchRequest"] = searchRequest
-                  if (page.isNotEmpty()) options["page"] = page
-                  if (perPage.isNotEmpty()) options["per_page"] = perPage //20
-                  if (area.isNotEmpty()) options["area"] = area
-                  if (industry.isNotEmpty()) options["industry"] = industry
-                  if (salary.isNotEmpty()) options["salary"] = salary
-                  if (onlyWithSalary.isNotEmpty()) options["only_with_salary"] = onlyWithSalary
-
-                  //   SearchService(options).execute()
-                  interactor.getVacancies(options)
-                      .collect { pair ->
-                          processResult(pair.first, pair.second)
-                      }
-              }
-          }
-      }*/
+        viewModelScope.launch {
+            interactor.loadVacanciesBig(searchText, currentPage, NUMBER_LOAD_VACANCIES)
+                .collect { pair ->
+                    processResult(pair.first, pair.second)
+                }
+            lastSearchText = searchText
+        }
+    }
 
     private fun processResult(foundVacancies: List<Vacancy>?, errorMessage: String?) {
         if (foundVacancies != null) {
@@ -93,15 +74,15 @@ class SearchViewModel(
         }
         when {
             errorMessage != null -> {
-                renderState(
+                _viewStateLiveData.postValue(
                     SearchState.Error(
-                        errorMessage = resourceProvider.getString(R.string.no_connection)
+                        errorMessage = errorMessage
                     )
                 )
             }
 
             vacanciesList.isEmpty() -> {
-                renderState(
+                _viewStateLiveData.postValue(
                     SearchState.Empty(
                         message = resourceProvider.getString(R.string.no_vacancies)
                     )
@@ -109,13 +90,36 @@ class SearchViewModel(
             }
 
             else -> {
-                renderState(
+                _viewStateLiveData.postValue(
                     SearchState.VacancyContent(
                         vacancies = vacanciesList,
                         foundValue = vacanciesList[0].found
                     )
                 )
+                maxPages = vacanciesList[0].pages
+                currentPage += 1
+                isNextPageLoading = false
             }
         }
     }
+
+    fun onLastItemReached() {
+        if (currentPage < maxPages && isNextPageLoading == false) {
+            getVacancies(lastSearchText ?: "")
+        }
+    }
+
+    companion object {
+        private const val NUMBER_LOAD_VACANCIES = 20
+    }
 }
+/* Форма для фильтрации
+        val options: HashMap<String, Any> = HashMap()
+
+        options["text"] = searchText
+        options["page"] = currentPage
+        options["per_page"] = 20
+        if (area.isNotEmpty()) options["area"] = area
+        if (industry.isNotEmpty()) options["industry"] = industry
+        if (salary.isNotEmpty()) options["salary"] = salary
+        if (onlyWithSalary.isNotEmpty()) options["only_with_salary"] = onlyWithSalary*/

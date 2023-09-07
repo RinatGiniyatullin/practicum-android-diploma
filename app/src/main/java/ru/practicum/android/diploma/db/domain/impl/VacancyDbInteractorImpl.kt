@@ -1,6 +1,8 @@
 package ru.practicum.android.diploma.db.domain.impl
 
+import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.db.data.converter.VacancyDbConverter
+import ru.practicum.android.diploma.db.data.entity.VacancyEntity
 import ru.practicum.android.diploma.db.domain.api.VacancyDbInteractor
 import ru.practicum.android.diploma.db.domain.api.VacancyDbRepository
 import ru.practicum.android.diploma.search.domain.models.Vacancy
@@ -18,11 +20,7 @@ class VacancyDbInteractorImpl(
         vacancyDbRepository.deleteVacancy(vacancyDbConverter.map(vacancy))
     }
 
-    override suspend fun getFavouriteVacancy(): List<Vacancy> {
-        var vacancies = listOf<Vacancy>()
-        vacancyDbRepository.getFavouriteVacancy().collect(){vacanciesEntity ->
-            vacancies = vacanciesEntity.map {vacancyEntity -> vacancyDbConverter.map(vacancyEntity)}
-        }
-        return vacancies
+    override suspend fun getFavouriteVacancy(): Flow<List<VacancyEntity>> {
+        return vacancyDbRepository.getFavouriteVacancy()
     }
 }

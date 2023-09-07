@@ -55,6 +55,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="?attr/black_to_white_color"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/card"
         app:layout_constraintTop_toBottomOf="@id/vacancy_name"
         tools:text="Авто.ру" />
@@ -68,6 +69,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textColor="?attr/black_to_white_color"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/card"
         app:layout_constraintTop_toBottomOf="@id/employer_name"
         tools:text="от 40 000 до 80 000 ₽" />

@@ -10,13 +10,15 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.practicum.android.diploma.db.AppDataBase
+import ru.practicum.android.diploma.details.data.ExternalNavigatorImpl
+import ru.practicum.android.diploma.details.domain.ExternalNavigator
 import ru.practicum.android.diploma.filters.data.FiltersStorage
 import ru.practicum.android.diploma.filters.data.localwork.SharedPrefStorage
 import ru.practicum.android.diploma.search.data.NetworkClient
-import ru.practicum.android.diploma.search.data.network.Api
-import ru.practicum.android.diploma.search.data.network.RetrofitNetworkClient
 import ru.practicum.android.diploma.search.data.ResourceProvider
 import ru.practicum.android.diploma.search.data.ResourceProviderImpl
+import ru.practicum.android.diploma.search.data.network.Api
+import ru.practicum.android.diploma.search.data.network.RetrofitNetworkClient
 
 val dataModule = module {
     factory { Gson() }
@@ -56,4 +58,6 @@ val dataModule = module {
         )
     }
     singleOf(::SharedPrefStorage).bind<FiltersStorage>()
+
+    singleOf(::ExternalNavigatorImpl).bind<ExternalNavigator>()
 }

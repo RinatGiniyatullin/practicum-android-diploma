@@ -10,6 +10,7 @@ import ru.practicum.android.diploma.search.data.dto.Response
 data class VacancyDetailsResponse (
     val contacts: Contacts?,
     val description: String,
+    val alternate_url: String,
     val employer: Employer?,
     val experience: Experience?,
     val key_skills: Array<KeySkill>,

@@ -7,6 +7,7 @@ import kotlinx.android.parcel.Parcelize
 data class VacancyDetails(
     val contacts: Contacts?,
     val description: String,
+    val alternate_url: String,
     val employer: Employer?,
     val experience: Experience?,
     val key_skills: Array<KeySkill>,
