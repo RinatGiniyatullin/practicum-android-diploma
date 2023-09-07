@@ -19,7 +19,6 @@ import ru.practicum.android.diploma.filters.presentation.models.ShowViewState
 import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.COUNTRIES
 import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.INDUSTRIES
 import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.REGION
-import ru.practicum.android.diploma.search.ui.IconState
 
 class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
 
@@ -172,6 +171,10 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
             filtersNew.industriesId+= "${it.id} "
             filtersNew.industriesName+="${it.name} "
         }
+        writeFilters()
+    }
+    fun addOnlyWithSalary(withSalary:Boolean){
+        filtersNew.onlyWithSalary = withSalary
         writeFilters()
     }
 

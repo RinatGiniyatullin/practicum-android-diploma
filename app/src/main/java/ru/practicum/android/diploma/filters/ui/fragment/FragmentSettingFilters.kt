@@ -91,6 +91,9 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         binding.clearIcon.setOnClickListener {
             binding.salaryEditText.text?.clear()
         }
+        binding.filterCheckbox.setOnClickListener {
+            viewModel.addOnlyWithSalary(binding.filterCheckbox.isChecked)
+        }
 
     }
     private fun hideKeyBoard() {
@@ -141,6 +144,8 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
             binding.industryClear.visibility = View.VISIBLE
         }
         if(filters.salary!=0)binding.salaryEditText.setText(filters.salary.toString())
+
+        if(filters.onlyWithSalary!=false)binding.filterCheckbox.isChecked = true
 
     }
     private fun clearPlaceWork(){
