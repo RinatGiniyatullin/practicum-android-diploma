@@ -39,8 +39,7 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         switchToPlaceOfWorkScreen()
         switchToIndustriesScreen()
         back()
-        hideKeyBoard()
-
+        viewModel.showFiltersData()
         binding.salaryEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 hideKeyBoard()
@@ -53,7 +52,6 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         }
         binding.salaryEditText.setOnFocusChangeListener{_, hasFocus ->
             if(hasFocus){
-                binding.salaryEditText.text?.clear()
                 binding.clearIcon.visibility = View.GONE
             }
 
@@ -73,7 +71,7 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         viewModel.getFiltersStateLiveData().observe(requireActivity()){
             render(it)
         }
-        viewModel.showFiltersData()
+
         binding.placeOfWorkClear.setOnClickListener {
             clearPlaceWork()
         }
@@ -84,6 +82,9 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
             clearPlaceWork()
             clearIndustries()
             viewModel.writeFilters()
+            binding.salaryEditText.text?.clear()
+            viewModel.addOnlyWithSalary(false)
+            binding.filterCheckbox.isChecked = false
         }
         binding.buttonApply.setOnClickListener {
             viewModel.writeFilters()
