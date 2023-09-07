@@ -160,11 +160,11 @@
             android:layout_height="wrap_content"
             android:background="@drawable/field_for_search_edit_text"
             android:hint="@string/expected_salary"
-            android:textColor="?attr/gray_to_white_color"
+            android:inputType="number"
             android:maxLines="1"
 
             android:singleLine="true"
-            android:inputType="number"
+            android:textColor="?attr/gray_to_white_color"
 
             />
     </com.google.android.material.textfield.TextInputLayout>
@@ -176,7 +176,7 @@
         android:src="@drawable/close"
         app:layout_constraintBottom_toBottomOf="@id/salary_text_input"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
-        android:layout_marginEnd="13dp"
+        android:layout_marginEnd="@dimen/margin_12"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="@id/salary_text_input" />
     <TextView

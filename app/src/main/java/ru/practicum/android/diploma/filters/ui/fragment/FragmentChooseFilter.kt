@@ -104,15 +104,20 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         adapter?.setCountry(countriesList)
         binding.searchEditText.visibility = View.GONE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_country)
+
     }
     private fun showIndustriesScreen(industryList:List<Industries>){
         adapter?.setIndustrie(industryList)
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_industry)
+        binding.searchEditText.setHint(requireActivity().getText(R.string.choose_of_industry))
+        binding.searchEditText.visibility = View.VISIBLE
     }
     private fun showAreasScreen(areas:List<Region>){
         adapter?.setRegion(areas)
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_region)
+        binding.searchEditText.setHint(requireActivity().getText(R.string.choose_of_region))
+        binding.searchEditText.visibility = View.VISIBLE
     }
 }
