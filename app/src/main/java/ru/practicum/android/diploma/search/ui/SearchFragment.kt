@@ -95,6 +95,10 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             clearInputEditText()
         }
 
+        binding.filterIcon.setOnClickListener {
+            openFilters()
+        }
+
         adapter.itemClickListener = { position, vacancy ->
             onVacancyClickDebounce(vacancy)
         }
@@ -231,6 +235,12 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         findNavController().navigate(
             R.id.action_searchFragment_to_vacancyFragment,
             VacancyFragment.createArgs(Gson().toJson(vacancy))
+        )
+    }
+
+    private fun openFilters() {
+        findNavController().navigate(
+            R.id.action_searchFragment_to_settingFilters
         )
     }
 
