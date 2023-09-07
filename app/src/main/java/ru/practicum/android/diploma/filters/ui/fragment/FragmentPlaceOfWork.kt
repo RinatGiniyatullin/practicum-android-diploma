@@ -30,6 +30,7 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getFiltersStateLiveData().observe(requireActivity()) { render(it) }
         viewModel.showFiltersData()
+        back()
 
         binding.clearCountryName.setOnClickListener {
             clearCountry()
@@ -81,6 +82,12 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
         when (state) {
             is FiltersDataState.filtersData -> showFiltersData(state.filters)
         }
+    }
+    private fun back(){
+        binding.arrowback.setOnClickListener {
+            findNavController().navigateUp()
+        }
+
     }
 
     private fun showFiltersData(filters: Filters) {

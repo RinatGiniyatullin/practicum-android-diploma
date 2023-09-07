@@ -224,6 +224,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         binding.progressBarInEnd.visibility = View.GONE
         hideKeyBoard()
         adapter.notifyDataSetChanged()
+
     }
 
     private fun search(text: String) {
