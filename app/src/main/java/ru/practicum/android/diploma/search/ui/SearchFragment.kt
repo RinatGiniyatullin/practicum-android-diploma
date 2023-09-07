@@ -145,6 +145,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         binding.progressBarInEnd.visibility = View.GONE
         hideKeyBoard()
         adapter.notifyDataSetChanged()
+
     }
 
     @SuppressLint("RestrictedApi", "CommitPrefEdits")

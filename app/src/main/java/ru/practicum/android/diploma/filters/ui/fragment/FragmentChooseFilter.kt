@@ -28,7 +28,6 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     private val areaList = mutableListOf<Region>()
     private val industryList = mutableListOf<Industries>()
 
-
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -99,7 +98,6 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
             is ScreenState.showCountriesScreen -> {
                 showCountriesScreen(state.countriesList)
             }
-
         }
     }
     private fun showCountriesScreen(countriesList:List<Areas>){

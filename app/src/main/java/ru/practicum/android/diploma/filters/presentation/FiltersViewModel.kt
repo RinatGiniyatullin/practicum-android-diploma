@@ -15,14 +15,17 @@ import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
+import ru.practicum.android.diploma.filters.presentation.models.ShowViewState
 import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.COUNTRIES
 import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.INDUSTRIES
 import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.REGION
+import ru.practicum.android.diploma.search.ui.IconState
 
 class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<ScreenState>()
     private val filtersDataStateLiveData = MutableLiveData<FiltersDataState>()
+    private var showViewState = MutableLiveData<ShowViewState>()
     private var getAreasJob: Job? = null
     private var getFiltersJob: Job? = null
     private var getIndustriesJob:Job? = null
@@ -38,6 +41,7 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
 
     fun getScreenStateLiveData(): LiveData<ScreenState> = screenStateLiveData
     fun getFiltersStateLiveData():LiveData<FiltersDataState> = filtersDataStateLiveData
+    fun getShowViewStateLiveData():LiveData<ShowViewState> = showViewState
 
     init {
         getFilters()
@@ -136,7 +140,18 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         writeFilters()
         Log.d("filters", "$region")
     }
+    fun addSalary(query:Int){
+            filtersNew.salary = query.toInt()
+            Log.d("salary", filtersNew.salary.toString())
+    }
+    fun setOnFocus(editText: String?, hasFocus: Boolean) {
+        if (hasFocus&&editText!!.isEmpty()) showViewState.postValue(ShowViewState.hideClearIcon)
+        if(hasFocus&&editText!!.isNotEmpty())showViewState.postValue(ShowViewState.showClearIcon)
+        if(!hasFocus&&editText!!.isEmpty()) addSalary(0)
+        if (!hasFocus && editText!!.isNotEmpty()) addSalary(editText.toInt())
+        writeFilters()
 
+    }
     fun addArea(RegionList: List<Region>) {
         filtersNew.areasNames = ""
         filtersNew.areasId = ""
