@@ -41,12 +41,14 @@ class FiltersAdapter(val onClickListener:FilterSelectionClickListener):RecyclerV
     fun setRegion(newAreasList:List<Region>){
         industryList.clear()
         countryList.clear()
+        areasList.clear()
         areasList.addAll(newAreasList)
         notifyDataSetChanged()
     }
     fun setIndustrie(newIndustryList:List<Industries>){
         areasList.clear()
         countryList.clear()
+        industryList.clear()
         industryList.addAll(newIndustryList)
         notifyDataSetChanged()
     }

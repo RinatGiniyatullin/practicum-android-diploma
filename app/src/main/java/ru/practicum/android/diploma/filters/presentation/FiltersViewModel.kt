@@ -53,7 +53,6 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
 
     init {
         getFilters()
-        Log.d("Filters", "$filtersNew")
     }
 
     fun setScreen(nameOfScreen: String) {
@@ -153,8 +152,8 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         writeFilters()
     }
 
-    fun addSalary(query: Int) {
-        filtersNew.salary = query.toInt()
+    fun addSalary(query: String) {
+        query.takeIf { it.isNotEmpty() }?.let { filtersNew.salary = query.toInt() }
         writeFilters()
         Log.d("salary", filtersNew.salary.toString())
     }
@@ -162,10 +161,6 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     fun setOnFocus(editText: String?, hasFocus: Boolean) {
         if (hasFocus && editText!!.isEmpty()) showViewState.postValue(ShowViewState.hideClearIcon)
         if (hasFocus && editText!!.isNotEmpty()) showViewState.postValue(ShowViewState.showClearIcon)
-        if (!hasFocus && editText!!.isEmpty()) addSalary(0)
-        if (!hasFocus && editText!!.isNotEmpty()) addSalary(editText.toInt())
-        writeFilters()
-
     }
 
     fun addArea(RegionList: List<Region>) {
@@ -216,7 +211,6 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         writeFiltersJob = viewModelScope.launch {
             filtersInteractor.writeFilters(filtersNew)
         }
-        Log.d("filters", filtersNew.toString())
     }
 
     fun showFiltersData() {
@@ -242,6 +236,29 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         filtersNew.industriesName = null
         filtersNew.industriesId = null
         writeFilters()
+    }
+     fun searchIndustry(searchTerm: String?) {
+         val foundIndustriesList = mutableListOf<Industries>()
+         foundIndustriesList.clear()
+         if(searchTerm.isNullOrEmpty()){
+             screenStateLiveData.postValue(ScreenState.showIndustriesScreen(newIndustries))
+         }else{
+             newIndustries.map { if(it.name.contains(searchTerm,  ignoreCase = true))foundIndustriesList.add(it) }
+             screenStateLiveData.postValue(ScreenState.showIndustriesScreen(foundIndustriesList))
+         }
+
+
+    }
+    fun searchRegion(searchTerm: String?){
+        val foundRegionList = mutableListOf<Region>()
+        foundRegionList.clear()
+        if(searchTerm.isNullOrEmpty()){
+            screenStateLiveData.postValue(ScreenState.showAreasScreen(region))
+
+        }else {
+            region.map { if(it.name.contains(searchTerm,  ignoreCase = true)) foundRegionList.add(it)}
+                screenStateLiveData.postValue(ScreenState.showAreasScreen(foundRegionList))
+        }
     }
 
 }

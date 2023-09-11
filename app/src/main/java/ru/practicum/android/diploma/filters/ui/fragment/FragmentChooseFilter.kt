@@ -1,9 +1,13 @@
 package ru.practicum.android.diploma.filters.ui.fragment
+import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -11,10 +15,10 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFilterSelectionBinding
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Industries
-import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
+import ru.practicum.android.diploma.filters.presentation.models.ShowViewState
 import ru.practicum.android.diploma.filters.ui.adapter.FilterSelectionClickListener
 import ru.practicum.android.diploma.filters.ui.adapter.FiltersAdapter
 import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.SCREEN
@@ -27,6 +31,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     private var screen:String? =null
     private val areaList = mutableListOf<Region>()
     private val industryList = mutableListOf<Industries>()
+    private var isRegionScreen:Boolean = false
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -38,6 +43,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getScreenStateLiveData().observe(requireActivity()){chooseScreen(it)}
+        viewModel.getShowViewStateLiveData().observe(requireActivity()){showView(it)}
         screen = arguments?.getString(SCREEN)
         viewModel.setScreen(screen!!)
         initAdapter()
@@ -45,9 +51,9 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.recyclerViewFilters.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFilters.adapter = adapter
         applyButtom()
+        listeners()
 
     }
-
     private fun initAdapter(){
         adapter = FiltersAdapter(object: FilterSelectionClickListener {
             override fun onClickRegion(model: Region?, isChecked: Boolean) {
@@ -73,7 +79,33 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
                 findNavController().navigateUp()
 
             }
+
         })
+    }
+    private fun listeners(){
+        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            if(!hasFocus)hideKeyBoard()
+            viewModel.setOnFocus(binding.searchEditText.text.toString(), hasFocus)
+
+        }
+        binding.searchEditText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                viewModel.setOnFocus(s.toString(), binding.searchEditText.hasFocus())
+                when(isRegionScreen){
+                    true -> viewModel.searchRegion(s.toString())
+                    else -> viewModel.searchIndustry(s.toString())
+                }
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
+        binding.editTextCloseImage.setOnClickListener {
+            binding.searchEditText.text.clear()
+            binding.searchEditText.clearFocus()
+            hideKeyBoard()
+        }
     }
     private fun applyButtom(){
         binding.buttonApply.setOnClickListener {
@@ -104,20 +136,56 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         adapter?.setCountry(countriesList)
         binding.searchEditText.visibility = View.GONE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_country)
+        if(countriesList.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
+        }else{
+            binding.placeholderImage.visibility = View.GONE
+        }
 
     }
     private fun showIndustriesScreen(industryList:List<Industries>){
+        isRegionScreen = false
         adapter?.setIndustrie(industryList)
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_industry)
         binding.searchEditText.setHint(requireActivity().getText(R.string.choose_of_industry))
         binding.searchEditText.visibility = View.VISIBLE
+        if(industryList.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
+        }else{
+            binding.placeholderImage.visibility = View.GONE
+        }
+
     }
     private fun showAreasScreen(areas:List<Region>){
+        isRegionScreen = true
         adapter?.setRegion(areas)
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_region)
         binding.searchEditText.setHint(requireActivity().getText(R.string.choose_of_region))
         binding.searchEditText.visibility = View.VISIBLE
+        if(areas.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
+        }else{
+            binding.placeholderImage.visibility = View.GONE
+        }
+
     }
+    private fun hideKeyBoard() {
+            val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(view?.getWindowToken(), 0)
+    }
+    fun showView(state: ShowViewState){
+        when(state){
+            is ShowViewState.showClearIcon -> showClearIcon()
+            is ShowViewState.hideClearIcon -> hideClearIcon()
+        }
+    }
+    fun showClearIcon(){
+        binding.editTextSearchImage.visibility = View.GONE
+        binding.editTextCloseImage.visibility = View.VISIBLE
+    }
+    fun hideClearIcon(){
+        binding.editTextSearchImage.visibility = View.VISIBLE
+        binding.editTextCloseImage.visibility = View.GONE
+
+    }
+
 }

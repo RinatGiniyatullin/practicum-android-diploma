@@ -15,7 +15,6 @@ class SearchViewModel(
     private val interactor: SearchInteractor,
     private val resourceProvider: ResourceProvider,
 ) : ViewModel() {
-
     private var lastSearchText: String? = null
     private var currentPage: Int = 0
     private var maxPages: Int = 1
