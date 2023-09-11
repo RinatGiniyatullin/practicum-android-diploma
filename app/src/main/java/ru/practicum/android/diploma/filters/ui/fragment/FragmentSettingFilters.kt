@@ -61,7 +61,14 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
             override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                if(s.isNullOrEmpty()){
+                    viewModel.addSalary("0")
+                }else{
+                    viewModel.addSalary(s.toString())
+                }
+
                 viewModel.setOnFocus(s.toString(), binding.salaryEditText.hasFocus())
+
             }
 
             override fun afterTextChanged(s: Editable?) {}
