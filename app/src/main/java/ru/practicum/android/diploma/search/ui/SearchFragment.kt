@@ -45,9 +45,14 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         viewModel.viewStateLiveData.observe(viewLifecycleOwner) { render(it) }
 
-        viewModel.iconStateLiveData.observe(viewLifecycleOwner) { state ->
+        viewModel.searchIconStateLiveData.observe(viewLifecycleOwner) { state ->
             changeIconInEditText(state)
         }
+
+        viewModel.filterIconStateLiveData.observe(viewLifecycleOwner) { state ->
+            changeFilterIcon(state)
+        }
+
         initAdapter()
         listener()
     }
@@ -60,6 +65,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
     private fun listener() {
 
+        viewModel.showFilters()
+
         vacancySearchDebounce = debounce<String>(
             SEARCH_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
@@ -69,6 +76,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         }
 
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) hideKeyBoard()
             viewModel.setOnFocus(binding.searchEditText.text.toString(), hasFocus)
         }
 
@@ -162,10 +170,17 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         adapter.setVacancies(null)
     }
 
-    private fun changeIconInEditText(state: IconState) {
+    private fun changeIconInEditText(state: SearchIconState) {
         when (state) {
-            IconState.CloseIcon -> setCloseIconForEditText()
-            IconState.SearchIcon -> setSearchIconForEditText()
+            SearchIconState.CloseSearchIcon -> setCloseIconForEditText()
+            SearchIconState.SearchSearchIcon -> setSearchIconForEditText()
+        }
+    }
+
+    private fun changeFilterIcon(state: FilterIconState) {
+        when (state) {
+            FilterIconState.NoFilters -> showEmptyFilterIcon()
+            FilterIconState.YesFilters -> showNoEmptyFilterIcon()
         }
     }
 
@@ -177,6 +192,14 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private fun setSearchIconForEditText() {
         binding.editTextCloseImage.visibility = View.GONE
         binding.editTextSearchImage.visibility = View.VISIBLE
+    }
+
+    private fun showEmptyFilterIcon() {
+        binding.filterIcon.setImageResource(R.drawable.filter_off)
+    }
+
+    private fun showNoEmptyFilterIcon() {
+        binding.filterIcon.setImageResource(R.drawable.filter_on)
     }
 
     private fun hideKeyBoard() {
@@ -203,6 +226,14 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         binding.progressBarInEnd.visibility = View.VISIBLE
     }
 
+    private fun showStopLoadind() {
+        binding.searchResult.visibility = View.VISIBLE
+        binding.searchRecyclerView.visibility = View.VISIBLE
+        binding.placeholderImage.visibility = View.GONE
+        binding.progressBarForLoad.visibility = View.GONE
+        binding.progressBarInEnd.visibility = View.GONE
+    }
+
     private fun render(state: SearchState) {
         when (state) {
             is SearchState.FirstLoading -> showLoading()
@@ -210,11 +241,13 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             is SearchState.VacancyContent -> showVacanciesList(state.vacancies, state.foundValue)
             is SearchState.Error -> showError(state.errorMessage)
             is SearchState.Empty -> showEmpty(state.message)
+            SearchState.StopLoad -> showStopLoadind()
         }
     }
 
     private fun clearInputEditText() {
-        binding.searchEditText.setText("")
+        binding.searchEditText.text.clear()
+        binding.searchEditText.clearFocus()
         viewModel.clearInputEditText()
 
         binding.searchResult.visibility = View.GONE
@@ -224,7 +257,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         binding.progressBarInEnd.visibility = View.GONE
         hideKeyBoard()
         adapter.notifyDataSetChanged()
-
     }
 
     private fun search(text: String) {

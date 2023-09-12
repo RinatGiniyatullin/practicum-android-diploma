@@ -5,8 +5,6 @@ import kotlinx.coroutines.flow.flow
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.details.data.VacancyDetailsResponse
 import ru.practicum.android.diploma.details.domain.models.VacancyDetails
-import ru.practicum.android.diploma.search.data.dto.SearchRequest
-import ru.practicum.android.diploma.search.data.dto.SearchRequestBig
 import ru.practicum.android.diploma.search.data.dto.SearchRequestDetails
 import ru.practicum.android.diploma.search.data.dto.SearchRequestOptions
 import ru.practicum.android.diploma.search.data.dto.SearchRequestSimilarVacancies
@@ -22,29 +20,8 @@ class SearchRepositoryImpl(
     private val networkClient: NetworkClient,
     private val resourceProvider: ResourceProvider,
 ) : SearchRepository {
-    override fun searchVacancies(query: String): Flow<Resource<List<Vacancy>>> = flow {
-        val response = networkClient.doRequest(SearchRequest(query))
-        when (response.resultCode) {
-            ERROR -> {
-                emit(Resource.Error(resourceProvider.getString(R.string.check_connection)))
-            }
 
-            SUCCESS -> {
-                with(response as SearchResponse) {
-                    val vacanciesList = items.map { mapVacancyFromDto(it, found, pages) }
-                    emit(Resource.Success(vacanciesList))
-                }
-
-            }
-
-            else -> {
-                emit(Resource.Error(resourceProvider.getString(R.string.server_error)))
-            }
-        }
-
-    }
-
-    override fun loadVacanciesQueryMap(options: HashMap<String, Any>): Flow<Resource<List<Vacancy>>> =
+    override fun loadVacanciesQueryMap(options: HashMap<String, String>): Flow<Resource<List<Vacancy>>> =
         flow {
             val response = networkClient.doRequest(SearchRequestOptions(options))
             when (response.resultCode) {
@@ -57,7 +34,6 @@ class SearchRepositoryImpl(
                         val vacanciesList = items.map { mapVacancyFromDto(it, found, pages) }
                         emit(Resource.Success(vacanciesList))
                     }
-
                 }
 
                 else -> {
@@ -90,32 +66,6 @@ class SearchRepositoryImpl(
     override fun getSimilarVacanciesById(vacancyId: String): Flow<Resource<List<Vacancy>>> = flow {
         val response =
             networkClient.getSimilarVacanciesById(SearchRequestSimilarVacancies(vacancyId))
-        when (response.resultCode) {
-            ERROR -> {
-                emit(Resource.Error(resourceProvider.getString(R.string.check_connection)))
-            }
-
-            SUCCESS -> {
-                with(response as SearchResponse) {
-                    val vacanciesList = items.map { mapVacancyFromDto(it, found, pages) }
-                    emit(Resource.Success(vacanciesList))
-                }
-
-            }
-
-            else -> {
-                emit(Resource.Error(resourceProvider.getString(R.string.server_error)))
-            }
-        }
-    }
-
-    override fun loadVacanciesBig(
-        searchText: String,
-        currentPage: Int,
-        perPage: Int,
-    ): Flow<Resource<List<Vacancy>>> = flow {
-        val response =
-            networkClient.doRequest(SearchRequestBig(searchText, currentPage, perPage))
         when (response.resultCode) {
             ERROR -> {
                 emit(Resource.Error(resourceProvider.getString(R.string.check_connection)))

@@ -7,7 +7,7 @@ import ru.practicum.android.diploma.filters.domain.models.Industry
 interface FiltersInteractor {
     suspend fun getAreas(): Flow<Pair<List<Areas>?, String?>>
 
-    suspend fun getFilters():Flow<Filters>?
+    suspend fun getFilters():Flow<Filters>
 
     suspend fun writeFilters(filters: Filters)
     suspend fun getIndustries():Flow<Pair<List<Industry>?, String?>>

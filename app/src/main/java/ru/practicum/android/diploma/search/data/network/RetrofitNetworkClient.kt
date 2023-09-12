@@ -11,34 +11,12 @@ import ru.practicum.android.diploma.search.data.NetworkClient
 import ru.practicum.android.diploma.search.data.dto.AreaSearchRequest
 import ru.practicum.android.diploma.search.data.dto.IndustriesSearchRequest
 import ru.practicum.android.diploma.search.data.dto.Response
-import ru.practicum.android.diploma.search.data.dto.SearchRequestBig
-import ru.practicum.android.diploma.search.data.dto.SearchRequest
 import ru.practicum.android.diploma.search.data.dto.SearchRequestDetails
+import ru.practicum.android.diploma.search.data.dto.SearchRequestOptions
 import ru.practicum.android.diploma.search.data.dto.SearchRequestSimilarVacancies
 
 
 class RetrofitNetworkClient(private val api: Api, private val context: Context) : NetworkClient {
-
-    /*  Форма для запроса с QueryMap
-
-    @RequiresApi(Build.VERSION_CODES.M)
-     override suspend fun doRequest(dto: Any): Response {
-         if (isConnected() == false) {
-             return Response().apply { resultCode = -1 }
-         }
-         if (dto !is SearchRequestOptions) {
-             return Response().apply { resultCode = 400 }
-         }
-         return withContext(Dispatchers.IO) {
-             try {
-                 val response = api.searchQueryMap(dto.options)
-                 response.apply { resultCode = 200 }
-             } catch (e: Throwable) {
-                 Response().apply { resultCode = 500 }
-
-           }
-       }
-   }*/
 
     @RequiresApi(Build.VERSION_CODES.M)
     override suspend fun getAres(dto: Any): Response {
@@ -85,10 +63,10 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
         if (isConnected() == false) {
             return Response().apply { resultCode = -1 }
         }
-        if(dto!is IndustriesSearchRequest){
+        if (dto !is IndustriesSearchRequest) {
             return Response().apply { resultCode = 400 }
         }
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             try {
                 val response = Response()
                 val result = api.getIndustries()
@@ -96,7 +74,7 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
                     resultCode = 200
                     resultIndustries = result
                 }
-            }catch(e:Throwable){
+            } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }
             }
         }
@@ -120,34 +98,17 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
         }
     }
 
-    /* Запрос для фильтров
-    @RequiresApi(Build.VERSION_CODES.M)
-     override suspend fun doRequest(dto: Any): Response {
-         if (isConnected() == false) {
-             return Response().apply { resultCode = -1 }
-         }
-         if (dto !is SearchRequestOptions) {
-             return Response().apply { resultCode = 400 }
-         }
-         return withContext(Dispatchers.IO) {
-             try {
-                 val response = api.getVacancies(dto.options)
-                 response.apply { resultCode = 200 }
-             } catch (e: Throwable) {
-                 Response().apply { resultCode = 500 }*/
-
-
     @RequiresApi(Build.VERSION_CODES.M)
     override suspend fun doRequest(dto: Any): Response {
         if (isConnected() == false) {
             return Response().apply { resultCode = -1 }
         }
-        if (dto !is SearchRequestBig) {
+        if (dto !is SearchRequestOptions) {
             return Response().apply { resultCode = 400 }
         }
         return withContext(Dispatchers.IO) {
             try {
-                val response = api.searchBig(dto.searchRequest, dto.page, dto.per_page)
+                val response = api.searchQueryMap(dto.options)
                 response.apply { resultCode = 200 }
             } catch (e: Throwable) {
                 Response().apply { resultCode = 500 }
@@ -155,7 +116,6 @@ class RetrofitNetworkClient(private val api: Api, private val context: Context) 
             }
         }
     }
-
 
     @RequiresApi(Build.VERSION_CODES.M)
     private fun isConnected(): Boolean {

@@ -20,7 +20,7 @@ import ru.practicum.android.diploma.util.BindingFragment
 import ru.practicum.android.diploma.util.adapter.VacancyAdapter
 import ru.practicum.android.diploma.util.debounce
 
-class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
+class SimilarVacancyFragment : BindingFragment<FragmentSimilarVacancyBinding>() {
 
     private val viewModel by viewModel<SimilarVacancyViewModel>()
     private lateinit var adapter: VacancyAdapter
@@ -28,7 +28,7 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
 
     override fun createBinding(
         inflater: LayoutInflater,
-        container: ViewGroup?
+        container: ViewGroup?,
     ): FragmentSimilarVacancyBinding {
         return FragmentSimilarVacancyBinding.inflate(inflater, container, false)
     }
@@ -40,10 +40,11 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
 
         viewModel.getSimilarVacanciesById(requireArguments().getString(VACANCY_ID)!!)
 
-        viewModel.state.observe(viewLifecycleOwner){state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                is SearchState.FirstLoading -> {}
-                is SearchState.AddLoading -> {}
+                SearchState.FirstLoading -> {}
+                SearchState.AddLoading -> {}
+                SearchState.StopLoad -> {}
                 is SearchState.VacancyContent -> showVacanciesList(state.vacancies)
                 is SearchState.Error -> showError(state.errorMessage)
                 is SearchState.Empty -> showEmpty(state.message)
@@ -53,7 +54,7 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
         initClickListeners()
     }
 
-    private fun initAdapters(){
+    private fun initAdapters() {
         adapter = VacancyAdapter(ArrayList())
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
@@ -75,7 +76,7 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
         binding.recyclerView.visibility = View.GONE
     }
 
-    private fun showToast(message: String){
+    private fun showToast(message: String) {
         Toast.makeText(requireActivity().applicationContext, message, Toast.LENGTH_LONG)
             .show()
     }
@@ -86,12 +87,12 @@ class SimilarVacancyFragment: BindingFragment<FragmentSimilarVacancyBinding>() {
         binding.recyclerView.visibility = View.GONE
     }
 
-    private fun initClickListeners(){
+    private fun initClickListeners() {
         binding.refreshButton.setOnClickListener {
             viewModel.getSimilarVacanciesById(requireArguments().getString(VACANCY_ID)!!)
         }
 
-        binding.backIcon.setOnClickListener{
+        binding.backIcon.setOnClickListener {
             findNavController().navigateUp()
         }
 
