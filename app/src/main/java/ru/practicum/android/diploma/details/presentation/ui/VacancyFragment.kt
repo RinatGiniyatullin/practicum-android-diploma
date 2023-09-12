@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.os.bundleOf
+import androidx.core.text.HtmlCompat
+import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -118,7 +120,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
         binding.requiredExperienceValue.text = if(experience != null) experience else noData
         binding.scheduleValue.text = if(schedule != null) schedule else noData
-        binding.vacancyDescriptionValue.text = vacancyDetails.description
+        binding.vacancyDescriptionValue.text = HtmlCompat.fromHtml(vacancyDetails.description, FROM_HTML_MODE_COMPACT)
         binding.vacancyKeySkillsValue.text = if(keySkills.isNotEmpty()) keySkills.joinToString { it.name } else noData
         binding.vacancyContactPersonValue.text = if(nameContact != null) nameContact else noData
         binding.vacancyContactEmailValue.text = if(emailContact != null) emailContact else noData
