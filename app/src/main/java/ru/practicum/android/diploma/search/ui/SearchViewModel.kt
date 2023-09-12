@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.R
+import ru.practicum.android.diploma.filters.domain.FiltersInteractor
 import ru.practicum.android.diploma.search.data.ResourceProvider
 import ru.practicum.android.diploma.search.domain.SearchInteractor
 import ru.practicum.android.diploma.search.domain.SearchState
@@ -14,6 +15,7 @@ import ru.practicum.android.diploma.search.domain.models.Vacancy
 class SearchViewModel(
     private val interactor: SearchInteractor,
     private val resourceProvider: ResourceProvider,
+    private val filtersInteractor: FiltersInteractor,
 ) : ViewModel() {
 
     private var lastSearchText: String? = null
@@ -21,12 +23,20 @@ class SearchViewModel(
     private var maxPages: Int = 1
     private var isNextPageLoading = true
     private val vacanciesList = mutableListOf<Vacancy>()
+    private var areasId: String? = null
+    private var industriesId: String? = null
+    private var salary: Int = 0
+    private var onlyWithSalary: Boolean = false
+    private val options = hashMapOf<String, String>()
 
     private var _viewStateLiveData = MutableLiveData<SearchState>()
     val viewStateLiveData: LiveData<SearchState> = _viewStateLiveData
 
-    private var _iconStateLiveData = MutableLiveData<IconState>()
-    val iconStateLiveData: LiveData<IconState> = _iconStateLiveData
+    private var _searchIconStateLiveData = MutableLiveData<SearchIconState>()
+    val searchIconStateLiveData: LiveData<SearchIconState> = _searchIconStateLiveData
+
+    private var _filterIconStateLiveData = MutableLiveData<FilterIconState>()
+    val filterIconStateLiveData: LiveData<FilterIconState> = _filterIconStateLiveData
 
     fun clearInputEditText() {
         lastSearchText = null
@@ -34,10 +44,18 @@ class SearchViewModel(
     }
 
     fun setOnFocus(editText: String?, hasFocus: Boolean) {
-        if (hasFocus && editText.isNullOrEmpty()) _iconStateLiveData.postValue(IconState.SearchIcon)
-        if (hasFocus && editText!!.isNotEmpty()) _iconStateLiveData.postValue(IconState.CloseIcon)
-        if (!hasFocus && editText!!.isNotEmpty()) _iconStateLiveData.postValue(IconState.SearchIcon)
-        if (!hasFocus && editText.isNullOrEmpty()) _iconStateLiveData.postValue(IconState.SearchIcon)
+        if (hasFocus && editText.isNullOrEmpty()) _searchIconStateLiveData.postValue(
+            SearchIconState.SearchSearchIcon
+        )
+        if (hasFocus && editText!!.isNotEmpty()) _searchIconStateLiveData.postValue(
+            SearchIconState.CloseSearchIcon
+        )
+        if (!hasFocus && editText!!.isNotEmpty()) _searchIconStateLiveData.postValue(
+            SearchIconState.SearchSearchIcon
+        )
+        if (!hasFocus && editText.isNullOrEmpty()) _searchIconStateLiveData.postValue(
+            SearchIconState.SearchSearchIcon
+        )
     }
 
     fun search(searchText: String) {
@@ -59,8 +77,21 @@ class SearchViewModel(
             _viewStateLiveData.postValue(SearchState.AddLoading)
         }
 
+        options["text"] = searchText
+        options["page"] = currentPage.toString()
+        options["per_page"] = NUMBER_LOAD_VACANCIES.toString()
+
         viewModelScope.launch {
-            interactor.loadVacanciesBig(searchText, currentPage, NUMBER_LOAD_VACANCIES)
+            /* interactor.loadVacanciesBig(
+                 searchText,
+                 currentPage,
+                 NUMBER_LOAD_VACANCIES,
+                 areasId,
+                 industriesId,
+                 salary,
+                 onlyWithSalary
+             )*/
+            interactor.loadVacanciesQueryMap(options)
                 .collect { pair ->
                     processResult(pair.first, pair.second)
                 }
@@ -104,22 +135,53 @@ class SearchViewModel(
     }
 
     fun onLastItemReached() {
+
+        if (currentPage == maxPages) {
+            _viewStateLiveData.postValue(SearchState.StopLoad)
+        }
         if (currentPage < maxPages && isNextPageLoading == false) {
             getVacancies(lastSearchText ?: "")
         }
+    }
+
+    private fun getFilters() {
+        viewModelScope.launch {
+            filtersInteractor.getFilters()
+                .collect { filters ->
+                    areasId = filters.areasId
+                    industriesId = filters.industriesId
+                    salary = filters.salary
+                    onlyWithSalary = filters.onlyWithSalary
+
+                    options.clear()
+                    if (areasId != null) options["area"] = areasId!!
+                    if (industriesId != null) options["industry"] = industriesId!!
+                    if (salary != 0) options["salary"] = salary.toString()
+                    options["only_with_salary"] = onlyWithSalary.toString()
+
+                    if (areasId != null || industriesId != null || salary != 0 || onlyWithSalary) {
+                        _filterIconStateLiveData.postValue(FilterIconState.YesFilters)
+                        if (!lastSearchText.isNullOrEmpty()) {
+                            vacanciesList.clear()
+                            getVacancies(lastSearchText!!)
+                        }
+                    } else {
+                        _filterIconStateLiveData.postValue(FilterIconState.NoFilters)
+                        if (!lastSearchText.isNullOrEmpty()) {
+                            vacanciesList.clear()
+                            getVacancies(lastSearchText!!)
+                        }
+
+                    }
+                }
+        }
+    }
+
+    fun showFilters() {
+        getFilters()
     }
 
     companion object {
         private const val NUMBER_LOAD_VACANCIES = 20
     }
 }
-/* Форма для фильтрации
-        val options: HashMap<String, Any> = HashMap()
-
-        options["text"] = searchText
-        options["page"] = currentPage
-        options["per_page"] = 20
-        if (area.isNotEmpty()) options["area"] = area
-        if (industry.isNotEmpty()) options["industry"] = industry
-        if (salary.isNotEmpty()) options["salary"] = salary
-        if (onlyWithSalary.isNotEmpty()) options["only_with_salary"] = onlyWithSalary*/
