@@ -27,7 +27,6 @@ import ru.practicum.android.diploma.util.debounce
 
 class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
-    lateinit var vacancy: Vacancy
     private lateinit var adapter: VacancyAdapter
     private lateinit var onVacancyClickDebounce: (Vacancy) -> Unit
     private lateinit var vacancySearchDebounce: (String) -> Unit
@@ -138,7 +137,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private fun showVacanciesList(vacancies: List<Vacancy>, foundValue: Int) {
 
         binding.searchResult.visibility = View.VISIBLE
-        binding.searchResult.text = "Найдено $foundValue вакансий"
+        binding.searchResult.text =
+            resources.getQuantityString(R.plurals.search_result_number, foundValue, foundValue)
         binding.searchRecyclerView.visibility = View.VISIBLE
         binding.placeholderImage.visibility = View.GONE
         binding.progressBarForLoad.visibility = View.GONE

@@ -17,6 +17,7 @@ class SearchViewModel(
     private val resourceProvider: ResourceProvider,
     private val filtersInteractor: FiltersInteractor,
 ) : ViewModel() {
+
     private var lastSearchText: String? = null
     private var currentPage: Int = 0
     private var maxPages: Int = 1
@@ -27,6 +28,7 @@ class SearchViewModel(
     private var salary: Int = 0
     private var onlyWithSalary: Boolean = false
     private val options = hashMapOf<String, String>()
+    private val lastOptions = hashMapOf<String, String>()
 
     private var _viewStateLiveData = MutableLiveData<SearchState>()
     val viewStateLiveData: LiveData<SearchState> = _viewStateLiveData
@@ -58,7 +60,7 @@ class SearchViewModel(
     }
 
     fun search(searchText: String) {
-        if (lastSearchText == searchText) {
+        if (searchText == lastSearchText) {
             return
         } else {
             vacanciesList.clear()
@@ -66,7 +68,7 @@ class SearchViewModel(
         }
     }
 
-    fun getVacancies(searchText: String) {
+    private fun getVacancies(searchText: String) {
 
         if (searchText.isEmpty()) return
         if (searchText.isNotEmpty() && vacanciesList.isEmpty()) {
@@ -79,22 +81,46 @@ class SearchViewModel(
         options["text"] = searchText
         options["page"] = currentPage.toString()
         options["per_page"] = NUMBER_LOAD_VACANCIES.toString()
+        if (options == lastOptions) {
+            return
+        }
 
         viewModelScope.launch {
-            /* interactor.loadVacanciesBig(
-                 searchText,
-                 currentPage,
-                 NUMBER_LOAD_VACANCIES,
-                 areasId,
-                 industriesId,
-                 salary,
-                 onlyWithSalary
-             )*/
             interactor.loadVacanciesQueryMap(options)
                 .collect { pair ->
                     processResult(pair.first, pair.second)
                 }
             lastSearchText = searchText
+            lastOptions.clear()
+            lastOptions.putAll(options)
+        }
+    }
+
+    private fun getFilters() {
+        viewModelScope.launch {
+            filtersInteractor.getFilters()
+                .collect { filters ->
+                    areasId = filters.areasId
+                    industriesId = filters.industriesId
+                    salary = filters.salary
+                    onlyWithSalary = filters.onlyWithSalary
+
+                    options.clear()
+                    if (areasId != null) options["area"] = areasId!!
+                    if (industriesId != null) options["industry"] = industriesId!!
+                    if (salary != 0) options["salary"] = salary.toString()
+                    options["only_with_salary"] = onlyWithSalary.toString()
+
+                    if (areasId != null || industriesId != null || salary != 0 || onlyWithSalary) {
+                        _filterIconStateLiveData.postValue(FilterIconState.YesFilters)
+                    } else {
+                        _filterIconStateLiveData.postValue(FilterIconState.NoFilters)
+                    }
+                    if (!lastSearchText.isNullOrEmpty()) {
+                        vacanciesList.clear()
+                        getVacancies(lastSearchText!!)
+                    }
+                }
         }
     }
 
@@ -140,39 +166,6 @@ class SearchViewModel(
         }
         if (currentPage < maxPages && isNextPageLoading == false) {
             getVacancies(lastSearchText ?: "")
-        }
-    }
-
-    private fun getFilters() {
-        viewModelScope.launch {
-            filtersInteractor.getFilters()
-                .collect { filters ->
-                    areasId = filters.areasId
-                    industriesId = filters.industriesId
-                    salary = filters.salary
-                    onlyWithSalary = filters.onlyWithSalary
-
-                    options.clear()
-                    if (areasId != null) options["area"] = areasId!!
-                    if (industriesId != null) options["industry"] = industriesId!!
-                    if (salary != 0) options["salary"] = salary.toString()
-                    options["only_with_salary"] = onlyWithSalary.toString()
-
-                    if (areasId != null || industriesId != null || salary != 0 || onlyWithSalary) {
-                        _filterIconStateLiveData.postValue(FilterIconState.YesFilters)
-                        if (!lastSearchText.isNullOrEmpty()) {
-                            vacanciesList.clear()
-                            getVacancies(lastSearchText!!)
-                        }
-                    } else {
-                        _filterIconStateLiveData.postValue(FilterIconState.NoFilters)
-                        if (!lastSearchText.isNullOrEmpty()) {
-                            vacanciesList.clear()
-                            getVacancies(lastSearchText!!)
-                        }
-
-                    }
-                }
         }
     }
 
