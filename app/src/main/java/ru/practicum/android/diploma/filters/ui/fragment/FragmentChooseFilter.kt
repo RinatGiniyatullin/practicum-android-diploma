@@ -14,7 +14,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFilterSelectionBinding
 import ru.practicum.android.diploma.filters.domain.models.Areas
+import ru.practicum.android.diploma.filters.domain.models.Country
 import ru.practicum.android.diploma.filters.domain.models.Industries
+import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
@@ -32,6 +34,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     private val areaList = mutableListOf<Region>()
     private val industryList = mutableListOf<Industries>()
     private var isRegionScreen:Boolean = false
+    var editText:String?= null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -92,7 +95,8 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
             override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                viewModel.setOnFocus(s.toString(), binding.searchEditText.hasFocus())
+                editText = s.toString()
+                viewModel.setOnFocus(editText, binding.searchEditText.hasFocus())
                 when(isRegionScreen){
                     true -> viewModel.searchRegion(s.toString())
                     else -> viewModel.searchIndustry(s.toString())
@@ -125,47 +129,62 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     }
     private fun chooseScreen(state:ScreenState){
         when(state){
-            is ScreenState.showIndustriesScreen -> showIndustriesScreen(state.industryList)
-            is ScreenState.showAreasScreen -> showAreasScreen(state.areasList)
-            is ScreenState.showCountriesScreen -> {
-                showCountriesScreen(state.countriesList)
+             ScreenState.ShowIndustriesScreen -> showIndustriesScreen()
+             ScreenState.ShowAreasScreen -> showAreasScreen()
+             ScreenState.ShowCountriesScreen -> {
+                showCountriesScreen()
             }
+            is ScreenState.ShowIndustryList -> showIndustryList(state.industryList)
+            is ScreenState.ShowAreasList -> showAreasList(state.areasList)
+            is ScreenState.ShowCountriesList -> showCountriesList(state.countriesList)
+
         }
     }
-    private fun showCountriesScreen(countriesList:List<Areas>){
-        adapter?.setCountry(countriesList)
-        binding.searchEditText.visibility = View.GONE
-        binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_country)
-        if(countriesList.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
+    private fun showIndustryList(industry: List<Industries>){
+        adapter?.setIndustrie(industry)
+        if(industry.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
         }else{
             binding.placeholderImage.visibility = View.GONE
         }
+        binding.progressBar.visibility = View.GONE
+    }
+    private fun showAreasList(region: List<Region>){
+        adapter?.setRegion(region)
+        if(region.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
+        }else{
+            binding.placeholderImage.visibility = View.GONE
+        }
+        binding.progressBar.visibility = View.GONE
 
     }
-    private fun showIndustriesScreen(industryList:List<Industries>){
+    private fun showCountriesList(country: List<Areas>){
+        adapter?.setCountry(country)
+        if(country.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
+        }else{
+            binding.placeholderImage.visibility = View.GONE
+        }
+        binding.progressBar.visibility = View.GONE
+    }
+    private fun showCountriesScreen(){
+        binding.searchEditText.visibility = View.GONE
+        binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_country)
+    }
+    private fun showIndustriesScreen(){
         isRegionScreen = false
-        adapter?.setIndustrie(industryList)
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_industry)
         binding.searchEditText.setHint(requireActivity().getText(R.string.choose_of_industry))
         binding.searchEditText.visibility = View.VISIBLE
-        if(industryList.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
-        }else{
-            binding.placeholderImage.visibility = View.GONE
-        }
+        if(editText.isNullOrEmpty())binding.editTextSearchImage.visibility = View.VISIBLE
 
     }
-    private fun showAreasScreen(areas:List<Region>){
+    private fun showAreasScreen(){
         isRegionScreen = true
-        adapter?.setRegion(areas)
         binding.recyclerViewFilters.visibility = View.VISIBLE
         binding.chooseTextview.text = requireActivity().getText(R.string.choose_of_region)
         binding.searchEditText.setHint(requireActivity().getText(R.string.choose_of_region))
         binding.searchEditText.visibility = View.VISIBLE
-        if(areas.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
-        }else{
-            binding.placeholderImage.visibility = View.GONE
-        }
+        if(editText.isNullOrEmpty())binding.editTextSearchImage.visibility = View.VISIBLE
 
     }
     private fun hideKeyBoard() {

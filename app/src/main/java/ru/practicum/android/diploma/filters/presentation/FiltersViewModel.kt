@@ -65,30 +65,34 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
 
     private fun setScreenCountries() {
         getAreasJob = viewModelScope.launch {
+            screenStateLiveData.postValue(ScreenState.ShowCountriesScreen)
             getAreas()
-            screenStateLiveData.postValue(ScreenState.showCountriesScreen(countries))
+            screenStateLiveData.postValue(ScreenState.ShowCountriesList(countries))
         }
     }
 
     private fun setScreenIndustries() {
         getIndustriesJob = viewModelScope.launch {
+            screenStateLiveData.postValue(ScreenState.ShowIndustriesScreen)
             getIndustries()
-            screenStateLiveData.postValue(ScreenState.showIndustriesScreen(newIndustries))
+            screenStateLiveData.postValue(ScreenState.ShowIndustryList(newIndustries))
         }
     }
 
     private fun setScreenRegion() {
         if (filtersNew.countryId.isNullOrEmpty()) {
             getAreasJob = viewModelScope.launch {
+                screenStateLiveData.postValue(ScreenState.ShowAreasScreen)
                 getAreas()
-                screenStateLiveData.postValue(ScreenState.showAreasScreen(region))
+                screenStateLiveData.postValue(ScreenState.ShowAreasList(region))
             }
         } else {
             getAreasJob = viewModelScope.launch {
+                screenStateLiveData.postValue(ScreenState.ShowAreasScreen)
                 getAreas()
                 region.clear()
                 countries.map { if (it.id.equals(filtersNew.countryId)) region.addAll(it.areas) }
-                screenStateLiveData.postValue(ScreenState.showAreasScreen(region))
+                screenStateLiveData.postValue(ScreenState.ShowAreasList(region))
             }
         }
     }
@@ -241,10 +245,10 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
          val foundIndustriesList = mutableListOf<Industries>()
          foundIndustriesList.clear()
          if(searchTerm.isNullOrEmpty()){
-             screenStateLiveData.postValue(ScreenState.showIndustriesScreen(newIndustries))
+             screenStateLiveData.postValue(ScreenState.ShowIndustryList(newIndustries))
          }else{
              newIndustries.map { if(it.name.contains(searchTerm,  ignoreCase = true))foundIndustriesList.add(it) }
-             screenStateLiveData.postValue(ScreenState.showIndustriesScreen(foundIndustriesList))
+             screenStateLiveData.postValue(ScreenState.ShowIndustryList(foundIndustriesList))
          }
 
 
@@ -253,11 +257,11 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
         val foundRegionList = mutableListOf<Region>()
         foundRegionList.clear()
         if(searchTerm.isNullOrEmpty()){
-            screenStateLiveData.postValue(ScreenState.showAreasScreen(region))
+            screenStateLiveData.postValue(ScreenState.ShowAreasList(region))
 
         }else {
             region.map { if(it.name.contains(searchTerm,  ignoreCase = true)) foundRegionList.add(it)}
-                screenStateLiveData.postValue(ScreenState.showAreasScreen(foundRegionList))
+                screenStateLiveData.postValue(ScreenState.ShowAreasList(foundRegionList))
         }
     }
 
