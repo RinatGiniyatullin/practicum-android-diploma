@@ -32,13 +32,14 @@
     <TextView
         android:id="@+id/choose_textview"
         style="@style/Text_Medium_22_500"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/logo_padding_8"
         android:paddingVertical="@dimen/logo_padding_8"
         android:text="@string/choose_place_of_work"
         android:textColor="?attr/black_to_white_color"
         app:layout_constraintBottom_toBottomOf="@+id/arrowback"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintStart_toEndOf="@+id/arrowback"
         app:layout_constraintTop_toTopOf="@+id/arrowback" />
 

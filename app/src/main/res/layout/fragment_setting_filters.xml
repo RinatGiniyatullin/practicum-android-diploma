@@ -31,20 +31,22 @@
         android:paddingEnd="@dimen/logo_padding_8"
          />
 
+
     <TextView
         android:id="@+id/textView2"
         style="@style/Text_Medium_22_500"
-
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/logo_padding_8"
         android:paddingVertical="@dimen/logo_padding_8"
         android:text="@string/SettingFilters"
         android:textColor="?attr/black_to_white_color"
         app:layout_constraintBottom_toBottomOf="@+id/arrowback"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/arrowback"
-        app:layout_constraintTop_toTopOf="@+id/arrowback" />
-
+        app:layout_constraintTop_toTopOf="@+id/arrowback"
+        app:layout_constraintVertical_bias="0.0" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/place_of_work"
@@ -52,7 +54,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toStartOf="@+id/place_of_work_button"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/arrowback"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
         android:layout_marginTop="@dimen/margin_16"
         android:enabled="false"
         app:boxStrokeWidth="0dp"
