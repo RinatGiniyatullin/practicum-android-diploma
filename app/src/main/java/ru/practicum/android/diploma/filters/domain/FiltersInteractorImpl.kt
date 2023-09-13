@@ -6,16 +6,18 @@ import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.util.Resource
+import ru.practicum.android.diploma.util.Results
 
-class FiltersInteractorImpl(val filtersRepository: FiltersRepository):FiltersInteractor {
-    override suspend fun getAreas(): Flow<Pair<List<Areas>?, String?>> {
-        return filtersRepository.getAres().map{result ->
-            when(result){
-                is Resource.Success ->{
-                    Pair(result.data, null)
+class FiltersInteractorImpl(val filtersRepository: FiltersRepository) : FiltersInteractor {
+    override suspend fun getAreas(): Flow<Results<List<Areas>?, String?>> {
+        return filtersRepository.getAreas().map { result ->
+            when (result) {
+                is Resource.Success -> {
+                    Results(result.data, null)
                 }
-                is Resource.Error ->{
-                    Pair(null, result.message)
+
+                is Resource.Error -> {
+                    Results(null, result.message)
                 }
             }
         }
@@ -29,14 +31,15 @@ class FiltersInteractorImpl(val filtersRepository: FiltersRepository):FiltersInt
         filtersRepository.writeFilters(filters)
     }
 
-    override suspend fun getIndustries(): Flow<Pair<List<Industry>?, String?>> {
+    override suspend fun getIndustries(): Flow<Results<List<Industry>?, String?>> {
         return filtersRepository.getIndustries().map { result ->
-            when(result){
+            when (result) {
                 is Resource.Success -> {
-                    Pair(result.data, null)
+                    Results(result.data, null)
                 }
-                is Resource.Error ->{
-                    Pair(null, result.message)
+
+                is Resource.Error -> {
+                    Results(null, result.message)
                 }
             }
         }

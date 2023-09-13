@@ -95,16 +95,16 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
 
     suspend fun getAreas() {
         filtersInteractor.getAreas()
-            .collect { pair ->
+            .collect { results ->
                 val areasList = mutableListOf<Areas>()
                 val regionList = mutableListOf<Region>()
-                if (pair.first != null) {
-                    areasList.addAll(pair.first!!)
+                if (results.data != null) {
+                    areasList.addAll(results.data)
                     areasList.map { it.areas.map { regionList.add(it) } }
                 }
                 when {
-                    pair.second != null -> {
-                        Log.d("myLog", pair.second.toString())
+                    results.message != null -> {
+                        Log.d("myLog", results.message.toString())
                     }
 
                     areasList.isEmpty() -> {
@@ -121,15 +121,15 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
 
     suspend fun getIndustries() {
         filtersInteractor.getIndustries()
-            .collect { pair ->
+            .collect { results ->
                 val industryList = mutableListOf<Industry>()
                 val industries = mutableListOf<Industries>()
-                if (pair.first != null) {
-                    industryList.addAll(pair.first!!)
+                if (results.data != null) {
+                    industryList.addAll(results.data)
                     industryList.map { it.industries.map { industries.add(it) } }
                 }
                 when {
-                    pair.second != null -> {
+                    results.message != null -> {
 
                     }
 
