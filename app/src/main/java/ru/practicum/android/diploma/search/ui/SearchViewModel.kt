@@ -7,10 +7,12 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.filters.domain.FiltersInteractor
+import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.search.data.ResourceProvider
 import ru.practicum.android.diploma.search.domain.SearchInteractor
 import ru.practicum.android.diploma.search.domain.SearchState
 import ru.practicum.android.diploma.search.domain.models.Vacancy
+import ru.practicum.android.diploma.util.app.App
 
 class SearchViewModel(
     private val interactor: SearchInteractor,
@@ -19,6 +21,7 @@ class SearchViewModel(
 ) : ViewModel() {
 
     private var lastSearchText: String? = null
+    private var saveText: String = ""
     private var currentPage: Int = 0
     private var maxPages: Int = 1
     private var isNextPageLoading = true
@@ -39,12 +42,16 @@ class SearchViewModel(
     private var _filterIconStateLiveData = MutableLiveData<FilterIconState>()
     val filterIconStateLiveData: LiveData<FilterIconState> = _filterIconStateLiveData
 
+    private var _saveTextLiveData = MutableLiveData<String>()
+    val saveTextLiveData: LiveData<String> = _saveTextLiveData
+
     fun clearInputEditText() {
         lastSearchText = null
         vacanciesList.clear()
         options.clear()
         lastOptions.clear()
         currentPage = 0
+        clearText()
     }
 
     fun setOnFocus(editText: String?, hasFocus: Boolean) {
@@ -73,6 +80,9 @@ class SearchViewModel(
 
     fun search(searchText: String) {
         if (searchText.isEmpty()) return
+
+        App.text = searchText
+
         fillOptionsWithFilters(searchText)
         if (options == lastOptions) return
         else {
@@ -106,20 +116,24 @@ class SearchViewModel(
         }
     }
 
-    private fun getFilters() {
+    private fun getFilters(filters: Filters) {
+        areasId = filters.areasId
+        industriesId = filters.industriesId
+        salary = filters.salary
+        onlyWithSalary = filters.onlyWithSalary
+
+        if (areasId != null || industriesId != null || salary != 0 || onlyWithSalary) {
+            _filterIconStateLiveData.postValue(FilterIconState.YesFilters)
+        } else {
+            _filterIconStateLiveData.postValue(FilterIconState.NoFilters)
+        }
+    }
+
+    private fun getFiltersFromJson() {
         viewModelScope.launch {
             filtersInteractor.getFilters()
                 .collect { filters ->
-                    areasId = filters.areasId
-                    industriesId = filters.industriesId
-                    salary = filters.salary
-                    onlyWithSalary = filters.onlyWithSalary
-
-                    if (areasId != null || industriesId != null || salary != 0 || onlyWithSalary) {
-                        _filterIconStateLiveData.postValue(FilterIconState.YesFilters)
-                    } else {
-                        _filterIconStateLiveData.postValue(FilterIconState.NoFilters)
-                    }
+                    getFilters(filters)
                 }
         }
     }
@@ -175,8 +189,18 @@ class SearchViewModel(
         }
     }
 
-    fun showFilters() {
-        getFilters()
+    fun showFilters(filters: Filters) {
+        saveText = App.text
+        _saveTextLiveData.postValue(saveText)
+        getFilters(filters)
+    }
+
+    fun showFiltersState() {
+        getFiltersFromJson()
+    }
+
+    fun clearText() {
+        App.text = ""
     }
 
     companion object {
