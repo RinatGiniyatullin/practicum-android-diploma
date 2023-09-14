@@ -152,6 +152,7 @@
         app:boxStrokeWidthFocused="0dp"
         app:placeholderText="@string/enter_salary"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
+        app:hintTextColor="@color/blue"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintTop_toBottomOf="@+id/industry">
 

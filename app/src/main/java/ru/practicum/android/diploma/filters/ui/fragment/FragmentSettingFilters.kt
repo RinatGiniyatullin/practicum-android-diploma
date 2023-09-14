@@ -48,6 +48,11 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
                 hideKeyBoard()
                 binding.salaryEditText.clearFocus()
                 binding.clearIcon.visibility = View.GONE
+                if(binding.salaryEditText.text!!.isNotEmpty()){
+                    binding.salaryTextInput.defaultHintTextColor = resources.getColorStateList(R.color.black, null)
+                }else{
+                    binding.salaryTextInput.defaultHintTextColor = resources.getColorStateList(R.color.gray, null)
+                }
                 true
             } else {
                 false
@@ -93,6 +98,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             clearIndustries()
             viewModel.writeFilters()
             clearEditText()
+            binding.salaryTextInput.defaultHintTextColor = resources.getColorStateList(R.color.gray, null)
             viewModel.addOnlyWithSalary(false)
             binding.filterCheckbox.isChecked = false
         }
@@ -192,21 +198,17 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
     }
     private fun clearEditText(){
         binding.salaryEditText.text?.clear()
-//        addPlaceholderText()
     }
 
     private fun showClearIcon() {
+        binding.salaryEditText.setTextColor(requireActivity().getColor(R.color.black))
         binding.clearIcon.visibility = View.VISIBLE
     }
 
     private fun hideClearIcon() {
         binding.clearIcon.visibility = View.GONE
     }
-    private fun addPlaceholderText(){
-        if (binding.salaryEditText.text.isNullOrEmpty()){
-            binding.salaryEditText.setText(requireActivity().getText(R.string.enter_salary))
-        }
-    }
+
 
     companion object {
         const val SCREEN = "screen"
