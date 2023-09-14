@@ -195,6 +195,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         when(state){
             is ShowViewState.showClearIcon -> showClearIcon()
             is ShowViewState.hideClearIcon -> hideClearIcon()
+            else -> {}
         }
     }
     fun showClearIcon(){

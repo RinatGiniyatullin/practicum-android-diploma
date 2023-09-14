@@ -164,12 +164,18 @@
             android:hint="@string/expected_salary"
             android:inputType="number"
             android:maxLines="1"
-
             android:singleLine="true"
             android:textColor="?attr/gray_to_white_color"
+            android:text="@string/enter_salary"
 
             />
+
     </com.google.android.material.textfield.TextInputLayout>
+
+
+
+
+
 
     <ImageView
         android:id="@+id/clear_icon"

@@ -157,14 +157,20 @@ class FiltersViewModel(val filtersInteractor: FiltersInteractor) : ViewModel() {
     }
 
     fun addSalary(query: String) {
-        query.takeIf { it.isNotEmpty() }?.let { filtersNew.salary = query.toInt() }
-        writeFilters()
+        if(query!="Введите сумму") {
+            query.takeIf { it.isNotEmpty() }?.let { filtersNew.salary = query.toInt() }
+            writeFilters()
+        }else{
+            filtersNew.salary = 0
+            writeFilters()
+        }
         Log.d("salary", filtersNew.salary.toString())
     }
 
     fun setOnFocus(editText: String?, hasFocus: Boolean) {
         if (hasFocus && editText!!.isEmpty()) showViewState.postValue(ShowViewState.hideClearIcon)
-        if (hasFocus && editText!!.isNotEmpty()) showViewState.postValue(ShowViewState.showClearIcon)
+        if (hasFocus && editText!!.isNotEmpty() && editText!="Введите сумму") showViewState.postValue(ShowViewState.showClearIcon)
+        if (hasFocus && editText!!.isNotEmpty() && editText.equals("Введите сумму")) showViewState.postValue(ShowViewState.clearEditText)
     }
 
     fun addArea(RegionList: List<Region>) {
