@@ -42,6 +42,9 @@ class SearchViewModel(
     fun clearInputEditText() {
         lastSearchText = null
         vacanciesList.clear()
+        options.clear()
+        lastOptions.clear()
+        currentPage = 0
     }
 
     fun setOnFocus(editText: String?, hasFocus: Boolean) {
@@ -59,40 +62,47 @@ class SearchViewModel(
         )
     }
 
-    fun search(searchText: String) {
-        if (searchText == lastSearchText) {
-            return
-        } else {
-            vacanciesList.clear()
-            getVacancies(searchText)
-        }
-    }
-
-    private fun getVacancies(searchText: String) {
-
-        if (searchText.isEmpty()) return
+    private fun showLoading(searchText: String) {
         if (searchText.isNotEmpty() && vacanciesList.isEmpty()) {
             _viewStateLiveData.postValue(SearchState.FirstLoading)
         }
         if (searchText.isNotEmpty() && vacanciesList.isNotEmpty()) {
             _viewStateLiveData.postValue(SearchState.AddLoading)
         }
+    }
 
-        options["text"] = searchText
+    fun search(searchText: String) {
+        if (searchText.isEmpty()) return
+        fillOptionsWithFilters(searchText)
+        if (options == lastOptions) return
+        else {
+            vacanciesList.clear()
+            showLoading(searchText)
+            currentPage = 0
+            getVacancies(options)
+            lastSearchText = searchText
+            lastOptions.clear()
+            lastOptions.putAll(options)
+        }
+    }
+
+    private fun fillOptionsWithFilters(text: String) {
+        options["text"] = text
         options["page"] = currentPage.toString()
         options["per_page"] = NUMBER_LOAD_VACANCIES.toString()
-        if (options == lastOptions) {
-            return
-        }
+        if (areasId != null) options["area"] = areasId!!
+        if (industriesId != null) options["industry"] = industriesId!!
+        if (salary != 0) options["salary"] = salary.toString()
+        options["only_with_salary"] = onlyWithSalary.toString()
+    }
+
+    private fun getVacancies(options: HashMap<String, String>) {
 
         viewModelScope.launch {
             interactor.loadVacanciesQueryMap(options)
                 .collect { pair ->
                     processResult(pair.first, pair.second)
                 }
-            lastSearchText = searchText
-            lastOptions.clear()
-            lastOptions.putAll(options)
         }
     }
 
@@ -105,20 +115,10 @@ class SearchViewModel(
                     salary = filters.salary
                     onlyWithSalary = filters.onlyWithSalary
 
-                    options.clear()
-                    if (areasId != null) options["area"] = areasId!!
-                    if (industriesId != null) options["industry"] = industriesId!!
-                    if (salary != 0) options["salary"] = salary.toString()
-                    options["only_with_salary"] = onlyWithSalary.toString()
-
                     if (areasId != null || industriesId != null || salary != 0 || onlyWithSalary) {
                         _filterIconStateLiveData.postValue(FilterIconState.YesFilters)
                     } else {
                         _filterIconStateLiveData.postValue(FilterIconState.NoFilters)
-                    }
-                    if (!lastSearchText.isNullOrEmpty()) {
-                        vacanciesList.clear()
-                        getVacancies(lastSearchText!!)
                     }
                 }
         }
@@ -153,7 +153,6 @@ class SearchViewModel(
                     )
                 )
                 maxPages = vacanciesList[0].pages
-                currentPage += 1
                 isNextPageLoading = false
             }
         }
@@ -165,7 +164,14 @@ class SearchViewModel(
             _viewStateLiveData.postValue(SearchState.StopLoad)
         }
         if (currentPage < maxPages && isNextPageLoading == false) {
-            getVacancies(lastSearchText ?: "")
+            if (!lastSearchText.isNullOrEmpty()) {
+                showLoading(lastSearchText!!)
+                currentPage += 1
+                options["page"] = currentPage.toString()
+                getVacancies(options)
+                lastOptions.clear()
+                lastOptions.putAll(options)
+            }
         }
     }
 
