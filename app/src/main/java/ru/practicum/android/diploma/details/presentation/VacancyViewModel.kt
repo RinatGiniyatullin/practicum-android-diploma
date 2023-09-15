@@ -29,6 +29,7 @@ class VacancyViewModel(
     fun observeStateFavouriteIcon(): LiveData<Boolean> = stateFavouriteIconLiveData
 
     fun loadVacancyDetails(vacancyId: String){
+        _state.postValue(VacancyState.Loading)
         viewModelScope.launch{
             withContext(Dispatchers.IO){
                 val result = vacancyInteractor.loadVacancyDetails(vacancyId)
@@ -67,11 +68,11 @@ class VacancyViewModel(
 
     fun checkFavourite(vacancy: Vacancy) {
         viewModelScope.launch {vacancyDbInteractor
-            var favouriteVacancies = listOf<Vacancy>()
+            var favouriteVacancies: List<Vacancy>
             vacancyDbInteractor.getFavouriteVacancy().collect(){
                     vacanciesEntity -> favouriteVacancies =
                 vacanciesEntity.map { vacancyEntity -> converter.map(vacancyEntity) }
-                var isFavourite: Boolean = false
+                var isFavourite = false
 
                 favouriteVacancies.forEach{
                     favouriteVacancy ->  if (vacancy.id == favouriteVacancy.id) isFavourite = true

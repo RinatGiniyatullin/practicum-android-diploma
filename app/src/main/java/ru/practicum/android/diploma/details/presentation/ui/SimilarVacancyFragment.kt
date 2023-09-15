@@ -42,7 +42,7 @@ class SimilarVacancyFragment : BindingFragment<FragmentSimilarVacancyBinding>() 
 
         viewModel.state.observe(viewLifecycleOwner) { state ->
             when (state) {
-                SearchState.FirstLoading -> {}
+                SearchState.FirstLoading -> showLoading()
                 SearchState.AddLoading -> {}
                 SearchState.StopLoad -> {}
                 is SearchState.VacancyContent -> showVacanciesList(state.vacancies)
@@ -60,10 +60,18 @@ class SimilarVacancyFragment : BindingFragment<FragmentSimilarVacancyBinding>() 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireActivity())
     }
 
+    private fun showLoading(){
+        binding.searchResult.visibility = View.GONE
+        binding.refreshButton.visibility = View.GONE
+        binding.recyclerView.visibility = View.GONE
+        binding.progressBarForLoad.visibility = View.VISIBLE
+    }
+
     private fun showVacanciesList(vacancies: List<Vacancy>) {
         binding.searchResult.visibility = View.GONE
-        binding.recyclerView.visibility = View.VISIBLE
         binding.refreshButton.visibility = View.GONE
+        binding.progressBarForLoad.visibility = View.GONE
+        binding.recyclerView.visibility = View.VISIBLE
         adapter.setVacancies(vacancies)
         adapter.notifyDataSetChanged()
     }
@@ -71,9 +79,10 @@ class SimilarVacancyFragment : BindingFragment<FragmentSimilarVacancyBinding>() 
     private fun showError(errorMessage: String) {
         binding.searchResult.text = errorMessage
         showToast(errorMessage)
+        binding.recyclerView.visibility = View.GONE
+        binding.progressBarForLoad.visibility = View.GONE
         binding.searchResult.visibility = View.VISIBLE
         binding.refreshButton.visibility = View.VISIBLE
-        binding.recyclerView.visibility = View.GONE
     }
 
     private fun showToast(message: String) {
@@ -85,6 +94,7 @@ class SimilarVacancyFragment : BindingFragment<FragmentSimilarVacancyBinding>() 
         binding.searchResult.text = emptyMessage
         binding.searchResult.visibility = View.VISIBLE
         binding.recyclerView.visibility = View.GONE
+        binding.progressBarForLoad.visibility = View.GONE
     }
 
     private fun initClickListeners() {
@@ -100,7 +110,7 @@ class SimilarVacancyFragment : BindingFragment<FragmentSimilarVacancyBinding>() 
             onVacancyClickDebounce(vacancy)
         }
 
-        onVacancyClickDebounce = debounce<Vacancy>(
+        onVacancyClickDebounce = debounce(
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false

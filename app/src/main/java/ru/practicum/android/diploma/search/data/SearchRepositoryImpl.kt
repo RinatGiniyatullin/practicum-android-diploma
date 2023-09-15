@@ -104,10 +104,11 @@ class SearchRepositoryImpl(
         return VacancyDetails(
             contacts = vacancyDetailsResponse.contacts,
             description = vacancyDetailsResponse.description,
-            alternate_url = vacancyDetailsResponse.alternate_url,
+            alternateUrl = vacancyDetailsResponse.alternateUrl,
+            area = vacancyDetailsResponse.area,
             employer = vacancyDetailsResponse.employer,
             experience = vacancyDetailsResponse.experience,
-            key_skills = vacancyDetailsResponse.key_skills,
+            keySkills = vacancyDetailsResponse.keySkills,
             schedule = vacancyDetailsResponse.schedule,
         )
     }

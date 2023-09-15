@@ -56,5 +56,6 @@
     <string name="aleksey">Алексей Михайлович Путилов</string>
     <string name="write_to_email">Хотите написать на этот email?</string>
     <string name="another_region">Другие регионы</string>
+    <string name="comment">Комментарий</string>
 
 </resources>
