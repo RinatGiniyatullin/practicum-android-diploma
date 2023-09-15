@@ -66,8 +66,9 @@
             style="@style/Text_Regular_16_400"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="?attr/gray_to_white_color"
+            android:textColor="?attr/black_to_white_color"
             android:backgroundTint="?attr/white2_to_black2_color"
+            android:textColorHint="@color/gray"
             android:hint="@string/place_of_work"
             tools:text="Россия"/>
     </com.google.android.material.textfield.TextInputLayout>
@@ -164,6 +165,7 @@
             android:background="@drawable/field_for_search_edit_text"
             android:hint="@string/expected_salary"
             android:inputType="number"
+            android:textCursorDrawable="@drawable/cursor"
             android:maxLines="1"
             android:singleLine="true"
             android:textColor="?attr/gray_to_white_color"

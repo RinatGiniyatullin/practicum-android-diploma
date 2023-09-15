@@ -4,7 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentPlaceOfWorkBinding
@@ -32,6 +34,7 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
         viewModel.getFiltersStateLiveData().observe(requireActivity()) { render(it) }
         viewModel.showFiltersData()
         back()
+        doOnTextChanged()
 
         binding.clearCountryName.setOnClickListener {
             clearCountry()
@@ -108,4 +111,21 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
             binding.clearRegion.visibility = View.VISIBLE
         }
     }
+    private fun TextInputLayout.inputTextChangeHandler(text:CharSequence?){
+        if(text.isNullOrEmpty()) this.setInputStrokeColor(R.color.hint_edit_text_empty) else this.setInputStrokeColor(
+            R.color.hint_edit_text_filed
+        )
+    }
+    private fun TextInputLayout.setInputStrokeColor(colorStateList:Int){
+        this.defaultHintTextColor = resources.getColorStateList(colorStateList, null)
+    }
+    private fun doOnTextChanged(){
+        binding.country.editText!!.doOnTextChanged{inputText, _, _, _ ->
+            binding.country.inputTextChangeHandler(inputText)
+        }
+        binding.region.editText!!.doOnTextChanged{inputText, _, _, _ ->
+            binding.region.inputTextChangeHandler(inputText)
+        }
+    }
+
 }

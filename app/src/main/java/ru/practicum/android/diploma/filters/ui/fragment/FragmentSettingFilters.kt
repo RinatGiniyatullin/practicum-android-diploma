@@ -1,5 +1,6 @@
 package ru.practicum.android.diploma.filters.ui.fragment
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -10,7 +11,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
+import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.textfield.TextInputLayout
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSettingFiltersBinding
@@ -43,17 +46,13 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         back()
         viewModel.showFiltersData()
         placeHolderText = requireActivity().getText(R.string.enter_salary).toString()
+        doOnTextChanged()
 
         binding.salaryEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 hideKeyBoard()
                 binding.salaryEditText.clearFocus()
                 binding.clearIcon.visibility = View.GONE
-                if(binding.salaryEditText.text!!.isNotEmpty()){
-                    binding.salaryTextInput.defaultHintTextColor = resources.getColorStateList(R.color.black, null)
-                }else{
-                    binding.salaryTextInput.defaultHintTextColor = resources.getColorStateList(R.color.gray, null)
-                }
                 true
             } else {
                 false
@@ -171,6 +170,9 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         filters.areasNames?.let {
             placeOfWork += ", $it"
             binding.placeOfWorkEditText.setText(placeOfWork)
+            if(placeOfWork.isNotEmpty()){
+                binding.placeOfWork.defaultHintTextColor = resources.getColorStateList(R.color.hint_edit_text_filed, null)
+            }
 
         }
         filters.industriesName?.let {
@@ -233,12 +235,28 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
     }
 
     private fun showClearIcon() {
-        binding.salaryEditText.setTextColor(requireActivity().getColor(R.color.black))
         binding.clearIcon.visibility = View.VISIBLE
     }
 
     private fun hideClearIcon() {
         binding.clearIcon.visibility = View.GONE
+    }
+    private fun TextInputLayout.inputTextChangeHandler(text:CharSequence?){
+        if(text.isNullOrEmpty()) this.setInputStrokeColor(R.color.hint_edit_text_empty) else this.setInputStrokeColor(
+            R.color.hint_edit_text_filed
+        )
+    }
+    fun doOnTextChanged(){
+        binding.placeOfWork.editText!!.doOnTextChanged{ inputText, _, _, _ ->
+            binding.placeOfWork.inputTextChangeHandler(inputText)
+        }
+        binding.industry.editText!!.doOnTextChanged{inputText, _, _, _ ->
+            binding.industry.inputTextChangeHandler(inputText)
+        }
+    }
+
+    private fun TextInputLayout.setInputStrokeColor(colorStateList:Int){
+        this.defaultHintTextColor = resources.getColorStateList(colorStateList, null)
     }
 
 
