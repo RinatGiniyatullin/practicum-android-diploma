@@ -28,6 +28,9 @@
         <action
             android:id="@+id/action_settingFilters_to_fragmentPlaceOfWork"
             app:destination="@id/fragmentPlaceOfWork" />
+        <action
+            android:id="@+id/action_settingFilters_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
     <fragment
         android:id="@+id/fragmentChooseFilter"

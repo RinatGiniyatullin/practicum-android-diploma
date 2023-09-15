@@ -92,7 +92,7 @@ class SearchRepositoryImpl(
             vacancyDto.area.name,
             vacancyDto.employer.name,
             found = foundValue,
-            vacancyDto.employer.logo_urls?.original,
+            vacancyDto.employer.logoUrls?.original,
             getSymbol(vacancyDto.salary?.currency),
             createValue(vacancyDto.salary?.from),
             createValue(vacancyDto.salary?.to),

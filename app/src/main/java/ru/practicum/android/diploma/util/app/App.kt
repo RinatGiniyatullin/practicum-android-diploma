@@ -44,4 +44,8 @@ class App : Application() {
             context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
         return darkModeFlag == Configuration.UI_MODE_NIGHT_YES
     }
+
+    companion object {
+        var text: String = ""
+    }
 }
