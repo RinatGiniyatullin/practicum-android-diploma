@@ -56,6 +56,7 @@
     <string name="aleksey">Алексей Михайлович Путилов</string>
     <string name="write_to_email">Хотите написать на этот email?</string>
     <string name="another_region">Другие регионы</string>
+    <string name="comment">Комментарий</string>
 
     <plurals name="search_result_number">
         <item quantity="zero">Найдено %d вакансий</item>

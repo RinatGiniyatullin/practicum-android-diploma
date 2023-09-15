@@ -57,7 +57,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            tools:listitem="@layout/vacancy_view"
+            tools:listitem="@layout/item_view"
             tools:itemCount="20"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
