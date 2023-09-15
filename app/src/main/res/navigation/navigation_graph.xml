@@ -42,6 +42,7 @@
             app:popExitAnim="@anim/slide_out_right"/>
         <action
             android:id="@+id/action_settingFilters_to_searchFragment"
+            app:destination="@+id/searchFragment"
             />
     </fragment>
     <fragment
