@@ -1,6 +1,5 @@
 package ru.practicum.android.diploma.filters.ui.fragment
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -94,7 +93,6 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             clearIndustries()
             viewModel.writeFilters()
             clearEditText()
-            binding.salaryTextInput.defaultHintTextColor = resources.getColorStateList(R.color.gray, null)
             viewModel.addOnlyWithSalary(false)
             binding.filterCheckbox.isChecked = false
             binding.clearAll.visibility = View.GONE
@@ -188,6 +186,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             lastSalary = filters.salary.toString()
             binding.salaryEditText.setText(filters.salary.toString())
             binding.clearAll.visibility= View.VISIBLE
+            binding.salaryEditText.setTextColor(resources.getColor(R.color.black))
         }
 
         if (filters.onlyWithSalary != false) {
@@ -246,6 +245,13 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             R.color.hint_edit_text_filed
         )
     }
+    private fun TextInputLayout.inputTextSalaryChangeHandler(text:CharSequence?){
+        if(text.isNullOrEmpty()||binding.salaryEditText.text!!.equals("Введите сумму")) this.setSalaryInputStrokeColor(R.color.salary_hint_empty)
+        else this.setInputStrokeColor(
+            R.color.salary_hint_filed
+        )
+    }
+
     fun doOnTextChanged(){
         binding.placeOfWork.editText!!.doOnTextChanged{ inputText, _, _, _ ->
             binding.placeOfWork.inputTextChangeHandler(inputText)
@@ -253,10 +259,18 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         binding.industry.editText!!.doOnTextChanged{inputText, _, _, _ ->
             binding.industry.inputTextChangeHandler(inputText)
         }
+        binding.salaryTextInput.editText!!.doOnTextChanged{inputText, _, _, _ ->
+            binding.salaryTextInput.inputTextSalaryChangeHandler(inputText)
+        }
+
     }
 
     private fun TextInputLayout.setInputStrokeColor(colorStateList:Int){
         this.defaultHintTextColor = resources.getColorStateList(colorStateList, null)
+    }
+    private fun TextInputLayout.setSalaryInputStrokeColor(colorStateList:Int){
+        this.defaultHintTextColor = resources.getColorStateList(colorStateList, null)
+        this.editText!!.setTextColor(resources.getColor(R.color.black))
     }
 
 

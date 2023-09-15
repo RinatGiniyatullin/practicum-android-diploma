@@ -115,7 +115,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/weight_height_60"
         android:paddingStart="@dimen/logo_padding_20"
-        android:src="@drawable/close"
+        android:src="@drawable/clear_place_of_work"
         app:layout_constraintBottom_toBottomOf="@+id/place_of_work"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintTop_toTopOf="@+id/place_of_work"
@@ -136,7 +136,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/weight_height_60"
         android:paddingStart="@dimen/logo_padding_20"
-        android:src="@drawable/close"
+        android:src="@drawable/clear_place_of_work"
         app:layout_constraintBottom_toBottomOf="@+id/industry"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintTop_toTopOf="@+id/industry"
@@ -173,9 +173,9 @@
 
             />
 
+
+
     </com.google.android.material.textfield.TextInputLayout>
-
-
 
 
 
