@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.filters.domain.FiltersInteractor
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Filters
@@ -159,10 +160,10 @@ class FiltersViewModel(
 
     fun setOnFocus(editText: String?, hasFocus: Boolean) {
         if (hasFocus && editText!!.isEmpty()) showViewState.postValue(ShowViewState.hideClearIcon)
-        if (hasFocus && editText!!.isNotEmpty() && editText != "Введите сумму") showViewState.postValue(
+        if (hasFocus && editText!!.isNotEmpty() && editText != resourceProvider.getString(R.string.enter_salary)) showViewState.postValue(
             ShowViewState.showClearIcon
         )
-        if (hasFocus && editText!!.isNotEmpty() && editText.equals("Введите сумму")) showViewState.postValue(
+        if (hasFocus && editText!!.isNotEmpty() && editText.equals(resourceProvider.getString(R.string.enter_salary))) showViewState.postValue(
             ShowViewState.clearEditText
         )
     }
@@ -179,7 +180,7 @@ class FiltersViewModel(
 
     fun addSalary(query: String) {
 
-            if (query != "Введите сумму") {
+            if (query != resourceProvider.getString(R.string.enter_salary)) {
                 query.takeIf { it.isNotEmpty() }?.let { filtersNew.salary = query.toInt() }
                 showAllClearButtom()
                 hasDataChanged()
