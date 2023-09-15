@@ -27,7 +27,6 @@ class VacancyViewHolder(parentView: ViewGroup) : RecyclerView.ViewHolder(
         Glide.with(itemView)
             .load(model.employerLogoUrl)
             .placeholder(R.drawable.placeholder)
-            .centerCrop()
             .into(logoUrl)
         if (model.employerLogoUrl != null) logoUrl.setPadding(3, 3, 3, 3)
     }

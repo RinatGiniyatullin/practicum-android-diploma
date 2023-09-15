@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
 import ru.practicum.android.diploma.details.presentation.ui.VacancyFragment
+import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.search.domain.SearchState
 import ru.practicum.android.diploma.search.domain.models.Vacancy
 import ru.practicum.android.diploma.util.BindingFragment
@@ -27,11 +29,11 @@ import ru.practicum.android.diploma.util.debounce
 
 class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
-    lateinit var vacancy: Vacancy
     private lateinit var adapter: VacancyAdapter
     private lateinit var onVacancyClickDebounce: (Vacancy) -> Unit
     private lateinit var vacancySearchDebounce: (String) -> Unit
     private val viewModel by viewModel<SearchViewModel>()
+    private lateinit var filters: Filters
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -53,6 +55,10 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             changeFilterIcon(state)
         }
 
+        viewModel.saveTextLiveData.observe(viewLifecycleOwner) { text ->
+            binding.searchEditText.setText(text)
+        }
+
         initAdapter()
         listener()
     }
@@ -64,8 +70,17 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun listener() {
+        if (arguments != null) {
+            val jsonFilters = requireArguments().getString(FILTERS)
 
-        viewModel.showFilters()
+            if (jsonFilters != null) {
+                filters = Gson().fromJson(jsonFilters, Filters::class.java)
+                viewModel.showFilters(filters)
+            }
+        } else {
+            viewModel.showFiltersState()
+        }
+
 
         vacancySearchDebounce = debounce<String>(
             SEARCH_DEBOUNCE_DELAY,
@@ -138,7 +153,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private fun showVacanciesList(vacancies: List<Vacancy>, foundValue: Int) {
 
         binding.searchResult.visibility = View.VISIBLE
-        binding.searchResult.text = "Найдено $foundValue вакансий"
+        binding.searchResult.text =
+            resources.getQuantityString(R.plurals.search_result_number, foundValue, foundValue)
         binding.searchRecyclerView.visibility = View.VISIBLE
         binding.placeholderImage.visibility = View.GONE
         binding.progressBarForLoad.visibility = View.GONE
@@ -280,6 +296,9 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val FILTERS = "filters"
+
+        fun createArgs(jsonFilters: String?): Bundle? = bundleOf(FILTERS to jsonFilters)
     }
 
 }

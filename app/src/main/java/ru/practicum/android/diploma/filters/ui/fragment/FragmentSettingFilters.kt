@@ -12,19 +12,23 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.os.bundleOf
 import androidx.navigation.fragment.findNavController
+import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSettingFiltersBinding
+import ru.practicum.android.diploma.details.presentation.ui.VacancyFragment
 import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.presentation.models.ShowViewState
+import ru.practicum.android.diploma.search.ui.SearchFragment
 import ru.practicum.android.diploma.util.BindingFragment
 
-class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
+class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() {
 
     val viewModel by viewModel<FiltersViewModel>()
-    var bundle:Bundle? = null
+    var bundle: Bundle? = null
+    private lateinit var getFilters: Filters
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -35,7 +39,7 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.getShowViewStateLiveData().observe(requireActivity()){showView(it)}
+        viewModel.getShowViewStateLiveData().observe(requireActivity()) { showView(it) }
         switchToPlaceOfWorkScreen()
         switchToIndustriesScreen()
         back()
@@ -50,8 +54,8 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
                 false
             }
         }
-        binding.salaryEditText.setOnFocusChangeListener{_, hasFocus ->
-            if(hasFocus){
+        binding.salaryEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus) {
                 binding.clearIcon.visibility = View.GONE
             }
 
@@ -61,9 +65,9 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
             override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {}
 
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                if(s.isNullOrEmpty()){
+                if (s.isNullOrEmpty()) {
                     viewModel.addSalary("0")
-                }else{
+                } else {
                     viewModel.addSalary(s.toString())
                 }
 
@@ -75,7 +79,7 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         })
 
 
-        viewModel.getFiltersStateLiveData().observe(requireActivity()){
+        viewModel.getFiltersStateLiveData().observe(requireActivity()) {
             render(it)
         }
 
@@ -95,7 +99,11 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         }
         binding.buttonApply.setOnClickListener {
             viewModel.writeFilters()
-            findNavController().navigateUp() }
+            findNavController().navigate(
+                R.id.action_settingFilters_to_searchFragment,
+                SearchFragment.createArgs(Gson().toJson(getFilters))
+            )
+        }
         binding.clearIcon.setOnClickListener {
             binding.salaryEditText.text?.clear()
         }
@@ -104,6 +112,7 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         }
 
     }
+
     private fun hideKeyBoard() {
         val inputMethodManager =
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -111,28 +120,34 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
         binding.salaryEditText.clearFocus()
 
     }
-    fun switchToPlaceOfWorkScreen(){
-        binding.placeOfWorkButton.setOnClickListener{
+
+    fun switchToPlaceOfWorkScreen() {
+        binding.placeOfWorkButton.setOnClickListener {
             findNavController().navigate(R.id.action_settingFilters_to_fragmentPlaceOfWork)
         }
     }
-    fun switchToIndustriesScreen(){
-        binding.industryButton.setOnClickListener{
+
+    fun switchToIndustriesScreen() {
+        binding.industryButton.setOnClickListener {
             bundle = bundleOf(SCREEN to INDUSTRIES)
             findNavController().navigate(R.id.action_settingFilters_to_fragmentChooseFilter, bundle)
         }
     }
-    fun back(){
+
+    fun back() {
         binding.arrowback.setOnClickListener {
             findNavController().navigateUp()
         }
     }
+
     private fun render(state: FiltersDataState) {
         when (state) {
             is FiltersDataState.filtersData -> showFiltersData(state.filters)
         }
     }
+
     private fun showFiltersData(filters: Filters) {
+        getFilters = filters
         var placeOfWork = ""
         var industries = ""
         filters.countryName?.let {
@@ -142,46 +157,52 @@ class FragmentSettingFilters:BindingFragment<FragmentSettingFiltersBinding>() {
             binding.placeOfWorkClear.visibility = View.VISIBLE
         }
         filters.areasNames?.let {
-            placeOfWork+=", $it"
+            placeOfWork += ", $it"
             binding.placeOfWorkEditText.setText(placeOfWork)
         }
         filters.industriesName?.let {
-            industries+="$it "
+            industries += "$it "
             binding.industryEditText.setText(industries)
             binding.industryButton.visibility = View.INVISIBLE
             binding.industryClear.visibility = View.VISIBLE
         }
-        if(filters.salary!=0)binding.salaryEditText.setText(filters.salary.toString())
+        if (filters.salary != 0) binding.salaryEditText.setText(filters.salary.toString())
 
-        if(filters.onlyWithSalary!=false)binding.filterCheckbox.isChecked = true
+        if (filters.onlyWithSalary != false) binding.filterCheckbox.isChecked = true
 
     }
-    private fun clearPlaceWork(){
+
+    private fun clearPlaceWork() {
         binding.placeOfWorkEditText.text?.clear()
         binding.placeOfWorkClear.visibility = View.GONE
         binding.placeOfWorkButton.visibility = View.VISIBLE
         viewModel.clearCountry()
         viewModel.clearRegion()
     }
-    private fun clearIndustries(){
+
+    private fun clearIndustries() {
         binding.industryEditText.text?.clear()
         binding.industryClear.visibility = View.GONE
         binding.industryButton.visibility = View.VISIBLE
         viewModel.clearIndustries()
     }
-    private fun showView(state: ShowViewState){
-        when(state){
+
+    private fun showView(state: ShowViewState) {
+        when (state) {
             is ShowViewState.showClearIcon -> showClearIcon()
             is ShowViewState.hideClearIcon -> hideClearIcon()
         }
     }
-    fun showClearIcon(){
+
+    fun showClearIcon() {
         binding.clearIcon.visibility = View.VISIBLE
     }
-    fun hideClearIcon(){
+
+    fun hideClearIcon() {
         binding.clearIcon.visibility = View.GONE
     }
-    companion object{
+
+    companion object {
         const val SCREEN = "screen"
         const val COUNTRIES = "COUNTRIES"
         const val REGION = "REGION"

@@ -42,5 +42,9 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="rounded_12">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">@dimen/radius_12</item>
+    </style>
 
 </resources>

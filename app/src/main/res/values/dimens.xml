@@ -24,4 +24,7 @@
     <dimen name="weight_height_25">25dp</dimen>
     <dimen name="logo_padding_20">20dp</dimen>
     <dimen name="margin_5">5dp</dimen>
+
+    <dimen name="padding_1">1dp</dimen>
+    <dimen name="stroke_1">1dp</dimen>
 </resources>
