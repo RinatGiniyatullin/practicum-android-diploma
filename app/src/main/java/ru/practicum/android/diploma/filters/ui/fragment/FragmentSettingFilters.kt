@@ -163,7 +163,6 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             binding.placeOfWorkEditText.setText(placeOfWork)
             binding.placeOfWorkButton.visibility = View.INVISIBLE
             binding.placeOfWorkClear.visibility = View.VISIBLE
-            binding.clearAll.visibility= View.VISIBLE
         }
         filters.areasNames?.let {
             placeOfWork += ", $it"
@@ -178,20 +177,17 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             binding.industryEditText.setText(industries)
             binding.industryButton.visibility = View.INVISIBLE
             binding.industryClear.visibility = View.VISIBLE
-            binding.clearAll.visibility= View.VISIBLE
         }
 
 
         if (filters.salary != 0) {
             lastSalary = filters.salary.toString()
             binding.salaryEditText.setText(filters.salary.toString())
-            binding.clearAll.visibility= View.VISIBLE
             binding.salaryEditText.setTextColor(resources.getColor(R.color.black))
         }
 
         if (filters.onlyWithSalary != false) {
             binding.filterCheckbox.isChecked = true
-            binding.clearAll.visibility= View.VISIBLE
         }
 
     }
@@ -220,6 +216,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             is ShowViewState.clearEditText  -> clearEditText()
             is ShowViewState.showApplyButton  -> showApplyButton()
             is ShowViewState.showClearAllButton -> showClearAllButton()
+            is ShowViewState.hideClearAllButton ->  binding.clearAll.visibility = View.GONE
 
         }
     }
@@ -254,9 +251,11 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
 
     fun doOnTextChanged(){
         binding.placeOfWork.editText!!.doOnTextChanged{ inputText, _, _, _ ->
+            viewModel.showAllClearButtom()
             binding.placeOfWork.inputTextChangeHandler(inputText)
         }
         binding.industry.editText!!.doOnTextChanged{inputText, _, _, _ ->
+            viewModel.showAllClearButtom()
             binding.industry.inputTextChangeHandler(inputText)
         }
         binding.salaryTextInput.editText!!.doOnTextChanged{inputText, _, _, _ ->

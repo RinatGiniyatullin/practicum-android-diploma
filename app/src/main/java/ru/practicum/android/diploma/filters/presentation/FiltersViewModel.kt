@@ -181,7 +181,7 @@ class FiltersViewModel(
 
             if (query != "Введите сумму") {
                 query.takeIf { it.isNotEmpty() }?.let { filtersNew.salary = query.toInt() }
-                showAllClearButtom(query)
+                showAllClearButtom()
                 hasDataChanged()
                 writeFilters()
             } else {
@@ -209,6 +209,7 @@ class FiltersViewModel(
     }
 
     fun addOnlyWithSalary(withSalary: Boolean) {
+        showAllClearButtom()
         filtersNew.onlyWithSalary = withSalary
         writeFilters()
     }
@@ -308,11 +309,13 @@ class FiltersViewModel(
 
         }
     }
-    fun showAllClearButtom(text:String){
+    fun showAllClearButtom(){
         viewModelScope.launch {
             delay(50)
-            if(text!="0") {
+            if(filtersNew.salary!=0 || !filtersNew.countryName.isNullOrEmpty() || !filtersNew.industriesName.isNullOrEmpty() || filtersNew.onlyWithSalary!=false) {
                 showViewState.postValue(ShowViewState.showClearAllButton)
+            }else{
+                showViewState.postValue(ShowViewState.hideClearAllButton)
             }
         }
     }

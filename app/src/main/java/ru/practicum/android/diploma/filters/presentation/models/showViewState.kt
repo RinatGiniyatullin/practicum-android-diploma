@@ -8,5 +8,6 @@ sealed interface ShowViewState{
     object clearEditText:ShowViewState
     object showApplyButton:ShowViewState
     object showClearAllButton:ShowViewState
+    object hideClearAllButton:ShowViewState
 
 }
