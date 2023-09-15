@@ -29,7 +29,8 @@
         app:strokeColor="@color/light_gray"
         android:scaleType="centerInside"
         android:src="@drawable/placeholder"
-        app:shapeAppearanceOverlay="@style/rounded_12"/>
+        app:shapeAppearanceOverlay="@style/rounded_12"
+        android:background="?attr/white_to_black_color"/>
     </com.google.android.material.card.MaterialCardView>
 
     <TextView
