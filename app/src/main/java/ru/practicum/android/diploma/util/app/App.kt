@@ -41,6 +41,6 @@ class App : Application() {
     }
 
     companion object{
-        var DADA_HAS_CHANGHED:String = "no"
+        var DATA_HAS_CHANGED:String = "no"
     }
 }

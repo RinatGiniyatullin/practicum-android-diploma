@@ -80,7 +80,7 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
         binding.countryEditText.text?.clear()
         binding.regionEditText.text?.clear()
         viewModel.clearCountry()
-        App.DADA_HAS_CHANGHED = ""
+        App.DATA_HAS_CHANGED = ""
     }
 
     private fun render(state: FiltersDataState) {

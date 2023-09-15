@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.filters.domain.FiltersInteractor
 import ru.practicum.android.diploma.filters.domain.models.Areas
 import ru.practicum.android.diploma.filters.domain.models.Filters
@@ -170,7 +169,7 @@ class FiltersViewModel(
         filtersNew.countryName = country.name
         parentId = country.id
         filtersNew.countryId = parentId
-        App.DADA_HAS_CHANGHED = "yes"
+        App.DATA_HAS_CHANGED = "yes"
         writeFilters()
 
     }
@@ -187,7 +186,7 @@ class FiltersViewModel(
     fun addArea(region: Region) {
         filtersNew.areasId = region.id
         filtersNew.areasNames = region.name
-        filtersNew.countryId = region.parent_id
+        filtersNew.countryId = region.parentId
         countries.map { if (it.id.equals(filtersNew.countryId)) addCountry(it) }
         writeFilters()
     }
@@ -195,7 +194,7 @@ class FiltersViewModel(
     fun addIndustries(industries: Industries) {
         filtersNew.industriesId = industries.id
         filtersNew.industriesName = industries.name
-        App.DADA_HAS_CHANGHED = "yes"
+        App.DATA_HAS_CHANGED = "yes"
         writeFilters()
     }
 
@@ -238,7 +237,7 @@ class FiltersViewModel(
         filtersNew.countryName = null
         filtersNew.countryId = null
         writeFilters()
-        App.DADA_HAS_CHANGHED = "no"
+        App.DATA_HAS_CHANGED = "no"
     }
 
     fun clearRegion() {
@@ -251,7 +250,7 @@ class FiltersViewModel(
         filtersNew.industriesName = null
         filtersNew.industriesId = null
         writeFilters()
-        App.DADA_HAS_CHANGHED = "no"
+        App.DATA_HAS_CHANGED = "no"
     }
 
     fun searchIndustry(searchTerm: String?) {
@@ -294,7 +293,7 @@ class FiltersViewModel(
     fun hasDataChanged() {
         viewModelScope.launch {
             delay(100)
-            if (App.DADA_HAS_CHANGHED != "no" || lastSallary != filtersNew.salary.toString()) {
+            if (App.DATA_HAS_CHANGED != "no" || lastSallary != filtersNew.salary.toString()) {
                 showViewState.postValue(ShowViewState.showApplyButton)
             }
 

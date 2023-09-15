@@ -121,7 +121,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
 
     override fun onDetach() {
         super.onDetach()
-        App.DADA_HAS_CHANGHED = "no"
+        App.DATA_HAS_CHANGED = "no"
     }
 
     private fun hideKeyBoard() {

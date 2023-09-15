@@ -8,7 +8,7 @@ data class Areas(
 )
 data class Region(
     val id:String,
-    val parent_id:String,
+    val parentId:String,
     val name:String,
     var isChecked:Boolean = false
 )
