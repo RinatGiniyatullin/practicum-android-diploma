@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/white2_to_black2_color"
             android:hint="@string/country"
-            android:textColor="?attr/gray_to_white_color" />
+            android:textColor="?attr/black_to_white_color" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
@@ -113,7 +113,7 @@
             style="@style/Text_Regular_16_400"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="?attr/gray_to_white_color"
+            android:textColor="?attr/black_to_white_color"
             android:backgroundTint="?attr/white2_to_black2_color"
             android:hint="@string/region" />
     </com.google.android.material.textfield.TextInputLayout>

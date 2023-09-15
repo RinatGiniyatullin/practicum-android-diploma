@@ -76,8 +76,7 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/industry"
         android:layout_width="0dp"
-        android:layout_height="@dimen/weight_height_60"
-
+        android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/place_of_work"
         app:layout_constraintEnd_toStartOf="@+id/industry_button"
@@ -86,16 +85,17 @@
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
         >
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/industryEditText"
             style="@style/Text_Regular_16_400"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="?attr/gray_to_white_color"
             android:backgroundTint="?attr/white2_to_black2_color"
             android:hint="@string/industry"
-
-            tools:text="IT"/>
+            android:textColorHint="@color/gray"
+            android:textColor="?attr/black_to_white_color"
+            tools:text="IT" />
     </com.google.android.material.textfield.TextInputLayout>
 
 
