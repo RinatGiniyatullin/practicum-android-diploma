@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
@@ -59,6 +60,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         }
 
         binding.salaryEditText.setOnFocusChangeListener { _, hasFocus ->
+            setSalaryEditTextColor(binding.salaryEditText.text.toString(), hasFocus)
             viewModel.setOnFocus(binding.salaryEditText.text.toString(), hasFocus)
             binding.clearIcon.visibility = View.GONE
         }
@@ -72,6 +74,8 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
                 } else {
                     viewModel.addSalary(s.toString())
                 }
+                setSalaryEditTextColor(binding.salaryEditText.text.toString(), binding.salaryEditText.hasFocus()
+                )
                 viewModel.setOnFocus(binding.salaryEditText.text.toString(), binding.salaryEditText.hasFocus())
             }
             override fun afterTextChanged(s: Editable?) {
@@ -213,7 +217,6 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         when (state) {
             is ShowViewState.showClearIcon -> showClearIcon()
             is ShowViewState.hideClearIcon -> hideClearIcon()
-            is ShowViewState.clearEditText  -> clearEditText()
             is ShowViewState.showApplyButton  -> showApplyButton()
             is ShowViewState.showClearAllButton -> showClearAllButton()
             is ShowViewState.hideClearAllButton ->  binding.clearAll.visibility = View.GONE
@@ -242,13 +245,12 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             R.color.hint_edit_text_filed
         )
     }
-    private fun TextInputLayout.inputTextSalaryChangeHandler(text:CharSequence?){
-        if(text.isNullOrEmpty()||binding.salaryEditText.text!!.equals("Введите сумму")) this.setSalaryInputStrokeColor(R.color.salary_hint_empty)
-        else this.setInputStrokeColor(
+    private fun EditText.editTextSalaryChangeHandler(text:CharSequence?, ){
+        if(text.isNullOrEmpty()) this.setSalaryInputStrokeColor(R.color.salary_hint_empty)
+        else this.setSalaryInputStrokeColor(
             R.color.salary_hint_filed
         )
     }
-
     fun doOnTextChanged(){
         binding.placeOfWork.editText!!.doOnTextChanged{ inputText, _, _, _ ->
             viewModel.showAllClearButtom()
@@ -258,21 +260,22 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             viewModel.showAllClearButtom()
             binding.industry.inputTextChangeHandler(inputText)
         }
-        binding.salaryTextInput.editText!!.doOnTextChanged{inputText, _, _, _ ->
-            binding.salaryTextInput.inputTextSalaryChangeHandler(inputText)
-        }
 
     }
 
     private fun TextInputLayout.setInputStrokeColor(colorStateList:Int){
         this.defaultHintTextColor = resources.getColorStateList(colorStateList, null)
     }
-    private fun TextInputLayout.setSalaryInputStrokeColor(colorStateList:Int){
-        this.defaultHintTextColor = resources.getColorStateList(colorStateList, null)
-        this.editText!!.setTextColor(resources.getColor(R.color.black))
+    private fun EditText.setSalaryInputStrokeColor(colorStateList:Int){
+        binding.sallaryHint.setTextColor(resources.getColor(colorStateList, null))
+
     }
+    private fun setSalaryEditTextColor(text:CharSequence?, hasFocus:Boolean){
+        if(hasFocus){ binding.sallaryHint.setTextColor(resources.getColor(R.color.blue)) }
+        if(!hasFocus&&!text.isNullOrEmpty()){binding.sallaryHint.setTextColor(resources.getColor(R.color.black))}
+        if(!hasFocus&&text.isNullOrEmpty()){binding.sallaryHint.setTextColor(resources.getColor(R.color.salary_hint_empty))}
 
-
+    }
     companion object {
         const val SCREEN = "screen"
         const val COUNTRIES = "COUNTRIES"

@@ -160,11 +160,8 @@ class FiltersViewModel(
 
     fun setOnFocus(editText: String?, hasFocus: Boolean) {
         if (hasFocus && editText!!.isEmpty()) showViewState.postValue(ShowViewState.hideClearIcon)
-        if (hasFocus && editText!!.isNotEmpty() && editText != resourceProvider.getString(R.string.enter_salary)) showViewState.postValue(
+        if (hasFocus && editText!!.isNotEmpty()) showViewState.postValue(
             ShowViewState.showClearIcon
-        )
-        if (hasFocus && editText!!.isNotEmpty() && editText.equals(resourceProvider.getString(R.string.enter_salary))) showViewState.postValue(
-            ShowViewState.clearEditText
         )
     }
 
@@ -179,18 +176,11 @@ class FiltersViewModel(
     }
 
     fun addSalary(query: String) {
-
-            if (query != resourceProvider.getString(R.string.enter_salary)) {
-                query.takeIf { it.isNotEmpty() }?.let { filtersNew.salary = query.toInt() }
-                showAllClearButtom()
-                hasDataChanged()
-                writeFilters()
-            } else {
-                filtersNew.salary = 0
-                writeFilters()
-            }
-            Log.d("salary", filtersNew.salary.toString())
-
+        query.takeIf { it.isNotEmpty() }?.let { filtersNew.salary = query.toInt() }
+        showAllClearButtom()
+        hasDataChanged()
+        writeFilters()
+        Log.d("salary", filtersNew.salary.toString())
     }
 
 
@@ -310,17 +300,17 @@ class FiltersViewModel(
 
         }
     }
-    fun showAllClearButtom(){
+
+    fun showAllClearButtom() {
         viewModelScope.launch {
             delay(50)
-            if(filtersNew.salary!=0 || !filtersNew.countryName.isNullOrEmpty() || !filtersNew.industriesName.isNullOrEmpty() || filtersNew.onlyWithSalary!=false) {
+            if (filtersNew.salary != 0 || !filtersNew.countryName.isNullOrEmpty() || !filtersNew.industriesName.isNullOrEmpty() || filtersNew.onlyWithSalary != false) {
                 showViewState.postValue(ShowViewState.showClearAllButton)
-            }else{
+            } else {
                 showViewState.postValue(ShowViewState.hideClearAllButton)
             }
         }
     }
-
 
 
 }

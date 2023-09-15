@@ -143,39 +143,40 @@
         app:layout_constraintVertical_bias="1.0"
         android:visibility="gone"/>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/salary_text_input"
+
+    <EditText
+        android:id="@+id/salary_edit_text"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:boxStrokeWidth="0dp"
+        android:layout_height="51dp"
         android:layout_marginTop="@dimen/margin_24"
-        android:textColorHint="?attr/gray_to_white_color"
-        app:boxStrokeWidthFocused="0dp"
-        app:placeholderText="@string/enter_salary"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
-        app:hintTextColor="@color/blue"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        app:layout_constraintTop_toBottomOf="@+id/industry">
+        app:layout_constraintTop_toBottomOf="@+id/industry"
+        android:hint="@string/enter_salary"
+        android:textColorHint="?attr/gray_to_white_color"
+        style="@style/Text_Regular_16_400"
+        android:background="@drawable/field_for_search_edit_text"
+        android:textColor="@color/black"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:inputType="number"
+        android:paddingStart="@dimen/margin_16"
+        android:paddingTop="@dimen/margin_16"
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/salary_edit_text"
-            style="@style/Text_Regular_16_400"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/field_for_search_edit_text"
-            android:hint="@string/expected_salary"
-            android:inputType="number"
-            android:textCursorDrawable="@drawable/cursor"
-            android:maxLines="1"
-            android:singleLine="true"
-            android:textColor="?attr/gray_to_white_color"
-            android:text="@string/enter_salary"
+        />
 
-            />
+    <TextView
+        android:id="@+id/sallary_hint"
+        style="@style/Text_Regular_12_400"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/expected_salary"
+        android:layout_marginStart="@dimen/margin_16"
+        android:layout_marginTop="@dimen/margin_8"
+        android:textColor="?attr/gray_to_white_color"
+        app:layout_constraintStart_toStartOf="@+id/salary_edit_text"
+        app:layout_constraintTop_toTopOf="@+id/salary_edit_text" />
 
-
-
-    </com.google.android.material.textfield.TextInputLayout>
 
 
 
@@ -185,11 +186,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/close"
-        app:layout_constraintBottom_toBottomOf="@id/salary_text_input"
+        app:layout_constraintBottom_toBottomOf="@id/salary_edit_text"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         android:layout_marginEnd="@dimen/margin_12"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@id/salary_text_input" />
+        app:layout_constraintTop_toTopOf="@id/salary_edit_text" />
     <TextView
         android:id="@+id/no_without_sallary"
         style="@style/Text_Regular_16_400"
@@ -200,7 +201,7 @@
         android:textColor="?attr/black_to_white_color"
         app:layout_constraintEnd_toStartOf="@+id/filter_checkbox"
         app:layout_constraintStart_toStartOf="@+id/leftBorder"
-        app:layout_constraintTop_toBottomOf="@+id/salary_text_input"
+        app:layout_constraintTop_toBottomOf="@+id/salary_edit_text"
         />
 
     <CheckBox
