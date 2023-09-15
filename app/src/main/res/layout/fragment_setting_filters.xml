@@ -221,10 +221,12 @@
         android:text="@string/apply"
         style="@style/Text_Medium_16_500"
         android:textColor="@color/white_2"
+        android:layout_marginBottom="@dimen/margin_8"
         app:layout_constraintBottom_toTopOf="@+id/clearAll"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintStart_toStartOf="@+id/leftBorder"
-        android:background="@drawable/field_for_result_text"/>
+        android:background="@drawable/field_for_result_text"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/clearAll"
@@ -238,7 +240,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/leftBorder" />
+        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        android:visibility="gone"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

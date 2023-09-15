@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,12 +19,14 @@ import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.presentation.models.ShowViewState
 import ru.practicum.android.diploma.util.BindingFragment
+import ru.practicum.android.diploma.util.app.App
 
 class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() {
 
     val viewModel by viewModel<FiltersViewModel>()
     var bundle: Bundle? = null
     lateinit var placeHolderText:String
+    var lastSalary:String = ""
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -74,14 +75,10 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
                     viewModel.addSalary(s.toString())
                 }
                 viewModel.setOnFocus(binding.salaryEditText.text.toString(), binding.salaryEditText.hasFocus())
-
-
-
             }
-
-            override fun afterTextChanged(s: Editable?) {}
+            override fun afterTextChanged(s: Editable?) {
+            }
         })
-
 
         viewModel.getFiltersStateLiveData().observe(requireActivity()) {
             render(it)
@@ -101,6 +98,8 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             binding.salaryTextInput.defaultHintTextColor = resources.getColorStateList(R.color.gray, null)
             viewModel.addOnlyWithSalary(false)
             binding.filterCheckbox.isChecked = false
+            binding.clearAll.visibility = View.GONE
+            binding.buttonApply.visibility = View.VISIBLE
         }
         binding.buttonApply.setOnClickListener {
             viewModel.writeFilters()
@@ -111,8 +110,17 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         }
         binding.filterCheckbox.setOnClickListener {
             viewModel.addOnlyWithSalary(binding.filterCheckbox.isChecked)
+            if(binding.filterCheckbox.isChecked.equals(true)){
+                binding.clearAll.visibility= View.VISIBLE
+            }
+            binding.buttonApply.visibility = View.VISIBLE
         }
 
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        App.DADA_HAS_CHANGHED = "no"
     }
 
     private fun hideKeyBoard() {
@@ -150,6 +158,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
     }
 
     private fun showFiltersData(filters: Filters) {
+        viewModel.hasDataChanged()
         var placeOfWork = ""
         var industries = ""
         filters.countryName?.let {
@@ -157,20 +166,32 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             binding.placeOfWorkEditText.setText(placeOfWork)
             binding.placeOfWorkButton.visibility = View.INVISIBLE
             binding.placeOfWorkClear.visibility = View.VISIBLE
+            binding.clearAll.visibility= View.VISIBLE
         }
         filters.areasNames?.let {
             placeOfWork += ", $it"
             binding.placeOfWorkEditText.setText(placeOfWork)
+
         }
         filters.industriesName?.let {
             industries += "$it "
             binding.industryEditText.setText(industries)
             binding.industryButton.visibility = View.INVISIBLE
             binding.industryClear.visibility = View.VISIBLE
+            binding.clearAll.visibility= View.VISIBLE
         }
-        if (filters.salary != 0) binding.salaryEditText.setText(filters.salary.toString())
 
-        if (filters.onlyWithSalary != false) binding.filterCheckbox.isChecked = true
+
+        if (filters.salary != 0) {
+            lastSalary = filters.salary.toString()
+            binding.salaryEditText.setText(filters.salary.toString())
+            binding.clearAll.visibility= View.VISIBLE
+        }
+
+        if (filters.onlyWithSalary != false) {
+            binding.filterCheckbox.isChecked = true
+            binding.clearAll.visibility= View.VISIBLE
+        }
 
     }
 
@@ -180,6 +201,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         binding.placeOfWorkButton.visibility = View.VISIBLE
         viewModel.clearCountry()
         viewModel.clearRegion()
+        showApplyButton()
     }
 
     private fun clearIndustries() {
@@ -187,14 +209,24 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         binding.industryClear.visibility = View.GONE
         binding.industryButton.visibility = View.VISIBLE
         viewModel.clearIndustries()
+        showApplyButton()
     }
 
     private fun showView(state: ShowViewState) {
         when (state) {
             is ShowViewState.showClearIcon -> showClearIcon()
             is ShowViewState.hideClearIcon -> hideClearIcon()
-            else  -> clearEditText()
+            is ShowViewState.clearEditText  -> clearEditText()
+            is ShowViewState.showApplyButton  -> showApplyButton()
+            is ShowViewState.showClearAllButton -> showClearAllButton()
+
         }
+    }
+    private fun showClearAllButton(){
+        binding.clearAll.visibility = View.VISIBLE
+    }
+    private fun showApplyButton(){
+        binding.buttonApply.visibility = View.VISIBLE
     }
     private fun clearEditText(){
         binding.salaryEditText.text?.clear()

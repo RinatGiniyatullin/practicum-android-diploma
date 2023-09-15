@@ -15,7 +15,7 @@ import ru.practicum.android.diploma.filters.ui.adapter.FilterSelectionClickListe
 class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private var textView: TextView = itemView.findViewById(R.id.SelectionFilters)
-    private var checkBox: CheckBox? = itemView.findViewById(R.id.filter_checkbox)
+    private var checkBox: CheckBox = itemView.findViewById(R.id.filter_checkbox)
     private var rightArrow: ImageView? = itemView.findViewById(R.id.choose_country_bottom)
 
     fun bindRegion(
@@ -23,10 +23,11 @@ class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         onClickListener: FilterSelectionClickListener?,
     ) {
         textView.text = model?.name
-        checkBox?.visibility = View.VISIBLE
+        checkBox.visibility = View.VISIBLE
         rightArrow?.visibility = View.GONE
-        checkBox?.setOnClickListener {
-            if (checkBox!!.isChecked) {
+        checkBox.isChecked = model!!.isChecked
+        checkBox.setOnClickListener {
+            if (checkBox.isChecked) {
                 onClickListener?.onClickRegion(model!!, true)
             } else {
                 onClickListener?.onClickRegion(model, false)
@@ -38,11 +39,12 @@ class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         textView.text = model?.name
         rightArrow?.visibility = View.GONE
         checkBox?.visibility = View.VISIBLE
+        checkBox.isChecked = model!!.isChecked
         checkBox?.setOnClickListener {
             if (checkBox!!.isChecked) {
                 onClickListener?.onClickIndustries(model!!, true)
             } else {
-                onClickListener?.onClickIndustries(null, false)
+                onClickListener?.onClickIndustries(model, false)
             }
         }
     }

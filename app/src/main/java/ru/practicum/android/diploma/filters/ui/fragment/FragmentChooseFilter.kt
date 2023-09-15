@@ -14,9 +14,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFilterSelectionBinding
 import ru.practicum.android.diploma.filters.domain.models.Areas
-import ru.practicum.android.diploma.filters.domain.models.Country
 import ru.practicum.android.diploma.filters.domain.models.Industries
-import ru.practicum.android.diploma.filters.domain.models.Industry
 import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
@@ -31,8 +29,10 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     private val viewModel by viewModel<FiltersViewModel>()
     private var adapter:FiltersAdapter? = null
     private var screen:String? =null
+    private var region:Region? = null
     private val areaList = mutableListOf<Region>()
     private val industryList = mutableListOf<Industries>()
+    private var industry:Industries? = null
     private var isRegionScreen:Boolean = false
     var editText:String?= null
 
@@ -61,20 +61,34 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         adapter = FiltersAdapter(object: FilterSelectionClickListener {
             override fun onClickRegion(model: Region?, isChecked: Boolean) {
                 when(isChecked){
-                    true -> areaList.add(model!!)
-                    false -> areaList.remove(model)
+                    true -> {
+                        model!!.isChecked = true
+                        areaList.map { if(it.equals(region))it.isChecked = false }
+                        adapter?.setRegion(areaList)
+                        region = model
+                    }
+                    false ->{ model!!.isChecked = false
+                        region = null
+                    }
                 }
                 binding.buttonApply.visibility = View.GONE
-                areaList.takeIf { it.isNotEmpty()}?.let{ binding.buttonApply.visibility = View.VISIBLE}
+                region?.let{ binding.buttonApply.visibility = View.VISIBLE}
                 Log.d("Area", "$areaList")
             }
             override fun onClickIndustries(model: Industries?, isChecked:Boolean) {
                 when(isChecked){
-                    true -> industryList.add(model!!)
-                    false -> industryList.remove(model)
+                    true -> {
+                        model!!.isChecked = true
+                        industryList.map { if(it.equals(industry))it.isChecked = false }
+                        adapter?.setIndustrie(industryList)
+                        industry = model
+                    }
+                    false -> {model!!.isChecked = false
+                        industry = null
+                    }
                 }
                 binding.buttonApply.visibility = View.GONE
-                industryList.takeIf { it.isNotEmpty()}?.let{ binding.buttonApply.visibility = View.VISIBLE}
+                industry?.let{ binding.buttonApply.visibility = View.VISIBLE}
 
             }
             override fun onClickCountry(model: Areas?) {
@@ -113,10 +127,10 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     }
     private fun applyButtom(){
         binding.buttonApply.setOnClickListener {
-            areaList.takeIf { it.isNotEmpty() }?.let {
+            region?.let {
                 viewModel.addArea(it)
             }
-            industryList.takeIf { it.isNotEmpty() }?.let {
+            industry?.let {
                 viewModel.addIndustries(it)
             }
             findNavController().navigateUp()
@@ -129,18 +143,20 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
     }
     private fun chooseScreen(state:ScreenState){
         when(state){
-             ScreenState.ShowIndustriesScreen -> showIndustriesScreen()
-             ScreenState.ShowAreasScreen -> showAreasScreen()
-             ScreenState.ShowCountriesScreen -> {
+             is ScreenState.ShowIndustriesScreen -> showIndustriesScreen()
+             is ScreenState.ShowAreasScreen -> showAreasScreen()
+             is ScreenState.ShowCountriesScreen -> {
                 showCountriesScreen()
             }
             is ScreenState.ShowIndustryList -> showIndustryList(state.industryList)
             is ScreenState.ShowAreasList -> showAreasList(state.areasList)
             is ScreenState.ShowCountriesList -> showCountriesList(state.countriesList)
 
+            else -> {}
         }
     }
     private fun showIndustryList(industry: List<Industries>){
+        industryList.addAll(industry)
         adapter?.setIndustrie(industry)
         if(industry.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
         }else{
@@ -149,6 +165,7 @@ class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
         binding.progressBar.visibility = View.GONE
     }
     private fun showAreasList(region: List<Region>){
+        areaList.addAll(region)
         adapter?.setRegion(region)
         if(region.isEmpty()){binding.placeholderImage.visibility = View.VISIBLE
         }else{

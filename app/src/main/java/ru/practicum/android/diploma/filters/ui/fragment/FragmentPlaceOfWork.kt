@@ -14,6 +14,7 @@ import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.REGION
 import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.SCREEN
 import ru.practicum.android.diploma.util.BindingFragment
+import ru.practicum.android.diploma.util.app.App
 
 class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
 
@@ -76,6 +77,7 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
         binding.countryEditText.text?.clear()
         binding.regionEditText.text?.clear()
         viewModel.clearCountry()
+        App.DADA_HAS_CHANGHED = ""
     }
 
     private fun render(state: FiltersDataState) {
