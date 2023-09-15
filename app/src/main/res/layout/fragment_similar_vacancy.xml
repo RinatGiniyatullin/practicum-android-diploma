@@ -65,6 +65,18 @@
         android:layout_marginTop="@dimen/margin_48"
         android:visibility="gone"/>
 
+    <ProgressBar
+        android:id="@+id/progress_bar_for_load"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:indeterminateTint="@color/blue"
+        android:layout_marginTop="@dimen/margin_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/refresh_button"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
@@ -73,7 +85,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/vacancy_view"
+        tools:listitem="@layout/item_view"
         tools:itemCount="20"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

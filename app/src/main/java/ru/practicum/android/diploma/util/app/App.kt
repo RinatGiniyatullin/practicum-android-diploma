@@ -24,6 +24,11 @@ class App : Application() {
         switchTheme(isDarkMode(applicationContext))
     }
 
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        switchTheme(isDarkMode(applicationContext))
+    }
+
     private fun switchTheme(darkThemeEnabled: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) {
@@ -40,7 +45,8 @@ class App : Application() {
         return darkModeFlag == Configuration.UI_MODE_NIGHT_YES
     }
 
-    companion object{
+    companion object {
+        var text: String = ""
         var DATA_HAS_CHANGED:String = "no"
     }
 }

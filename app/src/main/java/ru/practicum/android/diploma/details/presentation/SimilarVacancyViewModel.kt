@@ -22,6 +22,7 @@ class SimilarVacancyViewModel(
     val state: LiveData<SearchState> = _state
 
     fun getSimilarVacanciesById(vacancyId: String){
+        _state.postValue(SearchState.FirstLoading)
         viewModelScope.launch {
             vacancyInteractor.getSimilarVacanciesById(vacancyId)
                 .collect { pair ->

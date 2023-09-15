@@ -48,16 +48,20 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         viewModel.state.observe(viewLifecycleOwner){ state ->
             when(state){
                 is VacancyState.Content -> {
+                    binding.progressBarForLoad.visibility = View.GONE
                     vacancyDetails = state.vacancyDetails
                     binding.detailsData.visibility = View.VISIBLE
                     binding.refreshButton.visibility = View.GONE
                     initVacancyDetails()
                 }
                 is VacancyState.Error -> {
+                    binding.progressBarForLoad.visibility = View.GONE
                     showToast(state.errorMessage)
                     binding.detailsData.visibility = View.GONE
                     binding.refreshButton.visibility = View.VISIBLE
                 }
+
+                VacancyState.Loading -> binding.progressBarForLoad.visibility = View.VISIBLE
             }
         }
 
@@ -103,29 +107,43 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
     private fun initVacancyDetails(){
         val radius = resources.getDimensionPixelSize(R.dimen.margin_12)
         Glide.with(requireContext())
-            .load(vacancyDetails.employer?.logo_urls?.original)
+            .load(vacancyDetails.employer?.logoUrls?.original)
             .placeholder(R.drawable.placeholder)
             .transform(RoundedCorners(radius))
             .into(binding.employerImage)
 
         val experience = vacancyDetails.experience?.name
         val schedule = vacancyDetails.schedule?.name
-        val keySkills = vacancyDetails.key_skills
+        val keySkills = vacancyDetails.keySkills
+        val contacts = vacancyDetails.contacts
         val nameContact = vacancyDetails.contacts?.name
         val emailContact = vacancyDetails.contacts?.email
         val phoneContactList = vacancyDetails.contacts?.phones
         val firstPhoneContact = phoneContactList?.get(0)
+        val phoneComment = firstPhoneContact?.comment
         val formattedPhoneContact = "+${firstPhoneContact?.country}(${firstPhoneContact?.city})${firstPhoneContact?.number?.dropLast(4)}-${firstPhoneContact?.number?.drop(3)?.dropLast(2)}-${firstPhoneContact?.number?.drop(5)}"
         val noData = getString(R.string.no_data)
 
+        binding.city.text = if(vacancy.city.isEmpty()) vacancyDetails.area.name else vacancy.city
         binding.requiredExperienceValue.text = if(experience != null) experience else noData
         binding.scheduleValue.text = if(schedule != null) schedule else noData
         binding.vacancyDescriptionValue.text = HtmlCompat.fromHtml(vacancyDetails.description, FROM_HTML_MODE_COMPACT)
-        binding.vacancyKeySkillsValue.text = if(keySkills.isNotEmpty()) keySkills.joinToString { it.name } else noData
-        binding.vacancyContactPersonValue.text = if(nameContact != null) nameContact else noData
-        binding.vacancyContactEmailValue.text = if(emailContact != null) emailContact else noData
-        binding.vacancyContactPhoneValue.text = if(phoneContactList != null) formattedPhoneContact else noData
 
+        if(keySkills.isNotEmpty()) {
+            binding.keySkillsContainer.visibility = View.VISIBLE
+            binding.vacancyKeySkillsValue.text = keySkills.joinToString { it.name }
+        } else
+            binding.keySkillsContainer.visibility = View.GONE
+
+        if(contacts != null) {
+            binding.contactsContainer.visibility = View.VISIBLE
+            binding.vacancyContactPersonValue.text = if(nameContact != null) nameContact else noData
+            binding.vacancyContactEmailValue.text = if(emailContact != null) emailContact else noData
+            binding.vacancyContactPhoneValue.text = if(phoneContactList != null) formattedPhoneContact else noData
+            binding.vacancyPhoneCommentValue.text = if(phoneComment != null) phoneComment else noData
+        }
+        else
+            binding.contactsContainer.visibility = View.GONE
     }
 
     private fun showToast(message: String){
@@ -161,7 +179,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         }
 
         binding.sharingIcon.setOnClickListener {
-            viewModel.shareVacancyUrl(vacancyDetails.alternate_url)
+            viewModel.shareVacancyUrl(vacancyDetails.alternateUrl)
         }
 
         binding.vacancyContactPhoneValue.setOnClickListener {

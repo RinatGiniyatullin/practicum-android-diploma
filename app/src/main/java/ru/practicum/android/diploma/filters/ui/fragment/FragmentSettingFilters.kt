@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,13 +15,16 @@ import androidx.core.os.bundleOf
 import androidx.core.widget.doOnTextChanged
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
+import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSettingFiltersBinding
+import ru.practicum.android.diploma.details.presentation.ui.VacancyFragment
 import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.presentation.models.ShowViewState
+import ru.practicum.android.diploma.search.ui.SearchFragment
 import ru.practicum.android.diploma.util.BindingFragment
 import ru.practicum.android.diploma.util.app.App
 
@@ -30,6 +34,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
     var bundle: Bundle? = null
     lateinit var placeHolderText:String
     var lastSalary:String = ""
+    private lateinit var getFilters: Filters
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -82,6 +87,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
             }
         })
 
+
         viewModel.getFiltersStateLiveData().observe(requireActivity()) {
             render(it)
         }
@@ -104,7 +110,10 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         }
         binding.buttonApply.setOnClickListener {
             viewModel.writeFilters()
-            findNavController().navigateUp()
+            findNavController().navigate(
+                R.id.action_settingFilters_to_searchFragment,
+                SearchFragment.createArgs(Gson().toJson(getFilters))
+            )
         }
         binding.clearIcon.setOnClickListener {
             clearEditText()
@@ -131,21 +140,18 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
         binding.salaryEditText.clearFocus()
 
     }
-
-    private fun switchToPlaceOfWorkScreen() {
-        binding.placeOfWorkButton.setOnClickListener {
+    fun switchToPlaceOfWorkScreen(){
+        binding.placeOfWorkButton.setOnClickListener{
             findNavController().navigate(R.id.action_settingFilters_to_fragmentPlaceOfWork)
         }
     }
-
-    private fun switchToIndustriesScreen() {
-        binding.industryButton.setOnClickListener {
+    fun switchToIndustriesScreen(){
+        binding.industryButton.setOnClickListener{
             bundle = bundleOf(SCREEN to INDUSTRIES)
             findNavController().navigate(R.id.action_settingFilters_to_fragmentChooseFilter, bundle)
         }
     }
-
-    private fun back() {
+    fun back(){
         binding.arrowback.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -160,6 +166,7 @@ class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() 
 
     private fun showFiltersData(filters: Filters) {
         viewModel.hasDataChanged()
+        getFilters = filters
         var placeOfWork = ""
         var industries = ""
         filters.countryName?.let {
