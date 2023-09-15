@@ -47,5 +47,6 @@ class App : Application() {
 
     companion object {
         var text: String = ""
+        var DATA_HAS_CHANGED:String = "no"
     }
 }
