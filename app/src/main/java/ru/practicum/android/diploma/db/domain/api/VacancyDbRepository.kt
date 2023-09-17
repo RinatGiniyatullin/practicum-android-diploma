@@ -9,4 +9,6 @@ interface VacancyDbRepository {
     suspend fun deleteVacancy(vacancyEntity: VacancyEntity)
 
     suspend fun getFavouriteVacancy(): Flow<List<VacancyEntity>>
+    suspend fun getFavouriteVacancyById(vacancyId: String): Flow<VacancyEntity>
+    suspend fun deleteVacancyById(vacancyId: String)
 }

@@ -11,8 +11,10 @@ import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFavouriteBinding
+import ru.practicum.android.diploma.details.domain.models.VacancyDetails
 import ru.practicum.android.diploma.details.presentation.ui.VacancyFragment
 import ru.practicum.android.diploma.favourite.presentation.models.FavoriteStateInterface
+import ru.practicum.android.diploma.favourite.presentation.models.GetFavouriteVacancyInfoState
 import ru.practicum.android.diploma.favourite.presentation.viewvodel.FavouriteViewModel
 import ru.practicum.android.diploma.search.domain.models.Vacancy
 import ru.practicum.android.diploma.util.BindingFragment
@@ -26,6 +28,7 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
     private lateinit var onFavouriteVacancyClickDebounce: (Vacancy) -> Unit
 
     private val favouriteViewModel: FavouriteViewModel by viewModel()
+    //private val vacancyDetails = arrayListOf<VacancyDetails>()
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -41,12 +44,18 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
 
         setListeners()
 
-        favouriteViewModel.observeStateFavourite().observe(viewLifecycleOwner){
+        favouriteViewModel.observeStateFavourite().observe(viewLifecycleOwner) {
             renderStateFavouriteVacancies(it)
         }
 
-        //showConfirmDialog()
+        favouriteViewModel.observeStateGetVacancyInfo().observe(viewLifecycleOwner) {
+            when(it){
+                is GetFavouriteVacancyInfoState.FavoriteVacanciesInfo -> renderStateGetInfoVacancy(it)
+                //is GetFavouriteVacancyInfoState.FavoriteVacanciesInfoIsEmpty
+            }
+        }
     }
+
 
     private fun initAdapter() {
         vacancyAdapter = VacancyAdapter(ArrayList<Vacancy>())
@@ -57,7 +66,8 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
 
         onFavouriteVacancyClickDebounce =
             debounce<Vacancy>(CLICK_DEBOUNCE_DELAY_MILLIS, lifecycleScope, false) { vacancy ->
-                sendToDetail(vacancy)
+                favouriteViewModel.getFavouriteVacancyInfo(vacancy.id)
+                //sendToDetail(vacancy)
             }
 
         vacancyAdapter.itemClickListener = { position, vacancy ->
@@ -70,20 +80,26 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
     }
 
     private fun renderStateFavouriteVacancies(favoriteStateInterface: FavoriteStateInterface) {
-        when(favoriteStateInterface){
+        when (favoriteStateInterface) {
             is FavoriteStateInterface.FavoriteVacanciesIsEmpty -> showPlaceHolder()
             is FavoriteStateInterface.FavoriteVacancies ->
                 showFavoriteVacancies(favoriteStateInterface.favoriteVacancies)
         }
     }
 
-    private fun showPlaceHolder(){
+    private fun renderStateGetInfoVacancy(favouriteVacanciesInfo: GetFavouriteVacancyInfoState.FavoriteVacanciesInfo) {
+        val vacancy: Vacancy = favouriteVacanciesInfo.vacancy
+        val vacancyDetails: VacancyDetails = favouriteVacanciesInfo.vacancyDetails
+        sendToDetail(vacancy, vacancyDetails)
+    }
+
+    private fun showPlaceHolder() {
         binding.placeholderFavourite.visibility = View.VISIBLE
         binding.recyclerView.visibility = View.GONE
         vacancyAdapter.setVacancies(null)
     }
 
-    private fun showFavoriteVacancies(vacancies: List<Vacancy>){
+    private fun showFavoriteVacancies(vacancies: List<Vacancy>) {
         binding.placeholderFavourite.visibility = View.GONE
         binding.recyclerView.visibility = View.VISIBLE
         vacancyAdapter.setVacancies(vacancies)
@@ -94,17 +110,20 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
             .setTitle(R.string.delete_vacancy)
             .setMessage("")
             .setPositiveButton(R.string.yes) { dialog, which ->
-                favouriteViewModel.deleteTrack(vacancy)
+                favouriteViewModel.deleteVacancy(vacancy)
+                //favouriteViewModel.deleteTrackById(vacancy.id)
             }
             .setNegativeButton(R.string.no) { dialog, which -> }
 
         confirmDialogDeleteFavouriteVacancy.show()
     }
 
-    private fun sendToDetail(vacancy: Vacancy) {
+    private fun sendToDetail(vacancy: Vacancy, vacancyDetails: VacancyDetails) {
         findNavController().navigate(
             R.id.action_fragmentFavourite_to_vacancyFragment,
-            VacancyFragment.createArgs(Gson().toJson(vacancy))
+            VacancyFragment.createArgs(Gson().toJson(vacancy)
+                //, Gson().toJson(vacancyDetails)
+            )
         )
     }
 

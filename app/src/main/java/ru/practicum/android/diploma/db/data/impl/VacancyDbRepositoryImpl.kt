@@ -17,4 +17,13 @@ class VacancyDbRepositoryImpl(private val appDataBase: AppDataBase): VacancyDbRe
     override suspend fun getFavouriteVacancy(): Flow<List<VacancyEntity>> {
         return appDataBase.vacancyDao().getFavouriteVacancy()
     }
+
+    override suspend fun getFavouriteVacancyById(vacancyId: String): Flow<VacancyEntity> {
+        return appDataBase.vacancyDao().getFavouriteVacancyById(vacancyId)
+    }
+
+    override suspend fun deleteVacancyById(vacancyId: String) {
+        appDataBase.vacancyDao().deleteFavouriteVacancyById(vacancyId)
+    }
+
 }

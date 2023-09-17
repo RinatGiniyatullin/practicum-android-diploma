@@ -25,6 +25,7 @@ import ru.practicum.android.diploma.util.BindingFragment
 class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
     private val viewModel by viewModel<VacancyViewModel>()
+    private var checkFavourite: Boolean = false
 
     private lateinit var vacancy: Vacancy
     private lateinit var vacancyDetails: VacancyDetails
@@ -45,8 +46,26 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
         viewModel.loadVacancyDetails(vacancy.id)
 
-        viewModel.state.observe(viewLifecycleOwner){ state ->
-            when(state){
+        viewModel.checkFavourite(vacancy)
+
+        viewModel.observeStateFavouriteIcon().observe(viewLifecycleOwner) {
+            renderStateFavouriteIcon(it)
+        }
+
+        viewModel.stateVacancyInfoDb.observe(viewLifecycleOwner) { vacancyDetailsDb ->
+            if (vacancyDetailsDb == null){
+                binding.favouritesIcon.isClickable = false
+                return@observe
+            }
+            vacancyDetails = vacancyDetailsDb
+            binding.detailsData.visibility = View.VISIBLE
+            binding.similarVacanciesButton.visibility = View.GONE
+            //viewModel.initVacancyDetailsInDb(vacancy)
+            initVacancyDetails()
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
                 is VacancyState.Content -> {
                     binding.progressBarForLoad.visibility = View.GONE
                     vacancyDetails = state.vacancyDetails
@@ -59,17 +78,16 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
                     showToast(state.errorMessage)
                     binding.detailsData.visibility = View.GONE
                     binding.refreshButton.visibility = View.VISIBLE
+                    viewModel.initVacancyDetailsInDb(vacancy)
+//                    if (checkFavourite) {
+//                        binding.detailsData.visibility = View.VISIBLE
+//                        viewModel.initVacancyDetailsInDb(vacancy)
+//                    }
                 }
 
                 VacancyState.Loading -> binding.progressBarForLoad.visibility = View.VISIBLE
             }
         }
-
-        viewModel.observeStateFavouriteIcon().observe(viewLifecycleOwner){
-            renderStateFavouriteIcon(it)
-        }
-
-        viewModel.checkFavourite(vacancy)
 
         initClickListeners()
     }
@@ -105,6 +123,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
     }
 
     private fun initVacancyDetails(){
+        if (vacancyDetails == null) return
         val radius = resources.getDimensionPixelSize(R.dimen.margin_12)
         Glide.with(requireContext())
             .load(vacancyDetails.employer?.logoUrls?.original)
@@ -129,7 +148,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         binding.scheduleValue.text = if(schedule != null) schedule else noData
         binding.vacancyDescriptionValue.text = HtmlCompat.fromHtml(vacancyDetails.description, FROM_HTML_MODE_COMPACT)
 
-        if(keySkills.isNotEmpty()) {
+        if(!keySkills.isNullOrEmpty()) {
             binding.keySkillsContainer.visibility = View.VISIBLE
             binding.vacancyKeySkillsValue.text = keySkills.joinToString { it.name }
         } else
@@ -152,9 +171,16 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
     }
 
     private fun renderStateFavouriteIcon(isFavourite: Boolean?){
-        when(isFavourite){
-            true -> binding.favouritesIcon.setImageResource(R.drawable.favorites_on)
-            else -> binding.favouritesIcon.setImageResource(R.drawable.favorites_off)
+        when (isFavourite) {
+            true -> {
+                binding.favouritesIcon.setImageResource(R.drawable.favorites_on)
+                checkFavourite = true
+            }
+
+            else -> {
+                binding.favouritesIcon.setImageResource(R.drawable.favorites_off)
+                checkFavourite = false
+            }
         }
     }
 
@@ -175,7 +201,8 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         }
 
         binding.favouritesIcon.setOnClickListener{
-            viewModel.clickOnFavoriteIcon(vacancy)
+
+            viewModel.clickOnFavoriteIcon(vacancy, vacancyDetails)
         }
 
         binding.sharingIcon.setOnClickListener {
