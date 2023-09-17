@@ -102,7 +102,7 @@ class VacancyDbConverter {
     private fun getKeySkillsStr(keySkills: Array<KeySkill>): String {
         var keySkillStr = ""
         keySkills.forEach { keySkill ->
-            keySkillStr += " ," + keySkill.name
+            keySkillStr += keySkill.name + " ,"
         }
         return keySkillStr
     }
@@ -111,8 +111,8 @@ class VacancyDbConverter {
         if (vacancyEntity.contactPhones.isNullOrEmpty()) return null
         val phone = vacancyEntity.contactPhones
         val country = phone[1].toString()
-        val city = phone.substring(3, 5)
-        val number = phone.substring(7, 9) + phone.substring(11, 12) + phone.substring(14, 15)
+        val city = phone.substring(3, 6)
+        val number = phone.substring(7, 10) + phone.substring(11, 13) + phone.substring(14, 16)
         val comment = vacancyEntity.contactComment
         val phonesList = arrayListOf<Phone>()
         phonesList.add(Phone(city, country, number, comment))
