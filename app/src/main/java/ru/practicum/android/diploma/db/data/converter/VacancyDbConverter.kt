@@ -116,7 +116,7 @@ class VacancyDbConverter {
         val comment = vacancyEntity.contactComment
         val phonesList = arrayListOf<Phone>()
         phonesList.add(Phone(city, country, number, comment))
-        return phonesList as Array<Phone>
+        return phonesList.toTypedArray()
     }
 
     private fun getSchedule(vacancyEntity: VacancyEntity): Schedule? {
