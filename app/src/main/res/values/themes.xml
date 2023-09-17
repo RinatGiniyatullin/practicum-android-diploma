@@ -10,6 +10,7 @@
         <item name="red_to_white_color">@color/red</item>
         <item name="white_to_black_color">@color/white</item>
         <item name="white2_to_black2_color">@color/white_2</item>
+        <item name="light_gray_75_to_gray_75_color">@color/light_gray_75</item>
 
     </style>
 
