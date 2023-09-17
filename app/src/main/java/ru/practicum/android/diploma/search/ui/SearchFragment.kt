@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.core.os.bundleOf
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,6 +19,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSearchBinding
 import ru.practicum.android.diploma.details.presentation.ui.VacancyFragment
+import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.search.domain.SearchState
 import ru.practicum.android.diploma.search.domain.models.Vacancy
 import ru.practicum.android.diploma.util.BindingFragment
@@ -27,11 +29,11 @@ import ru.practicum.android.diploma.util.debounce
 
 class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
-    lateinit var vacancy: Vacancy
     private lateinit var adapter: VacancyAdapter
     private lateinit var onVacancyClickDebounce: (Vacancy) -> Unit
     private lateinit var vacancySearchDebounce: (String) -> Unit
     private val viewModel by viewModel<SearchViewModel>()
+    private lateinit var filters: Filters
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -45,9 +47,18 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
 
         viewModel.viewStateLiveData.observe(viewLifecycleOwner) { render(it) }
 
-        viewModel.iconStateLiveData.observe(viewLifecycleOwner) { state ->
+        viewModel.searchIconStateLiveData.observe(viewLifecycleOwner) { state ->
             changeIconInEditText(state)
         }
+
+        viewModel.filterIconStateLiveData.observe(viewLifecycleOwner) { state ->
+            changeFilterIcon(state)
+        }
+
+        viewModel.saveTextLiveData.observe(viewLifecycleOwner) { text ->
+            binding.searchEditText.setText(text)
+        }
+
         initAdapter()
         listener()
     }
@@ -59,6 +70,17 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     }
 
     private fun listener() {
+        if (arguments != null) {
+            val jsonFilters = requireArguments().getString(FILTERS)
+
+            if (jsonFilters != null) {
+                filters = Gson().fromJson(jsonFilters, Filters::class.java)
+                viewModel.showFilters(filters)
+            }
+        } else {
+            viewModel.showFiltersState()
+        }
+
 
         vacancySearchDebounce = debounce<String>(
             SEARCH_DEBOUNCE_DELAY,
@@ -69,6 +91,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         }
 
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) hideKeyBoard()
             viewModel.setOnFocus(binding.searchEditText.text.toString(), hasFocus)
         }
 
@@ -130,7 +153,8 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private fun showVacanciesList(vacancies: List<Vacancy>, foundValue: Int) {
 
         binding.searchResult.visibility = View.VISIBLE
-        binding.searchResult.text = "Найдено $foundValue вакансий"
+        binding.searchResult.text =
+            resources.getQuantityString(R.plurals.search_result_number, foundValue, foundValue)
         binding.searchRecyclerView.visibility = View.VISIBLE
         binding.placeholderImage.visibility = View.GONE
         binding.progressBarForLoad.visibility = View.GONE
@@ -162,10 +186,17 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         adapter.setVacancies(null)
     }
 
-    private fun changeIconInEditText(state: IconState) {
+    private fun changeIconInEditText(state: SearchIconState) {
         when (state) {
-            IconState.CloseIcon -> setCloseIconForEditText()
-            IconState.SearchIcon -> setSearchIconForEditText()
+            SearchIconState.CloseSearchIcon -> setCloseIconForEditText()
+            SearchIconState.SearchSearchIcon -> setSearchIconForEditText()
+        }
+    }
+
+    private fun changeFilterIcon(state: FilterIconState) {
+        when (state) {
+            FilterIconState.NoFilters -> showEmptyFilterIcon()
+            FilterIconState.YesFilters -> showNoEmptyFilterIcon()
         }
     }
 
@@ -177,6 +208,14 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     private fun setSearchIconForEditText() {
         binding.editTextCloseImage.visibility = View.GONE
         binding.editTextSearchImage.visibility = View.VISIBLE
+    }
+
+    private fun showEmptyFilterIcon() {
+        binding.filterIcon.setImageResource(R.drawable.filter_off)
+    }
+
+    private fun showNoEmptyFilterIcon() {
+        binding.filterIcon.setImageResource(R.drawable.filter_on)
     }
 
     private fun hideKeyBoard() {
@@ -203,6 +242,14 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         binding.progressBarInEnd.visibility = View.VISIBLE
     }
 
+    private fun showStopLoadind() {
+        binding.searchResult.visibility = View.VISIBLE
+        binding.searchRecyclerView.visibility = View.VISIBLE
+        binding.placeholderImage.visibility = View.GONE
+        binding.progressBarForLoad.visibility = View.GONE
+        binding.progressBarInEnd.visibility = View.GONE
+    }
+
     private fun render(state: SearchState) {
         when (state) {
             is SearchState.FirstLoading -> showLoading()
@@ -210,11 +257,13 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             is SearchState.VacancyContent -> showVacanciesList(state.vacancies, state.foundValue)
             is SearchState.Error -> showError(state.errorMessage)
             is SearchState.Empty -> showEmpty(state.message)
+            SearchState.StopLoad -> showStopLoadind()
         }
     }
 
     private fun clearInputEditText() {
-        binding.searchEditText.setText("")
+        binding.searchEditText.text.clear()
+        binding.searchEditText.clearFocus()
         viewModel.clearInputEditText()
 
         binding.searchResult.visibility = View.GONE
@@ -224,7 +273,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
         binding.progressBarInEnd.visibility = View.GONE
         hideKeyBoard()
         adapter.notifyDataSetChanged()
-
     }
 
     private fun search(text: String) {
@@ -248,6 +296,9 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val FILTERS = "filters"
+
+        fun createArgs(jsonFilters: String?): Bundle? = bundleOf(FILTERS to jsonFilters)
     }
 
 }

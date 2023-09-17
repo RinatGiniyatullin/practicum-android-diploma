@@ -11,7 +11,11 @@
         tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_settingFilters"
-            app:destination="@id/settingFilters" />
+            app:destination="@id/settingFilters"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
         <action
             android:id="@+id/action_searchFragment_to_vacancyFragment"
             app:destination="@id/vacancyFragment" />
@@ -24,10 +28,22 @@
         tools:layout="@layout/fragment_setting_filters">
         <action
             android:id="@+id/action_settingFilters_to_fragmentChooseFilter"
-            app:destination="@id/fragmentChooseFilter" />
+            app:destination="@id/fragmentChooseFilter"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
         <action
             android:id="@+id/action_settingFilters_to_fragmentPlaceOfWork"
-            app:destination="@id/fragmentPlaceOfWork" />
+            app:destination="@id/fragmentPlaceOfWork"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"/>
+        <action
+            android:id="@+id/action_settingFilters_to_searchFragment"
+            app:destination="@+id/searchFragment"
+            />
     </fragment>
     <fragment
         android:id="@+id/fragmentChooseFilter"
@@ -68,7 +84,12 @@
         tools:layout="@layout/fragment_place_of_work">
         <action
             android:id="@+id/action_fragmentPlaceOfWork_to_fragmentChooseFilter"
-            app:destination="@id/fragmentChooseFilter" />
+            app:destination="@id/fragmentChooseFilter"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right"
+            />
     </fragment>
     <fragment
         android:id="@+id/teamFragment"

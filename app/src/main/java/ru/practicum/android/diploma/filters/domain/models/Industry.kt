@@ -8,4 +8,5 @@ data class Industry(
 data class Industries(
     val id:String,
     val name:String,
+    var isChecked:Boolean = false
 )

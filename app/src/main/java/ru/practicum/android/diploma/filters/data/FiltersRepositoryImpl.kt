@@ -30,7 +30,7 @@ class FiltersRepositoryImpl(
     private val filtersStorage: FiltersStorage
 ) : FiltersRepository {
 
-    override suspend fun getAres(): Flow<Resource<List<Areas>>> = flow {
+    override suspend fun getAreas(): Flow<Resource<List<Areas>>> = flow {
         val response = networkClient.getAres(AreaSearchRequest)
         when (response.resultCode) {
             ERROR -> {
@@ -40,7 +40,7 @@ class FiltersRepositoryImpl(
             SUCCESS -> {
                 with(response) {
                     val regionList = response.resultAreas.map { mapAresFromDto(it) }
-                    emit(ru.practicum.android.diploma.util.Resource.Success(regionList))
+                    emit(ru.practicum.android.diploma.util.Resource.Success(moveItemToEnd(regionList.toMutableList())))
                 }
             }
 
@@ -96,7 +96,7 @@ class FiltersRepositoryImpl(
             areasDto.areas.map {
                 Region(
                     it.id,
-                    it.parent_id,
+                    it.parentId,
                     it.name
                 )
             }
@@ -141,6 +141,16 @@ class FiltersRepositoryImpl(
             industries.name
 
         )
+    }
+    fun  moveItemToEnd(list: MutableList<Areas>):MutableList<Areas> {
+        var area:Areas? = null
+        list.map { if(it.name.equals(resourceProvider.getString(R.string.another_region)))area = it }
+        val index = list.indexOf(area)
+        if (index >= 0 && index < list.size) {
+            val item = list.removeAt(index)
+            list.add(item)
+        }
+        return list
     }
 
 }

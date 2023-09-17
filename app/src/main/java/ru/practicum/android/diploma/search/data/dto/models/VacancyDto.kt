@@ -1,23 +1,31 @@
 package ru.practicum.android.diploma.search.data.dto.models
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class VacancyDto(
-    val accept_incomplete_resumes: Boolean,
-    val alternate_url: String,
-    val apply_alternate_url: String,
+    @SerializedName("accept_incomplete_resumes")
+    val acceptIncompleteResumes: Boolean,
+    @SerializedName("alternate_url")
+    val alternateUrl: String,
+    @SerializedName("apply_alternate_url")
+    val applyAlternateUrl: String,
     val area: Area,
     val department: Department?,
     val employer: Employer,
-    val has_test: Boolean,
+    @SerializedName("has_test")
+    val hasTest: Boolean,
     val id: String,
     val name: String,
-    val professional_roles: List<ProfessionalRoles>,
-    val published_at: String,
+    @SerializedName("professional_roles")
+    val professionalRoles: List<ProfessionalRoles>,
+    @SerializedName("published_at")
+    val publishedAt: String,
     val relations: Array<String>?,
-    val response_letter_required: Boolean,
+    @SerializedName("response_letter_required")
+    val responseLetterRequired: Boolean,
     val salary: Salary?,
     val type: Type,
     val url: String,
@@ -25,7 +33,8 @@ data class VacancyDto(
     val found: Int,
     val page: Int,
     val pages: Int,
-    val per_page: Int,
+    @SerializedName("per_page")
+    val perPage: Int,
 ) : Parcelable
 
 @Parcelize
@@ -43,14 +52,18 @@ data class Department(
 
 @Parcelize
 data class Employer(
-    val accredited_it_employer: Boolean,
-    val alternate_url: String?,
+    @SerializedName("accredited_it_employer")
+    val accreditedItEmployer: Boolean,
+    @SerializedName("alternate_url")
+    val alternateUrl: String?,
     val id: String?,
-    val logo_urls: LogoUrls?,
+    @SerializedName("logo_urls")
+    val logoUrls: LogoUrls?,
     val name: String,
     val trusted: Boolean,
     val url: String?,
-    val vacancies_url: String?,
+    @SerializedName("vacancies_url")
+    val vacanciesUrl: String?,
 ) : Parcelable
 
 @Parcelize

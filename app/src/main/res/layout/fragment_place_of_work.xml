@@ -32,13 +32,14 @@
     <TextView
         android:id="@+id/choose_textview"
         style="@style/Text_Medium_22_500"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/logo_padding_8"
         android:paddingVertical="@dimen/logo_padding_8"
         android:text="@string/choose_place_of_work"
         android:textColor="?attr/black_to_white_color"
         app:layout_constraintBottom_toBottomOf="@+id/arrowback"
+        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintStart_toEndOf="@+id/arrowback"
         app:layout_constraintTop_toTopOf="@+id/arrowback" />
 
@@ -53,7 +54,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/choose_textview"
         app:layout_constraintEnd_toStartOf="@+id/choose_country_bottom"
-        android:textColorHint="?attr/gray_to_white_color"
+        android:textColorHint="@color/gray"
         android:enabled="false"
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
@@ -67,7 +68,7 @@
             android:layout_height="wrap_content"
             android:backgroundTint="?attr/white2_to_black2_color"
             android:hint="@string/country"
-            android:textColor="?attr/gray_to_white_color" />
+            android:textColor="?attr/black_to_white_color" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <ImageView
@@ -85,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/weight_height_60"
         android:paddingStart="@dimen/logo_padding_20"
-        android:src="@drawable/close"
+        android:src="@drawable/clear_place_of_work"
         app:layout_constraintBottom_toBottomOf="@+id/country"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintTop_toTopOf="@+id/country"
@@ -101,7 +102,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/country"
         app:layout_constraintEnd_toStartOf="@+id/region_button"
-        android:textColorHint="?attr/gray_to_white_color"
+        android:textColorHint="@color/gray"
         android:enabled="false"
         app:boxStrokeWidth="0dp"
         app:boxStrokeWidthFocused="0dp"
@@ -112,7 +113,7 @@
             style="@style/Text_Regular_16_400"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="?attr/gray_to_white_color"
+            android:textColor="?attr/black_to_white_color"
             android:backgroundTint="?attr/white2_to_black2_color"
             android:hint="@string/region" />
     </com.google.android.material.textfield.TextInputLayout>
@@ -131,7 +132,7 @@
         android:layout_width="wrap_content"
         android:layout_height="@dimen/weight_height_60"
         android:paddingStart="@dimen/logo_padding_20"
-        android:src="@drawable/close"
+        android:src="@drawable/clear_place_of_work"
         app:layout_constraintBottom_toBottomOf="@+id/region"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintTop_toTopOf="@+id/region"
