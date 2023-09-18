@@ -8,6 +8,7 @@ import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 import ru.practicum.android.diploma.db.data.entity.VacancyEntity
 
+
 @Dao
 interface VacancyDao {
     @Insert(entity = VacancyEntity::class, onConflict = OnConflictStrategy.REPLACE)
@@ -20,5 +21,17 @@ interface VacancyDao {
     fun getFavouriteVacancy(): Flow<List<VacancyEntity>>
 
     @Query("SELECT * FROM vacancy_table WHERE id = :vacancyId")
-    fun getFavouriteVacancyById(vacancyId: Int): Flow<VacancyEntity>
+    fun getFavouriteVacancyById(vacancyId: String): Flow<VacancyEntity>
+
+    @Query("DELETE FROM vacancy_table WHERE id = :vacancyId")
+    fun deleteFavouriteVacancyById(vacancyId: String)
+
+//    @Insert(entity = PhoneEntity::class, onConflict = OnConflictStrategy.IGNORE)
+//    suspend fun insertPhone(phoneEntity: PhoneEntity)
+//
+//    @Delete(entity = PhoneEntity::class)
+//    suspend fun deletePhone(phoneEntity: PhoneEntity)
+//
+//    @Query("SELECT * FROM phone_table WHERE id = :phoneId")
+//    fun getPhoneById(phoneId: Int): Flow<PhoneEntity>
 }

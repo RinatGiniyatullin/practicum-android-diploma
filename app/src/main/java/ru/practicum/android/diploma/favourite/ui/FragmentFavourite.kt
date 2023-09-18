@@ -13,6 +13,7 @@ import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFavouriteBinding
 import ru.practicum.android.diploma.details.presentation.ui.VacancyFragment
 import ru.practicum.android.diploma.favourite.presentation.models.FavoriteStateInterface
+import ru.practicum.android.diploma.favourite.presentation.models.GetFavouriteVacancyInfoState
 import ru.practicum.android.diploma.favourite.presentation.viewvodel.FavouriteViewModel
 import ru.practicum.android.diploma.search.domain.models.Vacancy
 import ru.practicum.android.diploma.util.BindingFragment
@@ -41,12 +42,25 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
 
         setListeners()
 
-        favouriteViewModel.observeStateFavourite().observe(viewLifecycleOwner){
+        favouriteViewModel.observeStateFavourite().observe(viewLifecycleOwner) {
             renderStateFavouriteVacancies(it)
         }
 
-        //showConfirmDialog()
+        favouriteViewModel.observeStateGetVacancyInfo().observe(viewLifecycleOwner) {
+            when (it) {
+                is GetFavouriteVacancyInfoState.FavoriteVacanciesInfo,
+                -> renderStateGetInfoVacancy(it)
+            }
+        }
+
+        favouriteViewModel.showFavouriteVacancies()
     }
+
+    override fun onPause() {
+        super.onPause()
+        favouriteViewModel.pause()
+    }
+
 
     private fun initAdapter() {
         vacancyAdapter = VacancyAdapter(ArrayList<Vacancy>())
@@ -57,7 +71,7 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
 
         onFavouriteVacancyClickDebounce =
             debounce<Vacancy>(CLICK_DEBOUNCE_DELAY_MILLIS, lifecycleScope, false) { vacancy ->
-                sendToDetail(vacancy)
+                favouriteViewModel.getFavouriteVacancyInfo(vacancy.id)
             }
 
         vacancyAdapter.itemClickListener = { position, vacancy ->
@@ -69,21 +83,29 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
         }
     }
 
-    private fun renderStateFavouriteVacancies(favoriteStateInterface: FavoriteStateInterface) {
-        when(favoriteStateInterface){
+    private fun renderStateFavouriteVacancies(favoriteStateInterface: FavoriteStateInterface?) {
+        if (favoriteStateInterface == null) return
+        when (favoriteStateInterface) {
             is FavoriteStateInterface.FavoriteVacanciesIsEmpty -> showPlaceHolder()
             is FavoriteStateInterface.FavoriteVacancies ->
                 showFavoriteVacancies(favoriteStateInterface.favoriteVacancies)
         }
     }
 
-    private fun showPlaceHolder(){
+    private fun renderStateGetInfoVacancy(
+        favouriteVacanciesInfo: GetFavouriteVacancyInfoState.FavoriteVacanciesInfo,
+    ) {
+        val vacancy: Vacancy = favouriteVacanciesInfo.vacancy
+        sendToDetail(vacancy)
+    }
+
+    private fun showPlaceHolder() {
         binding.placeholderFavourite.visibility = View.VISIBLE
         binding.recyclerView.visibility = View.GONE
         vacancyAdapter.setVacancies(null)
     }
 
-    private fun showFavoriteVacancies(vacancies: List<Vacancy>){
+    private fun showFavoriteVacancies(vacancies: List<Vacancy>) {
         binding.placeholderFavourite.visibility = View.GONE
         binding.recyclerView.visibility = View.VISIBLE
         vacancyAdapter.setVacancies(vacancies)
@@ -94,7 +116,7 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
             .setTitle(R.string.delete_vacancy)
             .setMessage("")
             .setPositiveButton(R.string.yes) { dialog, which ->
-                favouriteViewModel.deleteTrack(vacancy)
+                favouriteViewModel.deleteVacancy(vacancy)
             }
             .setNegativeButton(R.string.no) { dialog, which -> }
 
