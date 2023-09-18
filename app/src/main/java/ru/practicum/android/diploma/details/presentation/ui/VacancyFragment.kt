@@ -133,9 +133,11 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         val nameContact = vacancyDetails.contacts?.name
         val emailContact = vacancyDetails.contacts?.email
         val phoneContactList = vacancyDetails.contacts?.phones
-        val firstPhoneContact = phoneContactList?.get(0)
-        val phoneComment = firstPhoneContact?.comment
-        val formattedPhoneContact = "+${firstPhoneContact?.country}(${firstPhoneContact?.city})${firstPhoneContact?.number?.dropLast(4)}-${firstPhoneContact?.number?.drop(3)?.dropLast(2)}-${firstPhoneContact?.number?.drop(5)}"
+        val firstPhoneContact = phoneContactList?.getOrNull(0)
+        val phoneComment = if(firstPhoneContact != null) firstPhoneContact.comment else null
+        val formattedPhoneContact = if(firstPhoneContact != null) "+${firstPhoneContact.country}(${firstPhoneContact.city})${firstPhoneContact.number.dropLast(4)}-${
+            firstPhoneContact.number.drop(3).dropLast(2)
+        }-${firstPhoneContact.number.drop(5)}" else null
         val noData = getString(R.string.no_data)
 
         binding.city.text = if(vacancy.city.isEmpty()) vacancyDetails.area.name else vacancy.city
@@ -143,7 +145,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         binding.scheduleValue.text = if(schedule != null) schedule else noData
         binding.vacancyDescriptionValue.text = HtmlCompat.fromHtml(vacancyDetails.description, FROM_HTML_MODE_COMPACT)
 
-        if(!keySkills.isNullOrEmpty()) {
+        if(keySkills.isNotEmpty()) {
             binding.keySkillsContainer.visibility = View.VISIBLE
             binding.vacancyKeySkillsValue.text = keySkills.joinToString { it.name }
         } else
@@ -153,7 +155,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
             binding.contactsContainer.visibility = View.VISIBLE
             binding.vacancyContactPersonValue.text = if(nameContact != null) nameContact else noData
             binding.vacancyContactEmailValue.text = if(emailContact != null) emailContact else noData
-            binding.vacancyContactPhoneValue.text = if(phoneContactList != null) formattedPhoneContact else noData
+            binding.vacancyContactPhoneValue.text = if(formattedPhoneContact != null) formattedPhoneContact else noData
             binding.vacancyPhoneCommentValue.text = if(phoneComment != null) phoneComment else noData
         }
         else
