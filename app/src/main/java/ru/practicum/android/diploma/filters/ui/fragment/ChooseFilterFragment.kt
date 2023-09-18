@@ -53,8 +53,8 @@ class ChooseFilterFragment:BindingFragment<FragmentFilterSelectionBinding>() {
         back()
         binding.recyclerViewFilters.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewFilters.adapter = adapter
-        applyButtom()
-        listeners()
+        applyButton()
+        initListeners()
 
     }
     private fun initAdapter(){
@@ -99,7 +99,7 @@ class ChooseFilterFragment:BindingFragment<FragmentFilterSelectionBinding>() {
 
         })
     }
-    private fun listeners(){
+    private fun initListeners(){
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if(!hasFocus)hideKeyBoard()
             viewModel.setOnFocus(binding.searchEditText.text.toString(), hasFocus)
@@ -125,7 +125,7 @@ class ChooseFilterFragment:BindingFragment<FragmentFilterSelectionBinding>() {
             hideKeyBoard()
         }
     }
-    private fun applyButtom(){
+    private fun applyButton(){
         binding.buttonApply.setOnClickListener {
             region?.let {
                 viewModel.addArea(it)

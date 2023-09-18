@@ -7,6 +7,7 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -114,6 +115,8 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
         }
         binding.clearIcon.setOnClickListener {
             clearEditText()
+            binding.salaryEditText.clearFocus()
+            hideKeyBoard()
         }
         binding.filterCheckbox.setOnClickListener {
             viewModel.addOnlyWithSalary(binding.filterCheckbox.isChecked)
@@ -121,6 +124,11 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
                 binding.clearAll.visibility= View.VISIBLE
             }
             binding.buttonApply.visibility = View.VISIBLE
+        }
+        binding.editTextBackground.setOnClickListener{
+            binding.salaryEditText.requestFocus()
+            showKeyBoard()
+            binding.salaryEditText.setSelection(binding.salaryEditText.text.length)
         }
 
     }
@@ -135,7 +143,10 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
             requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.hideSoftInputFromWindow(binding.salaryEditText.windowToken, 0)
         binding.salaryEditText.clearFocus()
-
+    }
+    private fun showKeyBoard(){
+        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
     fun switchToPlaceOfWorkScreen(){
         binding.placeOfWorkButton.setOnClickListener{
