@@ -17,15 +17,13 @@ import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
 import ru.practicum.android.diploma.filters.presentation.models.ShowViewState
-import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.COUNTRIES
-import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.INDUSTRIES
-import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.REGION
-import ru.practicum.android.diploma.search.data.ResourceProvider
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment.Companion.COUNTRIES
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment.Companion.INDUSTRIES
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment.Companion.REGION
 import ru.practicum.android.diploma.util.app.App
 
 class FiltersViewModel(
     val filtersInteractor: FiltersInteractor,
-    private val resourceProvider: ResourceProvider
 ) : ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<ScreenState>()
