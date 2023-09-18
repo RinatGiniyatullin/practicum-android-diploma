@@ -13,12 +13,12 @@ import ru.practicum.android.diploma.databinding.FragmentPlaceOfWorkBinding
 import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
-import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.REGION
-import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.SCREEN
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragmen.Companion.REGION
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragmen.Companion.SCREEN
 import ru.practicum.android.diploma.util.BindingFragment
 import ru.practicum.android.diploma.util.app.App
 
-class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
+class PlaceOfWorkFragment : BindingFragment<FragmentPlaceOfWorkBinding>() {
 
     private val viewModel by viewModel<FiltersViewModel>()
     private var bundle: Bundle? = null
@@ -51,7 +51,7 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
             findNavController().navigateUp()
         }
         binding.chooseCountryBottom.setOnClickListener {
-            bundle = bundleOf(FragmentSettingFilters.SCREEN to FragmentSettingFilters.COUNTRIES)
+            bundle = bundleOf(SettingFiltersFragmen.SCREEN to SettingFiltersFragmen.COUNTRIES)
             findNavController().navigate(
                 R.id.action_fragmentPlaceOfWork_to_fragmentChooseFilter,
                 bundle

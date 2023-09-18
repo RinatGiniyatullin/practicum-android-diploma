@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="ru.practicum.android.diploma.filters.ui.fragment.FragmentPlaceOfWork">
+    tools:context="ru.practicum.android.diploma.filters.ui.fragment.PlaceOfWorkFragment">
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftBorder"
         style="@style/guideline"

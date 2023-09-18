@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +18,6 @@ import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentSettingFiltersBinding
-import ru.practicum.android.diploma.details.presentation.ui.VacancyFragment
 import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
@@ -28,7 +26,7 @@ import ru.practicum.android.diploma.search.ui.SearchFragment
 import ru.practicum.android.diploma.util.BindingFragment
 import ru.practicum.android.diploma.util.app.App
 
-class FragmentSettingFilters : BindingFragment<FragmentSettingFiltersBinding>() {
+class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
 
     val viewModel by viewModel<FiltersViewModel>()
     var bundle: Bundle? = null

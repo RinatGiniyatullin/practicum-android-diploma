@@ -21,10 +21,10 @@ import ru.practicum.android.diploma.filters.presentation.models.ScreenState
 import ru.practicum.android.diploma.filters.presentation.models.ShowViewState
 import ru.practicum.android.diploma.filters.ui.adapter.FilterSelectionClickListener
 import ru.practicum.android.diploma.filters.ui.adapter.FiltersAdapter
-import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.SCREEN
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragmen.Companion.SCREEN
 import ru.practicum.android.diploma.util.BindingFragment
 
-class FragmentChooseFilter:BindingFragment<FragmentFilterSelectionBinding>() {
+class ChooseFilterFragment:BindingFragment<FragmentFilterSelectionBinding>() {
 
     private val viewModel by viewModel<FiltersViewModel>()
     private var adapter:FiltersAdapter? = null
