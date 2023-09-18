@@ -58,14 +58,12 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
         viewModel.stateVacancyInfoDb.observe(viewLifecycleOwner) { vacancyDetailsDb ->
             if (vacancyDetailsDb == null){
-                showToast(getString(R.string.no_connection))
                 return@observe
             }
             vacancyDetails = vacancyDetailsDb
             binding.detailsData.visibility = View.VISIBLE
             binding.favouritesIcon.isClickable = true
             binding.sharingIcon.isClickable = true
-            showToast(getString(R.string.no_connection_vacancy_from_db))
             initVacancyDetails()
         }
 
@@ -88,6 +86,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
                     binding.refreshButton.visibility = View.VISIBLE
                     binding.favouritesIcon.isClickable = false
                     binding.sharingIcon.isClickable = false
+                    showToast(getString(R.string.no_connection))
                     viewModel.initVacancyDetailsInDb(vacancy)
                 }
 

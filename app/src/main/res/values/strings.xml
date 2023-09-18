@@ -16,7 +16,6 @@
     <string name="check_connection">Проверьте подключение к интернету</string>
     <string name="server_error">Ошибка сервера</string>
     <string name="no_connection">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
-    <string name="no_connection_vacancy_from_db">Проблемы со связью\n\nЗагружены данные из избранного</string>
     <string name="nothing_found">Ничего не нашлось</string>
     <string name="industry">Отрасль</string>
     <string name="list_empty">Список пуст</string>
