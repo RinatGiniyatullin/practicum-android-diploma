@@ -57,6 +57,11 @@
     <string name="write_to_email">Хотите написать на этот email?</string>
     <string name="another_region">Другие регионы</string>
     <string name="comment">Комментарий</string>
+    <string name="filter_icon">filterIcon</string>
+    <string name="edit_text_search_image">editTextSearchImage</string>
+    <string name="edit_text_close_image">editTextCloseImage</string>
+    <string name="placeholder_image">placeholderImage</string>
+    <string name="button_up">buttonUp</string>
 
     <plurals name="search_result_number">
         <item quantity="zero">Найдено %d вакансий</item>

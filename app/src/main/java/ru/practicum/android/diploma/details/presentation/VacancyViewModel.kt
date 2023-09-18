@@ -60,17 +60,17 @@ class VacancyViewModel(
         if (isFavourite) {
             _stateFavouriteIconLiveData.postValue(false)
             isFavourite = false
-            viewModelScope.launch {
-                vacancyDbInteractor.getFavouriteVacancyById(vacancy.id).collect(){
-                    deleteVacancy(it)
-                }
-            }
+            deleteVacancy(converter.map(vacancy, vacancyDetails))
         } else {
             _stateFavouriteIconLiveData.postValue(true)
             isFavourite = true
-            viewModelScope.launch {
-                vacancyDbInteractor.insertVacancy(vacancy, vacancyDetails)
-            }
+            insertVacancy(vacancy, vacancyDetails)
+        }
+    }
+
+    private fun insertVacancy(vacancy: Vacancy, vacancyDetails: VacancyDetails) {
+        viewModelScope.launch {
+            vacancyDbInteractor.insertVacancy(vacancy, vacancyDetails)
         }
     }
 
@@ -118,8 +118,7 @@ class VacancyViewModel(
             _stateVacancyInfoDb.postValue(converter.mapDetail(vacancyEntity))
     }
 
-    private fun deleteVacancy(vacancyEntity: VacancyEntity?){
-        if (vacancyEntity == null) return
+    private fun deleteVacancy(vacancyEntity: VacancyEntity){
         viewModelScope.launch {
             vacancyDbInteractor.deleteVacancy(vacancyEntity)
         }
