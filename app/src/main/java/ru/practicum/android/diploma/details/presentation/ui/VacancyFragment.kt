@@ -196,7 +196,6 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         }
 
         binding.favouritesIcon.setOnClickListener{
-
             viewModel.clickOnFavoriteIcon(vacancy, vacancyDetails)
         }
 

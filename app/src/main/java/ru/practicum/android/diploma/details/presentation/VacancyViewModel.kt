@@ -56,17 +56,20 @@ class VacancyViewModel(
 
     fun clickOnFavoriteIcon(vacancy: Vacancy, vacancyDetails: VacancyDetails) {
         if (stateFavouriteIconLiveData.value == true) {
+
             stateFavouriteIconLiveData.postValue(false)
-            viewModelScope.launch {
-                vacancyDbInteractor.getFavouriteVacancyById(vacancy.id).collect(){
-                    deleteVacancy(it)
-                }
-            }
+
+            deleteVacancy(converter.map(vacancy, vacancyDetails))
+
         } else {
             stateFavouriteIconLiveData.postValue(true)
-            viewModelScope.launch {
-                vacancyDbInteractor.insertVacancy(vacancy, vacancyDetails)
-            }
+            insertVacancy(vacancy, vacancyDetails)
+        }
+    }
+
+    private fun insertVacancy(vacancy: Vacancy, vacancyDetails: VacancyDetails) {
+        viewModelScope.launch {
+            vacancyDbInteractor.insertVacancy(vacancy, vacancyDetails)
         }
     }
 
@@ -115,8 +118,7 @@ class VacancyViewModel(
         )
     }
 
-    private fun deleteVacancy(vacancyEntity: VacancyEntity?){
-        if (vacancyEntity == null) return
+    private fun deleteVacancy(vacancyEntity: VacancyEntity){
         viewModelScope.launch {
             vacancyDbInteractor.deleteVacancy(vacancyEntity)
         }
