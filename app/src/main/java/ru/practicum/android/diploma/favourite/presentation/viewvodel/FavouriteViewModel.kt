@@ -15,8 +15,7 @@ import ru.practicum.android.diploma.search.domain.models.Vacancy
 class FavouriteViewModel(
     private val favouriteVacancyDbInteractor: VacancyDbInteractor,
     private val converter: VacancyDbConverter,
-) :
-    ViewModel() {
+) : ViewModel() {
 
     private val stateLiveDataFavourite = MutableLiveData<FavoriteStateInterface?>()
     private val stateLiveDataGetVacancyInfo = MutableLiveData<GetFavouriteVacancyInfoState?>()
@@ -30,9 +29,10 @@ class FavouriteViewModel(
     }
 
     fun showFavouriteVacancies() {
-        viewModelScope.launch {
-            var favouriteVacancies = listOf<Vacancy>()
 
+        var favouriteVacancies: List<Vacancy>
+
+        viewModelScope.launch {
             favouriteVacancyDbInteractor.getFavouriteVacancy().collect() { vacanciesEntity ->
                 favouriteVacancies =
                     vacanciesEntity.map { vacancyEntity -> converter.map(vacancyEntity) }
@@ -40,16 +40,16 @@ class FavouriteViewModel(
                 if (favouriteVacancies.isEmpty())
                     renderStateFavourite(FavoriteStateInterface.FavoriteVacanciesIsEmpty)
                 else renderStateFavourite(
-                    FavoriteStateInterface.FavoriteVacancies(
-                        favouriteVacancies
-                    )
+                    FavoriteStateInterface.FavoriteVacancies(favouriteVacancies)
                 )
             }
         }
     }
 
     fun getFavouriteVacancyInfo(vacancyId: String) {
+
         if (vacancyId.isNullOrEmpty()) return
+
         viewModelScope.launch {
             favouriteVacancyDbInteractor.getFavouriteVacancyById(vacancyId)
                 .collect() { vacancyEntity ->
@@ -85,7 +85,8 @@ class FavouriteViewModel(
         }
     }
 
-    private fun deleteVacancyEntity(vacancyEntity: VacancyEntity) {
+    private fun deleteVacancyEntity(vacancyEntity: VacancyEntity?) {
+        if (vacancyEntity == null) return
         viewModelScope.launch {
             favouriteVacancyDbInteractor.deleteVacancy(vacancyEntity)
         }
