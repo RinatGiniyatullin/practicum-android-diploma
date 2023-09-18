@@ -18,24 +18,18 @@ class FavouriteViewModel(
 ) :
     ViewModel() {
 
-    init {
-        showFavouriteVacancies()
-    }
+    private val stateLiveDataFavourite = MutableLiveData<FavoriteStateInterface?>()
+    private val stateLiveDataGetVacancyInfo = MutableLiveData<GetFavouriteVacancyInfoState?>()
 
-    private lateinit var vacancyEntity: VacancyEntity
-
-    private val stateLiveDataFavourite = MutableLiveData<FavoriteStateInterface>()
-    private val stateLiveDataGetVacancyInfo = MutableLiveData<GetFavouriteVacancyInfoState>()
-
-    fun observeStateFavourite(): LiveData<FavoriteStateInterface> = stateLiveDataFavourite
-    fun observeStateGetVacancyInfo(): LiveData<GetFavouriteVacancyInfoState> =
+    fun observeStateFavourite(): LiveData<FavoriteStateInterface?> = stateLiveDataFavourite
+    fun observeStateGetVacancyInfo(): MutableLiveData<GetFavouriteVacancyInfoState?> =
         stateLiveDataGetVacancyInfo
 
     private fun renderStateFavourite(state: FavoriteStateInterface) {
         stateLiveDataFavourite.postValue(state)
     }
 
-    private fun showFavouriteVacancies() {
+    fun showFavouriteVacancies() {
         viewModelScope.launch {
             var favouriteVacancies = listOf<Vacancy>()
 
@@ -78,8 +72,12 @@ class FavouriteViewModel(
         }
     }
 
+    fun pause(){
+        stateLiveDataGetVacancyInfo.postValue(null)
+        stateLiveDataFavourite.postValue(null)
+    }
+
     fun deleteVacancy(vacancy: Vacancy) {
-        //var vacancyEntity: VacancyEntity
         viewModelScope.launch {
             favouriteVacancyDbInteractor.getFavouriteVacancyById(vacancy.id).collect() {
                 deleteVacancyEntity(it)
@@ -92,10 +90,4 @@ class FavouriteViewModel(
             favouriteVacancyDbInteractor.deleteVacancy(vacancyEntity)
         }
     }
-
-//    fun deleteTrackById(vacancyId: String) {
-//        viewModelScope.launch {
-//            favouriteVacancyDbInteractor.deleteVacancyById(vacancyId)
-//        }
-//    }
 }

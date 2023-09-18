@@ -11,7 +11,6 @@ import com.google.gson.Gson
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentFavouriteBinding
-import ru.practicum.android.diploma.details.domain.models.VacancyDetails
 import ru.practicum.android.diploma.details.presentation.ui.VacancyFragment
 import ru.practicum.android.diploma.favourite.presentation.models.FavoriteStateInterface
 import ru.practicum.android.diploma.favourite.presentation.models.GetFavouriteVacancyInfoState
@@ -28,7 +27,6 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
     private lateinit var onFavouriteVacancyClickDebounce: (Vacancy) -> Unit
 
     private val favouriteViewModel: FavouriteViewModel by viewModel()
-    //private val vacancyDetails = arrayListOf<VacancyDetails>()
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -49,11 +47,18 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
         }
 
         favouriteViewModel.observeStateGetVacancyInfo().observe(viewLifecycleOwner) {
-            when(it){
-                is GetFavouriteVacancyInfoState.FavoriteVacanciesInfo -> renderStateGetInfoVacancy(it)
-                //is GetFavouriteVacancyInfoState.FavoriteVacanciesInfoIsEmpty
+            when (it) {
+                is GetFavouriteVacancyInfoState.FavoriteVacanciesInfo,
+                -> renderStateGetInfoVacancy(it)
             }
         }
+
+        favouriteViewModel.showFavouriteVacancies()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        favouriteViewModel.pause()
     }
 
 
@@ -67,7 +72,6 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
         onFavouriteVacancyClickDebounce =
             debounce<Vacancy>(CLICK_DEBOUNCE_DELAY_MILLIS, lifecycleScope, false) { vacancy ->
                 favouriteViewModel.getFavouriteVacancyInfo(vacancy.id)
-                //sendToDetail(vacancy)
             }
 
         vacancyAdapter.itemClickListener = { position, vacancy ->
@@ -79,7 +83,8 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
         }
     }
 
-    private fun renderStateFavouriteVacancies(favoriteStateInterface: FavoriteStateInterface) {
+    private fun renderStateFavouriteVacancies(favoriteStateInterface: FavoriteStateInterface?) {
+        if (favoriteStateInterface == null) return
         when (favoriteStateInterface) {
             is FavoriteStateInterface.FavoriteVacanciesIsEmpty -> showPlaceHolder()
             is FavoriteStateInterface.FavoriteVacancies ->
@@ -87,10 +92,11 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
         }
     }
 
-    private fun renderStateGetInfoVacancy(favouriteVacanciesInfo: GetFavouriteVacancyInfoState.FavoriteVacanciesInfo) {
+    private fun renderStateGetInfoVacancy(
+        favouriteVacanciesInfo: GetFavouriteVacancyInfoState.FavoriteVacanciesInfo,
+    ) {
         val vacancy: Vacancy = favouriteVacanciesInfo.vacancy
-        val vacancyDetails: VacancyDetails = favouriteVacanciesInfo.vacancyDetails
-        sendToDetail(vacancy, vacancyDetails)
+        sendToDetail(vacancy)
     }
 
     private fun showPlaceHolder() {
@@ -111,19 +117,16 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
             .setMessage("")
             .setPositiveButton(R.string.yes) { dialog, which ->
                 favouriteViewModel.deleteVacancy(vacancy)
-                //favouriteViewModel.deleteTrackById(vacancy.id)
             }
             .setNegativeButton(R.string.no) { dialog, which -> }
 
         confirmDialogDeleteFavouriteVacancy.show()
     }
 
-    private fun sendToDetail(vacancy: Vacancy, vacancyDetails: VacancyDetails) {
+    private fun sendToDetail(vacancy: Vacancy) {
         findNavController().navigate(
             R.id.action_fragmentFavourite_to_vacancyFragment,
-            VacancyFragment.createArgs(Gson().toJson(vacancy)
-                //, Gson().toJson(vacancyDetails)
-            )
+            VacancyFragment.createArgs(Gson().toJson(vacancy))
         )
     }
 

@@ -60,7 +60,6 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
             vacancyDetails = vacancyDetailsDb
             binding.detailsData.visibility = View.VISIBLE
             binding.similarVacanciesButton.visibility = View.GONE
-            //viewModel.initVacancyDetailsInDb(vacancy)
             initVacancyDetails()
         }
 
@@ -79,10 +78,6 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
                     binding.detailsData.visibility = View.GONE
                     binding.refreshButton.visibility = View.VISIBLE
                     viewModel.initVacancyDetailsInDb(vacancy)
-//                    if (checkFavourite) {
-//                        binding.detailsData.visibility = View.VISIBLE
-//                        viewModel.initVacancyDetailsInDb(vacancy)
-//                    }
                 }
 
                 VacancyState.Loading -> binding.progressBarForLoad.visibility = View.VISIBLE
