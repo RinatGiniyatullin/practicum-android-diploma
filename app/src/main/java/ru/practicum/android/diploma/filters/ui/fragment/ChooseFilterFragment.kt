@@ -34,7 +34,7 @@ class ChooseFilterFragment:BindingFragment<FragmentFilterSelectionBinding>() {
     private val industryList = mutableListOf<Industries>()
     private var industry:Industries? = null
     private var isRegionScreen:Boolean = false
-    var editText:String?= null
+    private var editText:String?= null
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -151,8 +151,6 @@ class ChooseFilterFragment:BindingFragment<FragmentFilterSelectionBinding>() {
             is ScreenState.ShowIndustryList -> showIndustryList(state.industryList)
             is ScreenState.ShowAreasList -> showAreasList(state.areasList)
             is ScreenState.ShowCountriesList -> showCountriesList(state.countriesList)
-
-            else -> {}
         }
     }
     private fun showIndustryList(industry: List<Industries>){

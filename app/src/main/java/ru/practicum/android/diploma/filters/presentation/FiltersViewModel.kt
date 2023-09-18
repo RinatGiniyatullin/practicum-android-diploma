@@ -25,7 +25,6 @@ import ru.practicum.android.diploma.util.app.App
 
 class FiltersViewModel(
     val filtersInteractor: FiltersInteractor,
-    private val resourceProvider: ResourceProvider
 ) : ViewModel() {
 
     private val screenStateLiveData = MutableLiveData<ScreenState>()

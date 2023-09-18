@@ -28,10 +28,9 @@ import ru.practicum.android.diploma.util.app.App
 
 class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
 
-    val viewModel by viewModel<FiltersViewModel>()
-    var bundle: Bundle? = null
+    private val viewModel by viewModel<FiltersViewModel>()
+    private var bundle: Bundle? = null
     lateinit var placeHolderText:String
-    var lastSalary:String = ""
     private lateinit var getFilters: Filters
 
     override fun createBinding(
@@ -190,7 +189,6 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
 
 
         if (filters.salary != 0) {
-            lastSalary = filters.salary.toString()
             binding.salaryEditText.setText(filters.salary.toString())
             binding.salaryEditText.setTextColor(resources.getColor(R.color.black))
         }

@@ -18,5 +18,5 @@ val repositoryModule = module {
     single<VacancyDbRepository> {
         VacancyDbRepositoryImpl(appDataBase = get())
     }
-    single<FiltersRepository> { FiltersRepositoryImpl(get(), get(), get())  }
+    singleOf(::FiltersRepositoryImpl).bind<FiltersRepository>()
 }

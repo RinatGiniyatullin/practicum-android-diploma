@@ -21,10 +21,7 @@ val interactorModule = module {
             vacancyDbRepository = get()
         )
     }
-
-    single<FiltersInteractor> {
-        FiltersInteractorImpl(get())
-    }
+    singleOf(::FiltersInteractorImpl).bind<FiltersInteractor>()
 
     singleOf(::VacancyInteractorImpl).bind<VacancyInteractor>()
 }
