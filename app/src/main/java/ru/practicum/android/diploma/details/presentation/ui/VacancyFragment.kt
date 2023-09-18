@@ -58,11 +58,14 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
         viewModel.stateVacancyInfoDb.observe(viewLifecycleOwner) { vacancyDetailsDb ->
             if (vacancyDetailsDb == null){
+                showToast(getString(R.string.no_connection))
                 return@observe
             }
             vacancyDetails = vacancyDetailsDb
             binding.detailsData.visibility = View.VISIBLE
             binding.favouritesIcon.isClickable = true
+            binding.sharingIcon.isClickable = true
+            showToast(getString(R.string.no_connection_vacancy_from_db))
             initVacancyDetails()
         }
 
@@ -75,15 +78,16 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
                     binding.similarVacanciesButton.visibility = View.VISIBLE
                     binding.refreshButton.visibility = View.GONE
                     binding.favouritesIcon.isClickable = true
+                    binding.sharingIcon.isClickable = true
                     initVacancyDetails()
                 }
                 is VacancyState.Error -> {
                     binding.progressBarForLoad.visibility = View.GONE
-                    showToast(state.errorMessage)
                     binding.detailsData.visibility = View.GONE
                     binding.similarVacanciesButton.visibility = View.GONE
                     binding.refreshButton.visibility = View.VISIBLE
                     binding.favouritesIcon.isClickable = false
+                    binding.sharingIcon.isClickable = false
                     viewModel.initVacancyDetailsInDb(vacancy)
                 }
 
@@ -175,13 +179,8 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
     private fun renderStateFavouriteIcon(isFavourite: Boolean?){
         when (isFavourite) {
-            true -> {
-                binding.favouritesIcon.setImageResource(R.drawable.favorites_on)
-            }
-
-            else -> {
-                binding.favouritesIcon.setImageResource(R.drawable.favorites_off)
-            }
+            true -> binding.favouritesIcon.setImageResource(R.drawable.favorites_on)
+            else -> binding.favouritesIcon.setImageResource(R.drawable.favorites_off)
         }
     }
 
@@ -201,18 +200,15 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         }
 
         binding.backIcon.setOnClickListener{
-            if(clickDebounce())
-                findNavController().navigateUp()
+            findNavController().navigateUp()
         }
 
         binding.favouritesIcon.setOnClickListener{
-            if(clickDebounce())
-                viewModel.clickOnFavoriteIcon(vacancy, vacancyDetails)
+            viewModel.clickOnFavoriteIcon(vacancy, vacancyDetails)
         }
 
         binding.sharingIcon.setOnClickListener {
-            if(clickDebounce())
-                viewModel.shareVacancyUrl(vacancyDetails.alternateUrl)
+            viewModel.shareVacancyUrl(vacancyDetails.alternateUrl)
         }
 
         binding.vacancyContactPhoneValue.setOnClickListener {
