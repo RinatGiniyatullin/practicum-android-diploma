@@ -26,11 +26,13 @@ class VacancyViewModel(
     private val _state = MutableLiveData<VacancyState>()
     val state: LiveData<VacancyState> = _state
 
-    private val stateFavouriteIconLiveData = MutableLiveData<Boolean>()
-    fun observeStateFavouriteIcon(): LiveData<Boolean> = stateFavouriteIconLiveData
+    private val _stateFavouriteIconLiveData = MutableLiveData<Boolean>()
+    val stateFavouriteIconLiveData: LiveData<Boolean> = _stateFavouriteIconLiveData
 
     private val _stateVacancyInfoDb = MutableLiveData<VacancyDetails?>()
-    val stateVacancyInfoDb = _stateVacancyInfoDb
+    val stateVacancyInfoDb: LiveData<VacancyDetails?> = _stateVacancyInfoDb
+
+    private var isFavourite = false
 
     fun loadVacancyDetails(vacancyId: String) {
         _state.postValue(VacancyState.Loading)
@@ -55,15 +57,17 @@ class VacancyViewModel(
     }
 
     fun clickOnFavoriteIcon(vacancy: Vacancy, vacancyDetails: VacancyDetails) {
-        if (stateFavouriteIconLiveData.value == true) {
-            stateFavouriteIconLiveData.postValue(false)
+        if (isFavourite) {
+            _stateFavouriteIconLiveData.postValue(false)
+            isFavourite = false
             viewModelScope.launch {
                 vacancyDbInteractor.getFavouriteVacancyById(vacancy.id).collect(){
                     deleteVacancy(it)
                 }
             }
         } else {
-            stateFavouriteIconLiveData.postValue(true)
+            _stateFavouriteIconLiveData.postValue(true)
+            isFavourite = true
             viewModelScope.launch {
                 vacancyDbInteractor.insertVacancy(vacancy, vacancyDetails)
             }
@@ -76,13 +80,12 @@ class VacancyViewModel(
             vacancyDbInteractor.getFavouriteVacancy().collect(){
                     vacanciesEntity -> favouriteVacancies =
                 vacanciesEntity.map { vacancyEntity -> converter.map(vacancyEntity) }
-                var isFavourite = false
 
                 favouriteVacancies.forEach{
                     favouriteVacancy ->  if (vacancy.id == favouriteVacancy.id) isFavourite = true
                 }
 
-                stateFavouriteIconLiveData.postValue(isFavourite)
+                _stateFavouriteIconLiveData.postValue(isFavourite)
             }
         }
     }
@@ -109,10 +112,10 @@ class VacancyViewModel(
     }
 
     private fun renderStateVacancyInfoDb(vacancyEntity: VacancyEntity?) {
-        if (vacancyEntity == null) return _stateVacancyInfoDb.postValue(null)
-        _stateVacancyInfoDb.postValue(
-            converter.mapDetail(vacancyEntity)
-        )
+        if (vacancyEntity == null)
+            _stateVacancyInfoDb.postValue(null)
+        else
+            _stateVacancyInfoDb.postValue(converter.mapDetail(vacancyEntity))
     }
 
     private fun deleteVacancy(vacancyEntity: VacancyEntity?){

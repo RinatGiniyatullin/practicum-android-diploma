@@ -8,11 +8,14 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentVacancyBinding
@@ -25,11 +28,12 @@ import ru.practicum.android.diploma.util.BindingFragment
 class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
     private val viewModel by viewModel<VacancyViewModel>()
-    private var checkFavourite: Boolean = false
 
     private lateinit var vacancy: Vacancy
     private lateinit var vacancyDetails: VacancyDetails
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
+
+    private var isClickAllowed = true
 
     override fun createBinding(
         inflater: LayoutInflater,
@@ -48,18 +52,17 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
         viewModel.checkFavourite(vacancy)
 
-        viewModel.observeStateFavouriteIcon().observe(viewLifecycleOwner) {
+        viewModel.stateFavouriteIconLiveData.observe(viewLifecycleOwner) {
             renderStateFavouriteIcon(it)
         }
 
         viewModel.stateVacancyInfoDb.observe(viewLifecycleOwner) { vacancyDetailsDb ->
             if (vacancyDetailsDb == null){
-                binding.favouritesIcon.isClickable = false
                 return@observe
             }
             vacancyDetails = vacancyDetailsDb
             binding.detailsData.visibility = View.VISIBLE
-            binding.similarVacanciesButton.visibility = View.GONE
+            binding.favouritesIcon.isClickable = true
             initVacancyDetails()
         }
 
@@ -69,14 +72,18 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
                     binding.progressBarForLoad.visibility = View.GONE
                     vacancyDetails = state.vacancyDetails
                     binding.detailsData.visibility = View.VISIBLE
+                    binding.similarVacanciesButton.visibility = View.VISIBLE
                     binding.refreshButton.visibility = View.GONE
+                    binding.favouritesIcon.isClickable = true
                     initVacancyDetails()
                 }
                 is VacancyState.Error -> {
                     binding.progressBarForLoad.visibility = View.GONE
                     showToast(state.errorMessage)
                     binding.detailsData.visibility = View.GONE
+                    binding.similarVacanciesButton.visibility = View.GONE
                     binding.refreshButton.visibility = View.VISIBLE
+                    binding.favouritesIcon.isClickable = false
                     viewModel.initVacancyDetailsInDb(vacancy)
                 }
 
@@ -118,7 +125,6 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
     }
 
     private fun initVacancyDetails(){
-        if (vacancyDetails == null) return
         val radius = resources.getDimensionPixelSize(R.dimen.margin_12)
         Glide.with(requireContext())
             .load(vacancyDetails.employer?.logoUrls?.original)
@@ -171,54 +177,70 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         when (isFavourite) {
             true -> {
                 binding.favouritesIcon.setImageResource(R.drawable.favorites_on)
-                checkFavourite = true
             }
 
             else -> {
                 binding.favouritesIcon.setImageResource(R.drawable.favorites_off)
-                checkFavourite = false
             }
         }
     }
 
     private fun initClickListeners(){
         binding.refreshButton.setOnClickListener{
-            viewModel.loadVacancyDetails(vacancy.id)
+            if(clickDebounce())
+                viewModel.loadVacancyDetails(vacancy.id)
         }
 
         binding.similarVacanciesButton.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_vacancyFragment_to_similarVacancyFragment,
-                SimilarVacancyFragment.createArgs(vacancy.id)
-            )
+            if(clickDebounce()){
+                findNavController().navigate(
+                    R.id.action_vacancyFragment_to_similarVacancyFragment,
+                    SimilarVacancyFragment.createArgs(vacancy.id)
+                )
+            }
         }
 
         binding.backIcon.setOnClickListener{
-            findNavController().navigateUp()
+            if(clickDebounce())
+                findNavController().navigateUp()
         }
 
         binding.favouritesIcon.setOnClickListener{
-
-            viewModel.clickOnFavoriteIcon(vacancy, vacancyDetails)
+            if(clickDebounce())
+                viewModel.clickOnFavoriteIcon(vacancy, vacancyDetails)
         }
 
         binding.sharingIcon.setOnClickListener {
-            viewModel.shareVacancyUrl(vacancyDetails.alternateUrl)
+            if(clickDebounce())
+                viewModel.shareVacancyUrl(vacancyDetails.alternateUrl)
         }
 
         binding.vacancyContactPhoneValue.setOnClickListener {
-            if(vacancyDetails.contacts?.phones != null)
+            if(clickDebounce() && vacancyDetails.contacts?.phones != null)
                 viewModel.sharePhone(binding.vacancyContactPhoneValue.text.toString())
         }
 
         binding.vacancyContactEmailValue.setOnClickListener {
-            if(vacancyDetails.contacts?.email != null)
+            if(clickDebounce() && vacancyDetails.contacts?.email != null)
                 confirmDialog.show()
         }
     }
 
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed){
+            isClickAllowed = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
     companion object {
         const val VACANCY = "vacancy"
+        const val CLICK_DEBOUNCE_DELAY = 1000L
 
         fun createArgs(jsonVacancy: String): Bundle = bundleOf(VACANCY to jsonVacancy)
     }
