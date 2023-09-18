@@ -42,15 +42,12 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
 
         setListeners()
 
-        favouriteViewModel.observeStateFavourite().observe(viewLifecycleOwner) {
-            renderStateFavouriteVacancies(it)
+        favouriteViewModel.observeStateFavourite().observe(viewLifecycleOwner) { state ->
+            renderStateFavouriteVacancies(state)
         }
 
-        favouriteViewModel.observeStateGetVacancyInfo().observe(viewLifecycleOwner) {
-            when (it) {
-                is GetFavouriteVacancyInfoState.FavoriteVacanciesInfo,
-                -> renderStateGetInfoVacancy(it)
-            }
+        favouriteViewModel.observeStateGetVacancyInfo().observe(viewLifecycleOwner) { state ->
+            renderStateGetInfoVacancy(state)
         }
 
         favouriteViewModel.showFavouriteVacancies()
@@ -84,7 +81,9 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
     }
 
     private fun renderStateFavouriteVacancies(favoriteStateInterface: FavoriteStateInterface?) {
+
         if (favoriteStateInterface == null) return
+
         when (favoriteStateInterface) {
             is FavoriteStateInterface.FavoriteVacanciesIsEmpty -> showPlaceHolder()
             is FavoriteStateInterface.FavoriteVacancies ->
@@ -93,10 +92,15 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
     }
 
     private fun renderStateGetInfoVacancy(
-        favouriteVacanciesInfo: GetFavouriteVacancyInfoState.FavoriteVacanciesInfo,
-    ) {
-        val vacancy: Vacancy = favouriteVacanciesInfo.vacancy
-        sendToDetail(vacancy)
+        favouriteVacanciesInfo: GetFavouriteVacancyInfoState?) {
+
+        if (favouriteVacanciesInfo == null) return
+
+        when(favouriteVacanciesInfo){
+            is GetFavouriteVacancyInfoState.FavoriteVacanciesInfoIsEmpty -> return
+            is GetFavouriteVacancyInfoState.FavoriteVacanciesInfo
+            -> sendToDetail(favouriteVacanciesInfo.vacancy)
+        }
     }
 
     private fun showPlaceHolder() {
