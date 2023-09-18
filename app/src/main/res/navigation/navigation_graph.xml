@@ -23,7 +23,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingFilters"
-        android:name="ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragmen"
+        android:name="ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment"
         android:label="fragment_setting_filters"
         tools:layout="@layout/fragment_setting_filters">
         <action

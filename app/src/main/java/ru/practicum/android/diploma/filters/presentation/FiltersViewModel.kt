@@ -17,10 +17,9 @@ import ru.practicum.android.diploma.filters.domain.models.Region
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
 import ru.practicum.android.diploma.filters.presentation.models.ScreenState
 import ru.practicum.android.diploma.filters.presentation.models.ShowViewState
-import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragmen.Companion.COUNTRIES
-import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragmen.Companion.INDUSTRIES
-import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragmen.Companion.REGION
-import ru.practicum.android.diploma.search.data.ResourceProvider
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment.Companion.COUNTRIES
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment.Companion.INDUSTRIES
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment.Companion.REGION
 import ru.practicum.android.diploma.util.app.App
 
 class FiltersViewModel(

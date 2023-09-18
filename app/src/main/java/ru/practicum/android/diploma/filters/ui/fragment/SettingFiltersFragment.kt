@@ -7,7 +7,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowManager
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -27,11 +26,11 @@ import ru.practicum.android.diploma.search.ui.SearchFragment
 import ru.practicum.android.diploma.util.BindingFragment
 import ru.practicum.android.diploma.util.app.App
 
-class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
+class SettingFiltersFragment : BindingFragment<FragmentSettingFiltersBinding>() {
 
     private val viewModel by viewModel<FiltersViewModel>()
     private var bundle: Bundle? = null
-    lateinit var placeHolderText:String
+    lateinit var placeHolderText: String
     private lateinit var getFilters: Filters
 
     override fun createBinding(
@@ -71,16 +70,22 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
         binding.salaryEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }
+
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 if (s.isNullOrEmpty()) {
                     viewModel.addSalary("0")
                 } else {
                     viewModel.addSalary(s.toString())
                 }
-                setSalaryEditTextColor(binding.salaryEditText.text.toString(), binding.salaryEditText.hasFocus()
+                setSalaryEditTextColor(
+                    binding.salaryEditText.text.toString(), binding.salaryEditText.hasFocus()
                 )
-                viewModel.setOnFocus(binding.salaryEditText.text.toString(), binding.salaryEditText.hasFocus())
+                viewModel.setOnFocus(
+                    binding.salaryEditText.text.toString(),
+                    binding.salaryEditText.hasFocus()
+                )
             }
+
             override fun afterTextChanged(s: Editable?) {
             }
         })
@@ -120,12 +125,12 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
         }
         binding.filterCheckbox.setOnClickListener {
             viewModel.addOnlyWithSalary(binding.filterCheckbox.isChecked)
-            if(binding.filterCheckbox.isChecked.equals(true)){
-                binding.clearAll.visibility= View.VISIBLE
+            if (binding.filterCheckbox.isChecked.equals(true)) {
+                binding.clearAll.visibility = View.VISIBLE
             }
             binding.buttonApply.visibility = View.VISIBLE
         }
-        binding.editTextBackground.setOnClickListener{
+        binding.editTextBackground.setOnClickListener {
             binding.salaryEditText.requestFocus()
             showKeyBoard()
             binding.salaryEditText.setSelection(binding.salaryEditText.text.length)
@@ -144,22 +149,27 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
         inputMethodManager?.hideSoftInputFromWindow(binding.salaryEditText.windowToken, 0)
         binding.salaryEditText.clearFocus()
     }
-    private fun showKeyBoard(){
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+
+    private fun showKeyBoard() {
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
     }
-    fun switchToPlaceOfWorkScreen(){
-        binding.placeOfWorkButton.setOnClickListener{
+
+    fun switchToPlaceOfWorkScreen() {
+        binding.placeOfWorkButton.setOnClickListener {
             findNavController().navigate(R.id.action_settingFilters_to_fragmentPlaceOfWork)
         }
     }
-    fun switchToIndustriesScreen(){
-        binding.industryButton.setOnClickListener{
+
+    fun switchToIndustriesScreen() {
+        binding.industryButton.setOnClickListener {
             bundle = bundleOf(SCREEN to INDUSTRIES)
             findNavController().navigate(R.id.action_settingFilters_to_fragmentChooseFilter, bundle)
         }
     }
-    fun back(){
+
+    fun back() {
         binding.arrowback.setOnClickListener {
             findNavController().navigateUp()
         }
@@ -186,8 +196,9 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
         filters.areasNames?.let {
             placeOfWork += ", $it"
             binding.placeOfWorkEditText.setText(placeOfWork)
-            if(placeOfWork.isNotEmpty()){
-                binding.placeOfWork.defaultHintTextColor = resources.getColorStateList(R.color.hint_edit_text_filed, null)
+            if (placeOfWork.isNotEmpty()) {
+                binding.placeOfWork.defaultHintTextColor =
+                    resources.getColorStateList(R.color.hint_edit_text_filed, null)
             }
 
         }
@@ -231,19 +242,22 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
         when (state) {
             is ShowViewState.showClearIcon -> showClearIcon()
             is ShowViewState.hideClearIcon -> hideClearIcon()
-            is ShowViewState.showApplyButton  -> showApplyButton()
+            is ShowViewState.showApplyButton -> showApplyButton()
             is ShowViewState.showClearAllButton -> showClearAllButton()
-            is ShowViewState.hideClearAllButton ->  binding.clearAll.visibility = View.GONE
+            is ShowViewState.hideClearAllButton -> binding.clearAll.visibility = View.GONE
 
         }
     }
-    private fun showClearAllButton(){
+
+    private fun showClearAllButton() {
         binding.clearAll.visibility = View.VISIBLE
     }
-    private fun showApplyButton(){
+
+    private fun showApplyButton() {
         binding.buttonApply.visibility = View.VISIBLE
     }
-    private fun clearEditText(){
+
+    private fun clearEditText() {
         binding.salaryEditText.text?.clear()
     }
 
@@ -254,42 +268,54 @@ class SettingFiltersFragmen : BindingFragment<FragmentSettingFiltersBinding>() {
     private fun hideClearIcon() {
         binding.clearIcon.visibility = View.GONE
     }
-    private fun TextInputLayout.inputTextChangeHandler(text:CharSequence?){
-        if(text.isNullOrEmpty()) this.setInputStrokeColor(R.color.hint_edit_text_empty) else this.setInputStrokeColor(
+
+    private fun TextInputLayout.inputTextChangeHandler(text: CharSequence?) {
+        if (text.isNullOrEmpty()) this.setInputStrokeColor(R.color.hint_edit_text_empty) else this.setInputStrokeColor(
             R.color.hint_edit_text_filed
         )
     }
-    private fun EditText.editTextSalaryChangeHandler(text:CharSequence?, ){
-        if(text.isNullOrEmpty()) this.setSalaryInputStrokeColor(R.color.salary_hint_empty)
+
+    private fun EditText.editTextSalaryChangeHandler(text: CharSequence?) {
+        if (text.isNullOrEmpty()) this.setSalaryInputStrokeColor(R.color.salary_hint_empty)
         else this.setSalaryInputStrokeColor(
             R.color.salary_hint_filed
         )
     }
-    fun doOnTextChanged(){
-        binding.placeOfWork.editText!!.doOnTextChanged{ inputText, _, _, _ ->
+
+    fun doOnTextChanged() {
+        binding.placeOfWork.editText!!.doOnTextChanged { inputText, _, _, _ ->
             viewModel.showAllClearButtom()
             binding.placeOfWork.inputTextChangeHandler(inputText)
         }
-        binding.industry.editText!!.doOnTextChanged{inputText, _, _, _ ->
+        binding.industry.editText!!.doOnTextChanged { inputText, _, _, _ ->
             viewModel.showAllClearButtom()
             binding.industry.inputTextChangeHandler(inputText)
         }
 
     }
 
-    private fun TextInputLayout.setInputStrokeColor(colorStateList:Int){
+    private fun TextInputLayout.setInputStrokeColor(colorStateList: Int) {
         this.defaultHintTextColor = resources.getColorStateList(colorStateList, null)
     }
-    private fun EditText.setSalaryInputStrokeColor(colorStateList:Int){
+
+    private fun EditText.setSalaryInputStrokeColor(colorStateList: Int) {
         binding.sallaryHint.setTextColor(resources.getColor(colorStateList, null))
 
     }
-    private fun setSalaryEditTextColor(text:CharSequence?, hasFocus:Boolean){
-        if(hasFocus){ binding.sallaryHint.setTextColor(resources.getColor(R.color.blue)) }
-        if(!hasFocus&&!text.isNullOrEmpty()){binding.sallaryHint.setTextColor(resources.getColor(R.color.black))}
-        if(!hasFocus&&text.isNullOrEmpty()){binding.sallaryHint.setTextColor(resources.getColor(R.color.salary_hint_empty))}
+
+    private fun setSalaryEditTextColor(text: CharSequence?, hasFocus: Boolean) {
+        if (hasFocus) {
+            binding.sallaryHint.setTextColor(resources.getColor(R.color.blue))
+        }
+        if (!hasFocus && !text.isNullOrEmpty()) {
+            binding.sallaryHint.setTextColor(resources.getColor(R.color.black))
+        }
+        if (!hasFocus && text.isNullOrEmpty()) {
+            binding.sallaryHint.setTextColor(resources.getColor(R.color.salary_hint_empty))
+        }
 
     }
+
     companion object {
         const val SCREEN = "screen"
         const val COUNTRIES = "COUNTRIES"
