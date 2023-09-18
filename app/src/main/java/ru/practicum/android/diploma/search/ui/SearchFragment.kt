@@ -81,7 +81,6 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
             viewModel.showFiltersState()
         }
 
-
         vacancySearchDebounce = debounce<String>(
             SEARCH_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
@@ -139,6 +138,7 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
                 super.onScrolled(recyclerView, dx, dy)
 
                 if (dy > 0) {
+                    binding.buttonUp.visibility = View.VISIBLE
                     val pos =
                         (binding.searchRecyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                     val itemsCount = adapter.itemCount
@@ -148,6 +148,11 @@ class SearchFragment : BindingFragment<FragmentSearchBinding>() {
                 }
             }
         })
+
+        binding.buttonUp.setOnClickListener {
+            binding.searchRecyclerView.smoothScrollToPosition(0)
+            binding.buttonUp.visibility = View.GONE
+        }
     }
 
     private fun showVacanciesList(vacancies: List<Vacancy>, foundValue: Int) {

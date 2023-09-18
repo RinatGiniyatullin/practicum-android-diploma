@@ -28,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
+            android:contentDescription="@string/filter_icon"
             android:src="@drawable/filter_off" />
 
     </androidx.appcompat.widget.Toolbar>
@@ -59,6 +60,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_16"
+        android:contentDescription="@string/edit_text_search_image"
         android:src="@drawable/search"
         app:layout_constraintBottom_toBottomOf="@id/search_edit_text"
         app:layout_constraintEnd_toEndOf="@id/search_edit_text"
@@ -69,6 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_16"
+        android:contentDescription="@string/edit_text_close_image"
         android:src="@drawable/close"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/search_edit_text"
@@ -79,6 +82,7 @@
         android:id="@+id/placeholder_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/placeholder_image"
         android:src="@drawable/search_image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -137,5 +141,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/search_recycler_view" />
+
+    <ImageButton
+        android:id="@+id/button_up"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginBottom="@dimen/margin_16"
+        android:background="@drawable/rounded_button"
+        android:contentDescription="@string/button_up"
+        android:src="@drawable/arrow_up"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

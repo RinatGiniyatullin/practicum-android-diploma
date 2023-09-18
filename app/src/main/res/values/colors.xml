@@ -11,8 +11,7 @@
     <color name="black_2">#1a1b22</color>
     <color name="white_2">#FFFFFF</color>
     <color name="edit_text_hint_color">?attr/black_to_white_color</color>
-
-
-
+    <color name="gray_75">#BFAEAFB4</color>
+    <color name="light_gray_75">#BFE6E8EB</color>
 
 </resources>

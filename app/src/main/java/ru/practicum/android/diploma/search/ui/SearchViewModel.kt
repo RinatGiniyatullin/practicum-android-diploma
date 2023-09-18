@@ -89,6 +89,7 @@ class SearchViewModel(
             vacanciesList.clear()
             showLoading(searchText)
             currentPage = 0
+            options["page"] = currentPage.toString()
             getVacancies(options)
             lastSearchText = searchText
             lastOptions.clear()
