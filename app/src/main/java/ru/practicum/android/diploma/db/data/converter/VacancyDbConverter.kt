@@ -102,9 +102,10 @@ class VacancyDbConverter {
     private fun getKeySkillsStr(keySkills: Array<KeySkill>): String {
         var keySkillStr = ""
         keySkills.forEach { keySkill ->
-            keySkillStr += keySkill.name + " ,"
+            if (!keySkill.name.isNullOrEmpty()) keySkillStr += keySkill.name + ", "
         }
-        return keySkillStr
+
+        return keySkillStr.dropLast(2)
     }
 
     private fun getPhonesList(vacancyEntity: VacancyEntity): Array<Phone>? {

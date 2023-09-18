@@ -26,12 +26,4 @@ interface VacancyDao {
     @Query("DELETE FROM vacancy_table WHERE id = :vacancyId")
     fun deleteFavouriteVacancyById(vacancyId: String)
 
-//    @Insert(entity = PhoneEntity::class, onConflict = OnConflictStrategy.IGNORE)
-//    suspend fun insertPhone(phoneEntity: PhoneEntity)
-//
-//    @Delete(entity = PhoneEntity::class)
-//    suspend fun deletePhone(phoneEntity: PhoneEntity)
-//
-//    @Query("SELECT * FROM phone_table WHERE id = :phoneId")
-//    fun getPhoneById(phoneId: Int): Flow<PhoneEntity>
 }
