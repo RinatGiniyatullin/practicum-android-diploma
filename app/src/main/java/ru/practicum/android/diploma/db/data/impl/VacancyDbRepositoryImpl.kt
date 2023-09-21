@@ -21,7 +21,7 @@ class VacancyDbRepositoryImpl(
         return appDataBase.vacancyDao().getFavouriteVacancies().map{ convertFromListVacancyEntityToListVacancy(it) }
     }
 
-    override suspend fun getFavouriteVacancyDetailsById(vacancyId: String): Flow<VacancyDetails> {
+    override suspend fun getFavouriteVacancyDetailsById(vacancyId: String): Flow<VacancyDetails?> {
         return appDataBase.vacancyDao().getFavouriteVacancyById(vacancyId).map { convertFromVacancyEntityToVacancyDetails(it) }
     }
 
@@ -33,8 +33,11 @@ class VacancyDbRepositoryImpl(
         appDataBase.vacancyDao().deleteFavouriteVacancyById(vacancyId)
     }
 
-    private fun convertFromVacancyEntityToVacancyDetails(vacancyEntity: VacancyEntity): VacancyDetails{
-        return vacancyDbConverter.mapDetail(vacancyEntity)
+    private fun convertFromVacancyEntityToVacancyDetails(vacancyEntity: VacancyEntity?): VacancyDetails?{
+        return if(vacancyEntity != null)
+            vacancyDbConverter.mapDetail(vacancyEntity)
+        else
+            null
     }
 
     private fun convertFromVacancyEntityToVacancy(vacancyEntity: VacancyEntity?): Vacancy?{
