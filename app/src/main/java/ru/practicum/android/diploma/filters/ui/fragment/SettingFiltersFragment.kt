@@ -170,7 +170,7 @@ class SettingFiltersFragment : BindingFragment<FragmentSettingFiltersBinding>() 
     }
 
     fun back() {
-        binding.arrowback.setOnClickListener {
+        binding.arrowBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }

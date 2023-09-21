@@ -211,6 +211,7 @@ class FiltersViewModel(
                     filtersNew.areasNames = filters.areasNames
                     filtersNew.countryId = filters.countryId
                     filtersNew.industriesName = filters.industriesName
+                    filtersNew.industriesId = filters.industriesId
                     filtersNew.salary = filters.salary
                     filtersNew.onlyWithSalary = filters.onlyWithSalary
                     lastSallary = filters.salary.toString()
