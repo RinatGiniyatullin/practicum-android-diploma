@@ -27,6 +27,7 @@ class SearchViewModel(
     private var isNextPageLoading = true
     private val vacanciesList = mutableListOf<Vacancy>()
     private var areasId: String? = null
+    private var country:String? = null
     private var industriesId: String? = null
     private var salary: Int = 0
     private var onlyWithSalary: Boolean = false
@@ -101,6 +102,7 @@ class SearchViewModel(
         options["text"] = text
         options["page"] = currentPage.toString()
         options["per_page"] = NUMBER_LOAD_VACANCIES.toString()
+        if(country !=null) options["country"] = country!!
         if (areasId != null) options["area"] = areasId!!
         if (industriesId != null) options["industry"] = industriesId!!
         if (salary != 0) options["salary"] = salary.toString()
@@ -118,12 +120,13 @@ class SearchViewModel(
     }
 
     private fun getFilters(filters: Filters) {
+        country = filters.countryId
         areasId = filters.areasId
         industriesId = filters.industriesId
         salary = filters.salary
         onlyWithSalary = filters.onlyWithSalary
 
-        if (areasId != null || industriesId != null || salary != 0 || onlyWithSalary) {
+        if (areasId != null || industriesId != null || salary != 0 || onlyWithSalary|| country !=null) {
             _filterIconStateLiveData.postValue(FilterIconState.YesFilters)
         } else {
             _filterIconStateLiveData.postValue(FilterIconState.NoFilters)
