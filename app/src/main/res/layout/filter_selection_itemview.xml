@@ -7,7 +7,7 @@
     >
 
     <TextView
-        android:id="@+id/SelectionFilters"
+        android:id="@+id/selection_filters"
         style="@style/Text_Regular_16_400"
         android:layout_width="0dp"
         android:layout_height="@dimen/weight_height_60"

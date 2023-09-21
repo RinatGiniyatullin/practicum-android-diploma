@@ -148,7 +148,7 @@ class ChooseFilterFragment : BindingFragment<FragmentFilterSelectionBinding>() {
     }
 
     private fun back() {
-        binding.arrowback.setOnClickListener {
+        binding.arrowBack.setOnClickListener {
             findNavController().navigateUp()
         }
     }
