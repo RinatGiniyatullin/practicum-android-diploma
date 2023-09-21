@@ -102,7 +102,7 @@ class SearchViewModel(
         options["text"] = text
         options["page"] = currentPage.toString()
         options["per_page"] = NUMBER_LOAD_VACANCIES.toString()
-        if(areasId!=null){options["area"] = areasId!!}else{options["area"] = countryId!!}
+        if(areasId!=null&&countryId!=null){options["area"] = areasId!!} else if(areasId.equals(null)&&countryId!=null){options["area"] = countryId!!}
         if (industriesId != null) options["industry"] = industriesId!!
         if (salary != 0) options["salary"] = salary.toString()
         options["only_with_salary"] = onlyWithSalary.toString()

@@ -64,6 +64,7 @@ class ChooseFilterFragment : BindingFragment<FragmentFilterSelectionBinding>() {
             override fun onClickRegion(model: Region?, isChecked: Boolean) {
                 when (isChecked) {
                     true -> {
+                        search()
                         model!!.isChecked = true
                         areaList.map { if (it.equals(region)) it.isChecked = false }
                         adapter?.setRegion(areaList)
@@ -83,6 +84,7 @@ class ChooseFilterFragment : BindingFragment<FragmentFilterSelectionBinding>() {
             override fun onClickIndustries(model: Industries?, isChecked: Boolean) {
                 when (isChecked) {
                     true -> {
+                        search()
                         model!!.isChecked = true
                         industryList.map { if (it.equals(industry)) it.isChecked = false }
                         adapter?.setIndustrie(industryList)
@@ -120,10 +122,7 @@ class ChooseFilterFragment : BindingFragment<FragmentFilterSelectionBinding>() {
             override fun onTextChanged(s: CharSequence?, p1: Int, p2: Int, p3: Int) {
                 editText = s.toString()
                 viewModel.setOnFocus(editText, binding.searchEditText.hasFocus())
-                when (isRegionScreen) {
-                    true -> viewModel.searchRegion(s.toString())
-                    else -> viewModel.searchIndustry(s.toString())
-                }
+                search()
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -152,6 +151,13 @@ class ChooseFilterFragment : BindingFragment<FragmentFilterSelectionBinding>() {
             findNavController().navigateUp()
         }
     }
+    fun search(){
+        when (isRegionScreen) {
+            true -> viewModel.searchRegion(binding.searchEditText.text.toString())
+            else -> viewModel.searchIndustry(binding.searchEditText.text.toString())
+        }
+    }
+
 
     private fun chooseScreen(state: ScreenState) {
         when (state) {
