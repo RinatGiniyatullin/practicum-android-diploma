@@ -8,7 +8,7 @@ import ru.practicum.android.diploma.search.domain.models.Vacancy
 interface VacancyDbInteractor {
     suspend fun insertFavouriteVacancy(vacancy: Vacancy, vacancyDetails: VacancyDetails)
     suspend fun getFavouriteVacancies(): Flow<List<Vacancy>>
-    suspend fun getFavouriteVacancyDetailsById(vacancyId: String): Flow<VacancyDetails>
+    suspend fun getFavouriteVacancyDetailsById(vacancyId: String): Flow<VacancyDetails?>
     suspend fun getFavouriteVacancyById(vacancyId: String): Flow<Vacancy?>
     suspend fun deleteFavouriteVacancyById(vacancyId: String)
 }
