@@ -152,9 +152,11 @@ class ChooseFilterFragment : BindingFragment<FragmentFilterSelectionBinding>() {
         }
     }
     fun search(){
-        when (isRegionScreen) {
-            true -> viewModel.searchRegion(binding.searchEditText.text.toString())
-            else -> viewModel.searchIndustry(binding.searchEditText.text.toString())
+        if(!binding.searchEditText.text.isEmpty()) {
+            when (isRegionScreen) {
+                true -> viewModel.searchRegion(binding.searchEditText.text.toString())
+                else -> viewModel.searchIndustry(binding.searchEditText.text.toString())
+            }
         }
     }
 
