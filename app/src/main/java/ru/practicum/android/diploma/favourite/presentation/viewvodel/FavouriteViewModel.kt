@@ -9,7 +9,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.db.domain.api.VacancyDbInteractor
 import ru.practicum.android.diploma.favourite.presentation.models.FavoriteStateInterface
-import ru.practicum.android.diploma.favourite.presentation.models.GetFavouriteVacancyInfoState
 import ru.practicum.android.diploma.search.domain.models.Vacancy
 
 class FavouriteViewModel(
@@ -17,11 +16,8 @@ class FavouriteViewModel(
 ) : ViewModel() {
 
     private val stateLiveDataFavourite = MutableLiveData<FavoriteStateInterface?>()
-    private val stateLiveDataGetVacancyInfo = MutableLiveData<GetFavouriteVacancyInfoState?>()
 
     fun observeStateFavourite(): LiveData<FavoriteStateInterface?> = stateLiveDataFavourite
-    fun observeStateGetVacancyInfo(): MutableLiveData<GetFavouriteVacancyInfoState?> =
-        stateLiveDataGetVacancyInfo
 
     private fun renderStateFavourite(state: FavoriteStateInterface) {
         stateLiveDataFavourite.postValue(state)
@@ -42,27 +38,7 @@ class FavouriteViewModel(
         }
     }
 
-    fun getFavouriteVacancyInfo(vacancyId: String) {
-        if (vacancyId.isEmpty()) return
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                favouriteVacancyDbInteractor.getFavouriteVacancyById(vacancyId)
-                    .collect() { vacancy ->
-                        stateGetVacancyInfo(vacancy)
-                    }
-            }
-        }
-    }
-
-    private fun stateGetVacancyInfo(vacancy: Vacancy?) {
-        if (vacancy == null)
-            stateLiveDataGetVacancyInfo.postValue(GetFavouriteVacancyInfoState.FavoriteVacanciesInfoIsEmpty)
-        else
-            stateLiveDataGetVacancyInfo.postValue(GetFavouriteVacancyInfoState.FavoriteVacanciesInfo(vacancy))
-    }
-
     fun pause(){
-        stateLiveDataGetVacancyInfo.postValue(null)
         stateLiveDataFavourite.postValue(null)
     }
 
