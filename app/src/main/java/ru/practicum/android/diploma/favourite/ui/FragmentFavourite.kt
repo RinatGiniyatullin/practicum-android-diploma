@@ -67,7 +67,7 @@ class FragmentFavourite : BindingFragment<FragmentFavouriteBinding>() {
     private fun setListeners() {
 
         onFavouriteVacancyClickDebounce =
-            debounce<Vacancy>(CLICK_DEBOUNCE_DELAY_MILLIS, lifecycleScope, false) { vacancy ->
+            debounce(CLICK_DEBOUNCE_DELAY_MILLIS, lifecycleScope, false) { vacancy ->
                 favouriteViewModel.getFavouriteVacancyInfo(vacancy.id)
             }
 
