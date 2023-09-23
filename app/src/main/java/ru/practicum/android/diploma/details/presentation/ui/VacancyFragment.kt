@@ -8,11 +8,14 @@ import android.widget.Toast
 import androidx.core.os.bundleOf
 import androidx.core.text.HtmlCompat
 import androidx.core.text.HtmlCompat.FROM_HTML_MODE_COMPACT
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.practicum.android.diploma.R
 import ru.practicum.android.diploma.databinding.FragmentVacancyBinding
@@ -30,6 +33,8 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
     private lateinit var vacancyDetails: VacancyDetails
     private lateinit var confirmDialog: MaterialAlertDialogBuilder
 
+    private var isClickAllowed = true
+
     override fun createBinding(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -45,31 +50,49 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
         viewModel.loadVacancyDetails(vacancy.id)
 
-        viewModel.state.observe(viewLifecycleOwner){ state ->
-            when(state){
+        viewModel.checkFavourite(vacancy)
+
+        viewModel.stateFavouriteIconLiveData.observe(viewLifecycleOwner) {
+            renderStateFavouriteIcon(it)
+        }
+
+        viewModel.stateVacancyInfoDb.observe(viewLifecycleOwner) { vacancyDetailsDb ->
+            if (vacancyDetailsDb == null){
+                return@observe
+            }
+            vacancyDetails = vacancyDetailsDb
+            binding.detailsData.visibility = View.VISIBLE
+            binding.favouritesIcon.isClickable = true
+            binding.sharingIcon.isClickable = true
+            initVacancyDetails()
+        }
+
+        viewModel.state.observe(viewLifecycleOwner) { state ->
+            when (state) {
                 is VacancyState.Content -> {
                     binding.progressBarForLoad.visibility = View.GONE
                     vacancyDetails = state.vacancyDetails
                     binding.detailsData.visibility = View.VISIBLE
+                    binding.similarVacanciesButton.visibility = View.VISIBLE
                     binding.refreshButton.visibility = View.GONE
+                    binding.favouritesIcon.isClickable = true
+                    binding.sharingIcon.isClickable = true
                     initVacancyDetails()
                 }
                 is VacancyState.Error -> {
                     binding.progressBarForLoad.visibility = View.GONE
-                    showToast(state.errorMessage)
                     binding.detailsData.visibility = View.GONE
+                    binding.similarVacanciesButton.visibility = View.GONE
                     binding.refreshButton.visibility = View.VISIBLE
+                    binding.favouritesIcon.isClickable = false
+                    binding.sharingIcon.isClickable = false
+                    showToast(getString(R.string.no_connection))
+                    viewModel.initVacancyDetailsInDb(vacancy)
                 }
 
                 VacancyState.Loading -> binding.progressBarForLoad.visibility = View.VISIBLE
             }
         }
-
-        viewModel.observeStateFavouriteIcon().observe(viewLifecycleOwner){
-            renderStateFavouriteIcon(it)
-        }
-
-        viewModel.checkFavourite(vacancy)
 
         initClickListeners()
     }
@@ -119,9 +142,11 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         val nameContact = vacancyDetails.contacts?.name
         val emailContact = vacancyDetails.contacts?.email
         val phoneContactList = vacancyDetails.contacts?.phones
-        val firstPhoneContact = phoneContactList?.get(0)
-        val phoneComment = firstPhoneContact?.comment
-        val formattedPhoneContact = "+${firstPhoneContact?.country}(${firstPhoneContact?.city})${firstPhoneContact?.number?.dropLast(4)}-${firstPhoneContact?.number?.drop(3)?.dropLast(2)}-${firstPhoneContact?.number?.drop(5)}"
+        val firstPhoneContact = phoneContactList?.getOrNull(0)
+        val phoneComment = if(firstPhoneContact != null) firstPhoneContact.comment else null
+        val formattedPhoneContact = if(firstPhoneContact != null) "+${firstPhoneContact.country}(${firstPhoneContact.city})${firstPhoneContact.number.dropLast(4)}-${
+            firstPhoneContact.number.drop(3).dropLast(2)
+        }-${firstPhoneContact.number.drop(5)}" else null
         val noData = getString(R.string.no_data)
 
         binding.city.text = if(vacancy.city.isEmpty()) vacancyDetails.area.name else vacancy.city
@@ -139,7 +164,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
             binding.contactsContainer.visibility = View.VISIBLE
             binding.vacancyContactPersonValue.text = if(nameContact != null) nameContact else noData
             binding.vacancyContactEmailValue.text = if(emailContact != null) emailContact else noData
-            binding.vacancyContactPhoneValue.text = if(phoneContactList != null) formattedPhoneContact else noData
+            binding.vacancyContactPhoneValue.text = if(formattedPhoneContact != null) formattedPhoneContact else noData
             binding.vacancyPhoneCommentValue.text = if(phoneComment != null) phoneComment else noData
         }
         else
@@ -152,7 +177,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
     }
 
     private fun renderStateFavouriteIcon(isFavourite: Boolean?){
-        when(isFavourite){
+        when (isFavourite) {
             true -> binding.favouritesIcon.setImageResource(R.drawable.favorites_on)
             else -> binding.favouritesIcon.setImageResource(R.drawable.favorites_off)
         }
@@ -160,14 +185,17 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
 
     private fun initClickListeners(){
         binding.refreshButton.setOnClickListener{
-            viewModel.loadVacancyDetails(vacancy.id)
+            if(clickDebounce())
+                viewModel.loadVacancyDetails(vacancy.id)
         }
 
         binding.similarVacanciesButton.setOnClickListener {
-            findNavController().navigate(
-                R.id.action_vacancyFragment_to_similarVacancyFragment,
-                SimilarVacancyFragment.createArgs(vacancy.id)
-            )
+            if(clickDebounce()){
+                findNavController().navigate(
+                    R.id.action_vacancyFragment_to_similarVacancyFragment,
+                    SimilarVacancyFragment.createArgs(vacancy.id)
+                )
+            }
         }
 
         binding.backIcon.setOnClickListener{
@@ -175,7 +203,7 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         }
 
         binding.favouritesIcon.setOnClickListener{
-            viewModel.clickOnFavoriteIcon(vacancy)
+            viewModel.clickOnFavoriteIcon(vacancy, vacancyDetails)
         }
 
         binding.sharingIcon.setOnClickListener {
@@ -183,18 +211,31 @@ class VacancyFragment : BindingFragment<FragmentVacancyBinding>() {
         }
 
         binding.vacancyContactPhoneValue.setOnClickListener {
-            if(vacancyDetails.contacts?.phones != null)
+            if(clickDebounce() && vacancyDetails.contacts?.phones != null)
                 viewModel.sharePhone(binding.vacancyContactPhoneValue.text.toString())
         }
 
         binding.vacancyContactEmailValue.setOnClickListener {
-            if(vacancyDetails.contacts?.email != null)
+            if(clickDebounce() && vacancyDetails.contacts?.email != null)
                 confirmDialog.show()
         }
     }
 
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed){
+            isClickAllowed = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+        }
+        return current
+    }
+
     companion object {
         const val VACANCY = "vacancy"
+        const val CLICK_DEBOUNCE_DELAY = 1000L
 
         fun createArgs(jsonVacancy: String): Bundle = bundleOf(VACANCY to jsonVacancy)
     }

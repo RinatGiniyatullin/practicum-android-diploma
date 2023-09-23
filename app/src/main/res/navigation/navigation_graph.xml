@@ -23,7 +23,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingFilters"
-        android:name="ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters"
+        android:name="ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment"
         android:label="fragment_setting_filters"
         tools:layout="@layout/fragment_setting_filters">
         <action
@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentChooseFilter"
-        android:name="ru.practicum.android.diploma.filters.ui.fragment.FragmentChooseFilter"
+        android:name="ru.practicum.android.diploma.filters.ui.fragment.ChooseFilterFragment"
         android:label="fragment_choose_filter"
         tools:layout="@layout/fragment_filter_selection" />
     <fragment
@@ -79,7 +79,7 @@
     </fragment>
     <fragment
         android:id="@+id/fragmentPlaceOfWork"
-        android:name="ru.practicum.android.diploma.filters.ui.fragment.FragmentPlaceOfWork"
+        android:name="ru.practicum.android.diploma.filters.ui.fragment.PlaceOfWorkFragment"
         android:label="fragment_place_of_work"
         tools:layout="@layout/fragment_place_of_work">
         <action

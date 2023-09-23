@@ -4,45 +4,60 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.practicum.android.diploma.db.data.converter.VacancyDbConverter
+import kotlinx.coroutines.withContext
 import ru.practicum.android.diploma.db.domain.api.VacancyDbInteractor
 import ru.practicum.android.diploma.favourite.presentation.models.FavoriteStateInterface
 import ru.practicum.android.diploma.search.domain.models.Vacancy
 
-class FavouriteViewModel(private val favouriteVacancyDbInteractor: VacancyDbInteractor, private val converter: VacancyDbConverter) :
-    ViewModel() {
+class FavouriteViewModel(
+    private val favouriteVacancyDbInteractor: VacancyDbInteractor,
+) : ViewModel() {
 
-    init {
-        showFavouriteVacancies()
-    }
+    private val stateLiveDataFavourite = MutableLiveData<FavoriteStateInterface?>()
 
-    private val stateLiveDataFavourite = MutableLiveData<FavoriteStateInterface>()
-
-    fun observeStateFavourite(): LiveData<FavoriteStateInterface> = stateLiveDataFavourite
+    fun observeStateFavourite(): LiveData<FavoriteStateInterface?> = stateLiveDataFavourite
 
     private fun renderStateFavourite(state: FavoriteStateInterface) {
         stateLiveDataFavourite.postValue(state)
     }
 
-    private fun showFavouriteVacancies() {
+    fun showFavouriteVacancies() {
         viewModelScope.launch {
-            var favouriteVacancies = listOf<Vacancy>()
-                favouriteVacancyDbInteractor.getFavouriteVacancy().collect(){
-                        vacanciesEntity -> favouriteVacancies =
-               vacanciesEntity.map { vacancyEntity -> converter.map(vacancyEntity) }
+            withContext(Dispatchers.IO) {
+                favouriteVacancyDbInteractor.getFavouriteVacancies()
+                    .collect() { favouriteVacancies ->
+                        if (favouriteVacancies.isEmpty())
+                            renderStateFavourite(FavoriteStateInterface.FavoriteVacanciesIsEmpty)
+                        else renderStateFavourite(
+                            FavoriteStateInterface.FavoriteVacancies(favouriteVacancies)
+                        )
+                    }
+            }
+        }
+    }
 
-                    if (favouriteVacancies.isEmpty()) renderStateFavourite(FavoriteStateInterface.FavoriteVacanciesIsEmpty)
-                    else renderStateFavourite(FavoriteStateInterface.FavoriteVacancies(favouriteVacancies))
+    fun pause(){
+        stateLiveDataFavourite.postValue(null)
+    }
+
+    fun deleteVacancy(vacancy: Vacancy) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                favouriteVacancyDbInteractor.getFavouriteVacancyById(vacancy.id).collect() {
+                    deleteVacancyEntity(it)
                 }
-
-
+            }
         }
     }
 
-    fun deleteTrack(vacancy: Vacancy) {
+    private fun deleteVacancyEntity(vacancy: Vacancy?) {
+        if (vacancy == null) return
         viewModelScope.launch {
-            favouriteVacancyDbInteractor.deleteVacancy(vacancy)
+            withContext(Dispatchers.IO) {
+                favouriteVacancyDbInteractor.deleteFavouriteVacancyById(vacancy.id)
+                }
+            }
         }
     }
-}

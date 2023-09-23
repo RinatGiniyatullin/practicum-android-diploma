@@ -7,5 +7,6 @@
     <attr name="red_to_white_color" format="reference" />
     <attr name="white_to_black_color" format="reference" />
     <attr name="white2_to_black2_color" format="reference" />
+    <attr name="light_gray_75_to_gray_75_color" format="reference" />
 
 </resources>

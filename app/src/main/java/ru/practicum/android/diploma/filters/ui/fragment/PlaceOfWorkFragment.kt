@@ -1,4 +1,5 @@
 package ru.practicum.android.diploma.filters.ui.fragment
+
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,12 +14,12 @@ import ru.practicum.android.diploma.databinding.FragmentPlaceOfWorkBinding
 import ru.practicum.android.diploma.filters.domain.models.Filters
 import ru.practicum.android.diploma.filters.presentation.FiltersViewModel
 import ru.practicum.android.diploma.filters.presentation.models.FiltersDataState
-import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.REGION
-import ru.practicum.android.diploma.filters.ui.fragment.FragmentSettingFilters.Companion.SCREEN
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment.Companion.REGION
+import ru.practicum.android.diploma.filters.ui.fragment.SettingFiltersFragment.Companion.SCREEN
 import ru.practicum.android.diploma.util.BindingFragment
 import ru.practicum.android.diploma.util.app.App
 
-class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
+class PlaceOfWorkFragment : BindingFragment<FragmentPlaceOfWorkBinding>() {
 
     private val viewModel by viewModel<FiltersViewModel>()
     private var bundle: Bundle? = null
@@ -51,7 +52,7 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
             findNavController().navigateUp()
         }
         binding.chooseCountryBottom.setOnClickListener {
-            bundle = bundleOf(FragmentSettingFilters.SCREEN to FragmentSettingFilters.COUNTRIES)
+            bundle = bundleOf(SettingFiltersFragment.SCREEN to SettingFiltersFragment.COUNTRIES)
             findNavController().navigate(
                 R.id.action_fragmentPlaceOfWork_to_fragmentChooseFilter,
                 bundle
@@ -88,8 +89,9 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
             is FiltersDataState.filtersData -> showFiltersData(state.filters)
         }
     }
-    private fun back(){
-        binding.arrowback.setOnClickListener {
+
+    private fun back() {
+        binding.arrowBack.setOnClickListener {
             findNavController().navigateUp()
         }
 
@@ -111,19 +113,22 @@ class FragmentPlaceOfWork : BindingFragment<FragmentPlaceOfWorkBinding>() {
             binding.clearRegion.visibility = View.VISIBLE
         }
     }
-    private fun TextInputLayout.inputTextChangeHandler(text:CharSequence?){
-        if(text.isNullOrEmpty()) this.setInputStrokeColor(R.color.hint_edit_text_empty) else this.setInputStrokeColor(
+
+    private fun TextInputLayout.inputTextChangeHandler(text: CharSequence?) {
+        if (text.isNullOrEmpty()) this.setInputStrokeColor(R.color.hint_edit_text_empty) else this.setInputStrokeColor(
             R.color.hint_edit_text_filed
         )
     }
-    private fun TextInputLayout.setInputStrokeColor(colorStateList:Int){
+
+    private fun TextInputLayout.setInputStrokeColor(colorStateList: Int) {
         this.defaultHintTextColor = resources.getColorStateList(colorStateList, null)
     }
-    private fun doOnTextChanged(){
-        binding.country.editText!!.doOnTextChanged{inputText, _, _, _ ->
+
+    private fun doOnTextChanged() {
+        binding.country.editText!!.doOnTextChanged { inputText, _, _, _ ->
             binding.country.inputTextChangeHandler(inputText)
         }
-        binding.region.editText!!.doOnTextChanged{inputText, _, _, _ ->
+        binding.region.editText!!.doOnTextChanged { inputText, _, _, _ ->
             binding.region.inputTextChangeHandler(inputText)
         }
     }

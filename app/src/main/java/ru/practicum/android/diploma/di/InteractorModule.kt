@@ -15,16 +15,10 @@ import ru.practicum.android.diploma.details.domain.VacancyInteractorImpl
 
 val interactorModule = module {
     singleOf(::SearchInteractorImpl).bind<SearchInteractor>()
-    single<VacancyDbInteractor> {
-        VacancyDbInteractorImpl(
-            vacancyDbConverter = get(),
-            vacancyDbRepository = get()
-        )
-    }
 
-    single<FiltersInteractor> {
-        FiltersInteractorImpl(get())
-    }
+    singleOf(::VacancyDbInteractorImpl).bind<VacancyDbInteractor>()
+
+    singleOf(::FiltersInteractorImpl).bind<FiltersInteractor>()
 
     singleOf(::VacancyInteractorImpl).bind<VacancyInteractor>()
 }
